@@ -307,7 +307,7 @@ img {
 .member-note,
 .publish-copy {
   line-height: 1.68;
-  color: var(--muted);
+  color: white;
 }
 
 .note-line {
@@ -541,6 +541,7 @@ img {
   padding: 0;
   list-style: none;
 }
+
 
 .mini-list li,
 .repo-list li,
@@ -1205,6 +1206,89 @@ img {
   *::before,
   *::after {
     animation: none !important;
-    transition: none !important;
   }
+}
+
+/* --- BLUE THEME OVERRIDES --- */
+.theme-blue {
+  --line: rgba(65, 130, 235, 0.24);
+  --line-strong: rgba(65, 130, 235, 0.48);
+  --primary: #4182eb;
+  --primary-deep: #2a61ba;
+  --accent: #4182eb;
+  --accent-soft: rgba(65, 130, 235, 0.12);
+}
+
+.theme-blue .eyebrow {
+  border-color: rgba(65, 130, 235, 0.34);
+  background: rgba(65, 130, 235, 0.08);
+  color: #adcbfa;
+}
+
+.theme-blue .button-primary {
+  background: linear-gradient(135deg, var(--primary), #5a96f0);
+  box-shadow: 0 14px 30px rgba(65, 130, 235, 0.22);
+}
+
+.theme-blue .button-secondary {
+  background: linear-gradient(135deg, rgba(65, 130, 235, 0.92), rgba(42, 97, 186, 0.94));
+  box-shadow: 0 12px 28px rgba(65, 130, 235, 0.18);
+}
+
+.theme-blue .button-primary:hover,
+.theme-blue .button-primary:focus-visible,
+.theme-blue .button-secondary:hover,
+.theme-blue .button-secondary:focus-visible {
+  background: linear-gradient(135deg, #4d8df5, #67a2fa);
+}
+
+.theme-blue .meta-item {
+  background: linear-gradient(135deg, rgba(65, 130, 235, 0.2), rgba(65, 130, 235, 0.09));
+  border-color: rgba(65, 130, 235, 0.28);
+}
+
+.theme-blue .brand-mark::before {
+  background: linear-gradient(145deg, rgba(65, 130, 235, 0.96), rgba(133, 172, 235, 0.9));
+}
+
+.theme-blue .status-pill {
+  border-color: rgba(65, 130, 235, 0.3);
+  background: rgba(65, 130, 235, 0.08);
+}
+
+.theme-blue .chip {
+  border-color: rgba(65, 130, 235, 0.18);
+}
+
+.theme-blue a:hover,
+.theme-blue a:focus-visible {
+  background: rgba(65, 130, 235, 0.08);
+}
+
+.theme-blue .panel {
+  box-shadow: var(--shadow-box), inset 0 0 0 1px rgba(65, 130, 235, 0.12);
+}
+.theme-blue .panel:hover {
+  box-shadow: var(--shadow-box-hover), inset 0 0 0 1px rgba(65, 130, 235, 0.2);
+  border-color: var(--line-strong);
+}
+
+.theme-blue:focus-visible {
+  outline-color: rgba(65, 130, 235, 0.35);
+}
+
+.theme-blue .report-nav a {
+  border-color: rgba(235, 240, 255, 0.12);
+  background: linear-gradient(135deg, rgba(65, 130, 235, 0.92), rgba(42, 97, 186, 0.94));
+}
+
+.theme-blue .report-nav a:hover,
+.theme-blue .report-nav a:focus-visible {
+  background: linear-gradient(135deg, #4d8df5, #67a2fa);
+  border-color: rgba(235, 240, 255, 0.2);
+}
+
+.theme-blue .mono-list li {
+  background: linear-gradient(135deg, rgba(65, 130, 235, 0.18), rgba(65, 130, 235, 0.08));
+  border-color: rgba(65, 130, 235, 0.28);
 }
