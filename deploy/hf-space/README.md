@@ -7,7 +7,7 @@ This folder prepares the Assignment 1 image demo for a Hugging Face Gradio Space
 No. If you already ran:
 
 ```powershell
-git clone https://huggingface.co/spaces/tanh1c/DeepLearning
+git clone https://huggingface.co/spaces/BoChay/DeepLearning
 ```
 
 then that cloned `DeepLearning` folder is already the deploy repository.
