@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local tool settings
+.claude/
+.codex/
+
+# Large local datasets and archives
+assignments/assignment-1/image/data/
+cifar-10.zip
+/assignment-one.pdf
+
+# Local checkpoints
+# Use Git LFS or external storage if you want to publish model weights.
+*.pth
+
+# Local experiments and references not needed in the public repo
+old/
+ref/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

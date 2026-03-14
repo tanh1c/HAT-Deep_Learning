@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Assignment 1 | Deep Learning Portfolio</title>
+    <meta
+      name="description"
+      content="Assignment 1 page for image, text, and multimodal classification, with the image track already published."
+    >
+    <link rel="stylesheet" href="../assets/styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="../" aria-label="Back to common page home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-copy">
+            <p class="brand-label">Assignment 1</p>
+            <p class="brand-note">Image track published first, team page ready for merge</p>
+          </span>
+        </a>
+
+        <nav class="topnav" aria-label="Primary">
+          <a href="../">Home</a>
+          <a href="#deliverables">Deliverables</a>
+          <a href="#image-report">Image report</a>
+          <a href="#results">Results</a>
+          <a href="#extensions">Extensions</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="shell page-hero section">
+        <article class="panel hero-card">
+          <p class="eyebrow">Assignment 1</p>
+          <h1>
+            Classification across <span>image, text, and multimodal</span> data.
+          </h1>
+          <p class="page-subtitle">
+            This page now publishes the completed <code>image</code> track first. The image
+            section compares a CNN and a Vision Transformer on CIFAR-10, and already includes
+            calibration, interpretability, and web-demo extensions.
+          </p>
+          <div class="button-row">
+            <a class="button button-primary" href="#image-report">Open image report</a>
+            <a class="button button-secondary" href="../">Back to common page</a>
+          </div>
+
+          <div class="hero-meta">
+            <div class="meta-item">
+              <p class="meta-label">Assignment</p>
+              <p class="meta-value">Assignment 1</p>
+            </div>
+            <div class="meta-item">
+              <p class="meta-label">Instructor</p>
+              <p class="meta-value">Le Thanh Sach</p>
+            </div>
+            <div class="meta-item">
+              <p class="meta-label">Published now</p>
+              <p class="meta-value">Image track</p>
+            </div>
+            <div class="meta-item">
+              <p class="meta-label">To merge later</p>
+              <p class="meta-value">Text and multimodal</p>
+            </div>
+          </div>
+        </article>
+
+        <aside class="panel page-callout">
+          <p class="card-kicker">Team split</p>
+          <h2 class="card-title">Current ownership for Assignment 1</h2>
+          <ul class="mini-list">
+            <li>Image: Chu Nguyen Tuan Anh</li>
+            <li>Text: Nguyen Quoc Hieu</li>
+            <li>Multimodal: Vu Hai Tuan</li>
+            <li>Instructor: Le Thanh Sach</li>
+          </ul>
+          <div class="assignment-meta">
+            <span class="status-pill">Image published</span>
+            <span class="chip">CNN + ViT</span>
+            <span class="chip">Calibration</span>
+            <span class="chip">Interpretability</span>
+          </div>
+        </aside>
+      </section>
+
+      <section id="deliverables" class="shell section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Deliverables</h2>
+            <p class="section-copy">
+              Required assignment-page items. Image content is already integrated below, while
+              team-level public links can be filled in after final upload.
+            </p>
+          </div>
+        </div>
+
+        <div class="deliverable-grid">
+          <article class="panel deliverable-card">
+            <p class="card-kicker">Demo video</p>
+            <h3 class="card-title">Team link pending</h3>
+            <p class="deliverable-note">
+              Add the final Assignment 1 demo video URL here after the team records the walkthrough.
+            </p>
+            <div class="assignment-meta">
+              <span class="status-pill planned">Pending final link</span>
+            </div>
+          </article>
+
+          <article class="panel deliverable-card">
+            <p class="card-kicker">Presentation video</p>
+            <h3 class="card-title">YouTube link pending</h3>
+            <p class="deliverable-note">
+              Add the final presentation video URL here before submission so the instructor can review it.
+            </p>
+            <div class="assignment-meta">
+              <span class="status-pill planned">Pending final link</span>
+            </div>
+          </article>
+
+          <article class="panel deliverable-card">
+            <p class="card-kicker">Code</p>
+            <h3 class="card-title">Working assets already in this repo</h3>
+            <ul class="mono-list">
+              <li>assignments/assignment-1/image/notebooks/</li>
+              <li>assignments/assignment-1/app/main.py</li>
+              <li>assignments/assignment-1/image/models/</li>
+              <li>assignments/assignment-1/image/artifacts/</li>
+            </ul>
+            <p class="deliverable-note">
+              Add the final public GitHub repository URL after publishing.
+            </p>
+          </article>
+
+          <article class="panel deliverable-card">
+            <p class="card-kicker">Presentation content</p>
+            <h3 class="card-title">Integrated directly in this page</h3>
+            <p class="deliverable-note">
+              The image-track report content below follows the five required report categories in the brief.
+            </p>
+            <div class="assignment-links">
+              <a class="button button-secondary" href="#image-report">Jump to image report</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="shell section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Track status</h2>
+            <p class="section-copy">
+              The image section is complete and published first; the remaining team tracks can be merged later.
+            </p>
+          </div>
+        </div>
+
+        <div class="track-grid">
+          <article class="panel track-card">
+            <p class="card-kicker">Image</p>
+            <h3 class="card-title">Published now</h3>
+            <p class="track-copy">
+              CIFAR-10 dataset, ResNet-18 and ViT-B/16 comparison, notebook training, model export,
+              calibration artifacts, and web-demo integration are complete.
+            </p>
+            <div class="assignment-meta">
+              <span class="status-pill">Complete</span>
+              <span class="chip">Chu Nguyen Tuan Anh</span>
+            </div>
+          </article>
+
+          <article class="panel track-card track-card-pending">
+            <p class="card-kicker">Text</p>
+            <h3 class="card-title">To be merged by teammate</h3>
+            <p class="track-copy">
+              The page slot and navigation are already ready. This section can be replaced with the
+              final text-classification content when available.
+            </p>
+            <div class="assignment-meta">
+              <span class="status-pill planned">Pending merge</span>
+              <span class="chip">Nguyen Quoc Hieu</span>
+            </div>
+          </article>
+
+          <article class="panel track-card track-card-pending">
+            <p class="card-kicker">Multimodal</p>
+            <h3 class="card-title">To be merged by teammate</h3>
+            <p class="track-copy">
+              The page structure already reserves a clean slot for the multimodal part without changing the layout later.
+            </p>
+            <div class="assignment-meta">
+              <span class="status-pill planned">Pending merge</span>
+              <span class="chip">Vu Hai Tuan</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="image-report" class="shell section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Image report content</h2>
+            <p class="section-copy">
+              This section follows the exact report structure required by the assignment for the image track.
+            </p>
+          </div>
+        </div>
+
+        <div class="report-nav">
+          <a href="#eda">EDA</a>
+          <a href="#pipeline">Data pipeline</a>
+          <a href="#models">Models</a>
+          <a href="#results">Results</a>
+          <a href="#extensions">Extensions</a>
+        </div>
+
+        <div class="kpi-grid">
+          <article class="panel kpi-card">
+            <p class="kpi-label">Dataset</p>
+            <p class="kpi-value">CIFAR-10</p>
+            <p class="kpi-note">10 classes, 50k train, 10k test, resized to 224x224</p>
+          </article>
+
+          <article class="panel kpi-card">
+            <p class="kpi-label">CNN result</p>
+            <p class="kpi-value">96.55%</p>
+            <p class="kpi-note">ResNet-18 test accuracy</p>
+          </article>
+
+          <article class="panel kpi-card">
+            <p class="kpi-label">ViT result</p>
+            <p class="kpi-value">98.36%</p>
+            <p class="kpi-note">ViT-B/16 test accuracy</p>
+          </article>
+
+          <article class="panel kpi-card">
+            <p class="kpi-label">Calibration</p>
+            <p class="kpi-value">0.0200 / 0.0069</p>
+            <p class="kpi-note">ECE for ResNet-18 and ViT-B/16</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="eda" class="shell section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">1. Problem and dataset exploration (EDA)</h2>
+            <p class="section-copy">
+              The image task is a multi-class classification problem comparing a CNN baseline and a Vision Transformer.
+            </p>
+          </div>
+        </div>
+
+        <div class="report-grid">
+          <article class="panel report-card">
+            <p class="card-kicker">Problem statement</p>
+            <h3 class="card-title">CNN vs ViT on CIFAR-10</h3>
+            <p class="track-copy">
+              The goal is to classify each image into one of ten semantic categories and compare two
+              major model families under the same dataset and evaluation protocol.
+            </p>
+            <ul class="mini-list">
+              <li>CNN model: ResNet-18</li>
+              <li>Transformer model: ViT-B/16</li>
+              <li>Both initialized from ImageNet-pretrained weights</li>
+            </ul>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">Dataset summary</p>
+            <h3 class="card-title">Why CIFAR-10 fits this assignment</h3>
+            <ul class="mono-list">
+              <li>10 classes</li>
+              <li>50,000 training images</li>
+              <li>10,000 test images</li>
+              <li>Original size: 32 x 32</li>
+            </ul>
+            <p class="deliverable-note">
+              CIFAR-10 is balanced, standard, and strong enough to reveal meaningful differences
+              between CNN and Transformer representations.
+            </p>
+          </article>
+        </div>
+
+        <article class="panel report-card">
+          <p class="card-kicker">Class labels</p>
+          <h3 class="card-title">CIFAR-10 categories used in the image task</h3>
+          <div class="chip-cloud">
+            <span class="chip">airplane</span>
+            <span class="chip">automobile</span>
+            <span class="chip">bird</span>
+            <span class="chip">cat</span>
+            <span class="chip">deer</span>
+            <span class="chip">dog</span>
+            <span class="chip">frog</span>
+            <span class="chip">horse</span>
+            <span class="chip">ship</span>
+            <span class="chip">truck</span>
+          </div>
+        </article>
+      </section>
+
+      <section id="pipeline" class="shell section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">2. Dataset, DataLoader, and augmentation setup</h2>
+            <p class="section-copy">
+              Both notebooks use the same CIFAR-10 source and a consistent preprocessing strategy for fair comparison.
+            </p>
+          </div>
+        </div>
+
+        <div class="report-grid report-grid-wide">
+          <article class="panel report-card">
+            <p class="card-kicker">Shared pipeline</p>
+            <h3 class="card-title">Data loading and preprocessing</h3>
+            <ul class="mono-list">
+              <li>torchvision.datasets.CIFAR10</li>
+              <li>Resize to 224 x 224</li>
+              <li>Batch size: 64</li>
+              <li>num_workers: 4</li>
+              <li>pin_memory: True</li>
+              <li>persistent_workers: True</li>
+            </ul>
+            <p class="deliverable-note">
+              Both models are ImageNet-pretrained, so CIFAR-10 images are resized before inference and training.
+            </p>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">Normalization and augmentation</p>
+            <h3 class="card-title">Lightweight augmentation for both models</h3>
+            <ul class="mini-list">
+              <li>Normalize with mean = (0.4914, 0.4822, 0.4465)</li>
+              <li>Normalize with std = (0.2470, 0.2435, 0.2616)</li>
+              <li>RandomHorizontalFlip for training</li>
+              <li>No augmentation on test split</li>
+            </ul>
+            <p class="deliverable-note">
+              The augmentation policy is intentionally simple to keep the CNN vs ViT comparison focused on architecture and fine-tuning strategy.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="models" class="shell section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">3. Model building, training, evaluation, and comparison</h2>
+            <p class="section-copy">
+              The image section compares a lighter CNN baseline with a larger Transformer model.
+            </p>
+          </div>
+        </div>
+
+        <div class="report-grid">
+          <article class="panel report-card">
+            <p class="card-kicker">CNN model</p>
+            <h3 class="card-title">ResNet-18</h3>
+            <ul class="mini-list">
+              <li>Backbone: ResNet-18 pretrained on ImageNet</li>
+              <li>Final head replaced for 10 classes</li>
+              <li>Full fine-tuning for 30 epochs</li>
+              <li>Optimizer: AdamW, LR: 3e-4, weight decay: 1e-4</li>
+              <li>Warmup + cosine schedule</li>
+              <li>Total params: 11.18M</li>
+            </ul>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">Transformer model</p>
+            <h3 class="card-title">ViT-B/16</h3>
+            <ul class="mini-list">
+              <li>Backbone: ViT-B/16 pretrained on ImageNet</li>
+              <li>Final head replaced for 10 classes</li>
+              <li>2-phase training: freeze 3 epochs, then full fine-tune 15 epochs</li>
+              <li>Optimizer: AdamW, phase-2 LR: 3e-5</li>
+              <li>Cosine schedule</li>
+              <li>Total params: 85.81M</li>
+            </ul>
+          </article>
+        </div>
+
+        <article class="panel report-card">
+          <p class="card-kicker">Comparison table</p>
+          <h3 class="card-title">Final image-model comparison</h3>
+          <div class="compare-table-wrap">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Family</th>
+                  <th>Params</th>
+                  <th>Training strategy</th>
+                  <th>Test accuracy</th>
+                  <th>Macro F1</th>
+                  <th>ECE</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>ResNet-18</td>
+                  <td>CNN</td>
+                  <td>11.18M</td>
+                  <td>Full fine-tuning, 30 epochs</td>
+                  <td>96.55%</td>
+                  <td>0.97</td>
+                  <td>0.0200</td>
+                </tr>
+                <tr>
+                  <td>ViT-B/16</td>
+                  <td>Transformer</td>
+                  <td>85.81M</td>
+                  <td>Freeze 3 epochs + fine-tune 15 epochs</td>
+                  <td>98.36%</td>
+                  <td>0.98</td>
+                  <td>0.0069</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section id="results" class="shell section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">4. Experimental results, figures, analysis, and discussion</h2>
+            <p class="section-copy">
+              The ViT model achieves the best final accuracy and the best confidence calibration on the CIFAR-10 test set.
+            </p>
+          </div>
+        </div>
+
+        <div class="figure-grid">
+          <article class="panel figure-card">
+            <p class="card-kicker">Calibration figure</p>
+            <h3 class="card-title">ResNet-18 reliability diagram</h3>
+            <div class="figure-frame">
+              <img
+                src="../assets/assignment-1/resnet18_calibration_full.png"
+                alt="ResNet-18 calibration plot"
+              >
+            </div>
+            <p class="figure-caption">
+              Exported from the CNN notebook on the full 10,000-image CIFAR-10 test set. ECE = 0.0200.
+            </p>
+          </article>
+
+          <article class="panel figure-card">
+            <p class="card-kicker">Calibration figure</p>
+            <h3 class="card-title">ViT-B/16 reliability diagram</h3>
+            <div class="figure-frame">
+              <img
+                src="../assets/assignment-1/vit_b16_calibration_full.png"
+                alt="ViT-B/16 calibration plot"
+              >
+            </div>
+            <p class="figure-caption">
+              Exported from the ViT notebook on the full 10,000-image CIFAR-10 test set. ECE = 0.0069.
+            </p>
+          </article>
+        </div>
+
+        <div class="report-grid">
+          <article class="panel report-card">
+            <p class="card-kicker">Main takeaways</p>
+            <h3 class="card-title">Accuracy and efficiency trade-off</h3>
+            <ul class="mini-list">
+              <li>ViT-B/16 achieves the strongest final accuracy and lower ECE.</li>
+              <li>ResNet-18 is much smaller and cheaper to train.</li>
+              <li>Both models are strong enough to make the architecture comparison meaningful.</li>
+            </ul>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">Discussion</p>
+            <h3 class="card-title">What the comparison shows</h3>
+            <ul class="mini-list">
+              <li>Residual errors are concentrated more in visually similar classes.</li>
+              <li>The ViT model produces more trustworthy confidence estimates.</li>
+              <li>The CNN model remains valuable as a compact, efficient baseline.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="extensions" class="shell section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">5. Extension reports</h2>
+            <p class="section-copy">
+              The image track already includes three extensions beyond raw classification.
+            </p>
+          </div>
+        </div>
+
+        <div class="deliverable-grid">
+          <article class="panel deliverable-card">
+            <p class="card-kicker">Application demo</p>
+            <h3 class="card-title">Interactive Gradio app</h3>
+            <p class="deliverable-note">
+              The local app in <code>assignments/assignment-1/app/main.py</code> loads both image models, runs prediction,
+              calibration mode, and model explanation directly from the reorganized
+              <code>assignments/assignment-1/</code> structure.
+            </p>
+            <div class="assignment-meta">
+              <span class="status-pill">Implemented</span>
+              <span class="chip">Web demo</span>
+            </div>
+          </article>
+
+          <article class="panel deliverable-card">
+            <p class="card-kicker">Interpretability</p>
+            <h3 class="card-title">Grad-CAM and attention visualization</h3>
+            <p class="deliverable-note">
+              ResNet-18 uses Grad-CAM, while ViT-B/16 uses attention-based visualization so the
+              project can show where each model focuses during prediction.
+            </p>
+            <div class="assignment-meta">
+              <span class="status-pill">Implemented</span>
+              <span class="chip">Qualitative analysis</span>
+            </div>
+          </article>
+
+          <article class="panel deliverable-card">
+            <p class="card-kicker">Calibration</p>
+            <h3 class="card-title">ECE and reliability diagrams</h3>
+            <p class="deliverable-note">
+              Both models were evaluated with full-test calibration analysis and exported notebook artifacts for fast web display.
+            </p>
+            <div class="assignment-meta">
+              <span class="status-pill">Implemented</span>
+              <span class="chip">Notebook artifacts</span>
+            </div>
+          </article>
+
+          <article class="panel deliverable-card">
+            <p class="card-kicker">Image section status</p>
+            <h3 class="card-title">Ready for GitHub Pages and presentation</h3>
+            <p class="deliverable-note">
+              The image component now has notebooks, trained weights, exported figures, a web demo,
+              and integrated report content for the assignment page.
+            </p>
+            <div class="assignment-meta">
+              <span class="status-pill">Ready</span>
+              <span class="chip">Report + demo</span>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="shell footer">
+      <div class="panel footer-card">
+        <p>
+          Assignment 1 currently publishes the completed image track first, with text and multimodal content ready to merge later.
+        </p>
+        <div class="footer-links">
+          <a href="../">Home</a>
+          <a href="#deliverables">Deliverables</a>
+          <a href="#image-report">Image report</a>
+          <a href="#extensions">Extensions</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

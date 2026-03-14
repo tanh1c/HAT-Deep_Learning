@@ -1,0 +1,135 @@
+/* 
+   Deep Learning Assignment - Custom Style System 
+   =============================================
+   Designed for a premium, dark-themed experience.
+*/
+
+/* Main container stabilization */
+.gradio-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+/* Header & Title Styling */
+.app-header {
+    text-align: center;
+    padding: 30px 0;
+    border-bottom: 1px solid #30363d;
+    margin-bottom: 30px;
+    background: linear-gradient(to bottom, #161b22, #0d1117);
+}
+
+.app-header h1 {
+    font-weight: 800 !important;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #58a6ff 0%, #bc8cff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Model Info Display */
+.model-info-box {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 15px 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* Prediction Result Premium Card */
+.prediction-label {
+    font-size: 26px !important;
+    font-weight: 700 !important;
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
+    border-radius: 12px;
+    color: white !important;
+    margin: 15px 0;
+    box-shadow: 0 8px 32px rgba(35, 134, 54, 0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Confidence Bars & Progress */
+.confidence-bar {
+    height: 32px;
+    border-radius: 8px;
+    background-color: #21262d;
+    overflow: hidden;
+    margin: 8px 0;
+    border: 1px solid #30363d;
+}
+
+/* Modern Tabs Navigation */
+.tab-nav {
+    border-bottom: 1px solid #30363d !important;
+    margin-bottom: 20px !important;
+}
+
+.tab-nav button {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    padding: 14px 28px !important;
+    color: #8b949e !important;
+    transition: all 0.2s ease !important;
+}
+
+.tab-nav button:hover {
+    color: #f0f6fc !important;
+    background-color: rgba(139, 148, 158, 0.1) !important;
+}
+
+.tab-nav button.selected {
+    color: #58a6ff !important;
+    border-bottom: 2px solid #58a6ff !important;
+    background: transparent !important;
+}
+
+/* Calibration Metric Cards */
+.metric-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    border-color: #58a6ff;
+}
+
+/* Custom Buttons Styling */
+.gr-button-primary {
+    background: linear-gradient(135deg, #1f6feb 0%, #58a6ff 100%) !important;
+    border: none !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(31, 111, 235, 0.3) !important;
+}
+
+.gr-button-primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+/* Footer Section */
+.app-footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: #8b949e;
+    font-size: 14px;
+    border-top: 1px solid #30363d;
+    margin-top: 40px;
+    opacity: 0.8;
+}
+
+/* Glassmorphism utility */
+.glass {
+    background: rgba(22, 27, 34, 0.7) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(48, 54, 61, 0.5) !important;
+}
