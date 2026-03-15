@@ -21,7 +21,6 @@
           <span class="brand-mark" aria-hidden="true"></span>
           <span class="brand-copy">
             <p class="brand-label">Assignment 1 · Text</p>
-            <p class="brand-note">Dedicated text report page for the RNN versus Transformer comparison</p>
           </span>
         </a>
 
@@ -419,7 +418,7 @@
 
             <h3 class="card-title" style="margin-top: 2rem;">Corpus Statistics</h3>
             <div class="compare-table-wrap">
-              <table class="compare-table">
+              <table class="compare-table" style="min-width: auto;">
                 <thead>
                   <tr>
                     <th>Statistic</th>
@@ -457,7 +456,7 @@
 
             <h3 class="card-title" style="margin-top: 2rem;">Per-document Word Count</h3>
             <div class="compare-table-wrap">
-              <table class="compare-table">
+              <table class="compare-table" style="min-width: auto;">
                 <thead>
                   <tr>
                     <th>Metric</th>
@@ -527,24 +526,90 @@
 
         <div class="report-grid">
           <article class="panel report-card">
-            <p class="card-kicker">Data loading</p>
-            <h3 class="card-title">Dataset and split strategy</h3>
-            <ul class="mono-list">
-              <li>Dataset source: TBD</li>
-              <li>Train split: TBD</li>
-              <li>Validation split: TBD</li>
-              <li>Test split: TBD</li>
+            <p class="card-kicker">1. Loading & EDA</p>
+            <h3 class="card-title">Dataset overview</h3>
+            <ul class="mini-list">
+              <li>Loaded from HuggingFace: SetFit/20_newsgroups</li>
+              <li>18,846 total docs, 20 classes</li>
+              <li>Train: 11,314 | Test: 7,532</li>
+              <li>Class imbalance: 628 (min) to 999 (max) docs per class</li>
             </ul>
           </article>
 
           <article class="panel report-card">
-            <p class="card-kicker">Preprocessing</p>
-            <h3 class="card-title">Tokenization and batching</h3>
+            <p class="card-kicker">2. Text Preprocessing</p>
+            <h3 class="card-title">Truncation and word statistics</h3>
             <ul class="mini-list">
-              <li>Tokenizer / vocabulary: TBD</li>
-              <li>Padding / truncation: TBD</li>
-              <li>Sequence length: TBD</li>
-              <li>Batch size: TBD</li>
+              <li>Truncation: Max 2000 words &rarr; clips 150 extreme outliers (from 11,765)</li>
+              <li>Word stats: Mean = 181.6, Median = 83, Max = 11765</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="report-grid" style="margin-top: 2rem;">
+          <article class="panel report-card">
+            <p class="card-kicker">3. Train/Val/Test Split</p>
+            <h3 class="card-title">Splitting strategy</h3>
+            <div class="compare-table-wrap" style="margin-bottom: 1rem;">
+              <table class="compare-table" style="min-width: auto;">
+                <thead>
+                  <tr>
+                    <th>Split</th>
+                    <th>Samples</th>
+                    <th>Percentage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Train</td>
+                    <td>9051</td>
+                    <td>48%</td>
+                  </tr>
+                  <tr>
+                    <td>Validation</td>
+                    <td>2263</td>
+                    <td>12%</td>
+                  </tr>
+                  <tr>
+                    <td>Test</td>
+                    <td>7,532</td>
+                    <td>40%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">4. Tokenization</p>
+            <h3 class="card-title">Tokenizer details</h3>
+            <ul class="mini-list">
+              <li>Tokenizer: distilbert-base-uncased</li>
+              <li>Max length per sentence: 512 tokens</li>
+              <li><strong>Dynamic padding via DataCollatorWithPadding</strong></li>
+              <li>~90% of docs fit under 512 tokens</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="report-grid" style="margin-top: 2rem;">
+          <article class="panel report-card">
+            <p class="card-kicker">5. Class Balancing</p>
+            <h3 class="card-title">Weighted loss</h3>
+            <ul class="mini-list">
+              <li>Computed class weights: 1.0 / class_counts</li>
+              <li>Normalized weights to sum to num_classes</li>
+              <li>Applied via CrossEntropyLoss(weight=class_weights)</li>
+            </ul>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">6. DataLoader</p>
+            <h3 class="card-title">Batch setup</h3>
+            <ul class="mini-list">
+              <li>Batch size: 16 (train), 32 (val/test)</li>
+              <li>Dynamic padding per batch</li>
+              <li>No .set_format('torch') to the dataset, let <strong>DataCollator</strong> handle tensor conversion</li>
             </ul>
           </article>
         </div>
