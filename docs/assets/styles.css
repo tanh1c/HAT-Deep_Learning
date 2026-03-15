@@ -8,9 +8,9 @@
   --panel-accent: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
   --text: #f4f3ee;
   --text-strong: #ffffff;
-  --muted: #b1ada1;
-  --line: rgba(193, 95, 60, 0.24);
-  --line-strong: rgba(193, 95, 60, 0.48);
+  --muted: white;
+  --line: rgba(255, 255, 255, 0.24);
+  --line-strong: rgba(255, 255, 255, 0.48);
   --primary: #c15f3c;
   --primary-deep: #9f492a;
   --secondary: #b1ada1;
@@ -175,12 +175,14 @@ img {
 .topnav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.2rem;
   justify-content: flex-end;
 }
 
 .topnav a {
-  padding: 0.7rem 0.95rem;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
   border-radius: 999px;
   color: var(--muted);
   font-weight: 600;
@@ -214,7 +216,7 @@ img {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-box), inset 0 0 0 1px rgba(193, 95, 60, 0.12);
+  box-shadow: var(--shadow-box), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
   overflow: hidden;
   transition: transform 0.28s ease, box-shadow 0.32s ease, border-color 0.28s ease;
 }
@@ -232,7 +234,7 @@ img {
 
 .panel:hover {
   transform: translate(-3px, -3px);
-  box-shadow: var(--shadow-box-hover), inset 0 0 0 1px rgba(193, 95, 60, 0.2);
+  box-shadow: var(--shadow-box-hover), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
   border-color: var(--line-strong);
 }
 
@@ -307,7 +309,7 @@ img {
 .member-note,
 .publish-copy {
   line-height: 1.68;
-  color: var(--muted);
+  color: white;
 }
 
 .note-line {
@@ -542,13 +544,14 @@ img {
   list-style: none;
 }
 
+
 .mini-list li,
 .repo-list li,
 .placeholder-list li {
   position: relative;
   margin-top: 0.7rem;
   padding-left: 1.1rem;
-  color: var(--muted);
+  color: white;
   line-height: 1.6;
 }
 
@@ -874,7 +877,7 @@ img {
 .track-copy,
 .figure-caption,
 .kpi-note {
-  color: var(--muted);
+  color: white;
   line-height: 1.65;
 }
 
@@ -996,7 +999,7 @@ img {
   justify-content: space-between;
   gap: 1rem;
   padding: 1.2rem 1.4rem;
-  color: var(--muted);
+  color: white;
 }
 
 .footer-card p {
@@ -1004,8 +1007,13 @@ img {
   line-height: 1.6;
 }
 
+.footer-links {
+  gap: 0.8rem;
+}
+
 .footer-links a {
   font-weight: 700;
+  font-size: 0.85rem;
   color: var(--text-strong);
 }
 
@@ -1205,6 +1213,89 @@ img {
   *::before,
   *::after {
     animation: none !important;
-    transition: none !important;
   }
+}
+
+/* --- BLUE THEME OVERRIDES --- */
+.theme-blue {
+  --line: rgba(65, 130, 235, 0.24);
+  --line-strong: rgba(65, 130, 235, 0.48);
+  --primary: #4182eb;
+  --primary-deep: #2a61ba;
+  --accent: #4182eb;
+  --accent-soft: rgba(65, 130, 235, 0.12);
+}
+
+.theme-blue .eyebrow {
+  border-color: rgba(65, 130, 235, 0.34);
+  background: rgba(65, 130, 235, 0.08);
+  color: #adcbfa;
+}
+
+.theme-blue .button-primary {
+  background: linear-gradient(135deg, var(--primary), #5a96f0);
+  box-shadow: 0 14px 30px rgba(65, 130, 235, 0.22);
+}
+
+.theme-blue .button-secondary {
+  background: linear-gradient(135deg, rgba(65, 130, 235, 0.92), rgba(42, 97, 186, 0.94));
+  box-shadow: 0 12px 28px rgba(65, 130, 235, 0.18);
+}
+
+.theme-blue .button-primary:hover,
+.theme-blue .button-primary:focus-visible,
+.theme-blue .button-secondary:hover,
+.theme-blue .button-secondary:focus-visible {
+  background: linear-gradient(135deg, #4d8df5, #67a2fa);
+}
+
+.theme-blue .meta-item {
+  background: linear-gradient(135deg, rgba(65, 130, 235, 0.2), rgba(65, 130, 235, 0.09));
+  border-color: rgba(65, 130, 235, 0.28);
+}
+
+.theme-blue .brand-mark::before {
+  background: linear-gradient(145deg, rgba(65, 130, 235, 0.96), rgba(133, 172, 235, 0.9));
+}
+
+.theme-blue .status-pill {
+  border-color: rgba(65, 130, 235, 0.3);
+  background: rgba(65, 130, 235, 0.08);
+}
+
+.theme-blue .chip {
+  border-color: rgba(65, 130, 235, 0.18);
+}
+
+.theme-blue a:hover,
+.theme-blue a:focus-visible {
+  background: rgba(65, 130, 235, 0.08);
+}
+
+.theme-blue .panel {
+  box-shadow: var(--shadow-box), inset 0 0 0 1px rgba(65, 130, 235, 0.12);
+}
+.theme-blue .panel:hover {
+  box-shadow: var(--shadow-box-hover), inset 0 0 0 1px rgba(65, 130, 235, 0.2);
+  border-color: var(--line-strong);
+}
+
+.theme-blue:focus-visible {
+  outline-color: rgba(65, 130, 235, 0.35);
+}
+
+.theme-blue .report-nav a {
+  border-color: rgba(235, 240, 255, 0.12);
+  background: linear-gradient(135deg, rgba(65, 130, 235, 0.92), rgba(42, 97, 186, 0.94));
+}
+
+.theme-blue .report-nav a:hover,
+.theme-blue .report-nav a:focus-visible {
+  background: linear-gradient(135deg, #4d8df5, #67a2fa);
+  border-color: rgba(235, 240, 255, 0.2);
+}
+
+.theme-blue .mono-list li {
+  background: linear-gradient(135deg, rgba(65, 130, 235, 0.18), rgba(65, 130, 235, 0.08));
+  border-color: rgba(65, 130, 235, 0.28);
 }

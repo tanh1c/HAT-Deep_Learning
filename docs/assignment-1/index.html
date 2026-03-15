@@ -9,6 +9,10 @@
       content="Assignment 1 page for image, text, and multimodal classification, with the image track already published."
     >
     <link rel="stylesheet" href="../assets/styles.css">
+    
+    <!-- MathJax for rendering equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
@@ -25,10 +29,10 @@
 
         <nav class="topnav" aria-label="Primary">
           <a href="../index.html">Home</a>
-          <a href="#deliverables">Deliverables</a>
-          <a href="#image-report">Image report</a>
-          <a href="#results">Results</a>
-          <a href="#extensions">Extensions</a>
+          <a href="#image-report">Image report content</a>
+          <a href="#text-report">RNN vs Transformer report</a>
+          <a href="#multi-report">Multimodal report</a>
+          <a href="#extensions">Extension</a>
         </nav>
       </div>
     </header>
@@ -489,10 +493,296 @@
         </div>
       </section>
 
+      <section id="text-report" class="shell section theme-blue">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">RNN vs Transformer report</h2>
+            <p class="section-copy">
+              This section explores the performance and architectural differences between sequential and attention-based deep learning models. Specifically, we compare an <strong>LSTM (Long Short-Term Memory)</strong> network, a type of RNN designed to mitigate the vanishing gradient problem and capture long-term dependencies in sequential data, against <strong>DistilBERT</strong>, a smaller, faster, and distilled version of the BERT Transformer that leverages bidirectional self-attention to understand context and relationships within text.
+            </p>
+          </div>
+        </div>
+
+        <div class="report-nav">
+          <a href="#text-background">Background</a>
+          <a href="#text-eda">EDA</a>
+          <a href="#text-pipeline">Data pipeline</a>
+          <a href="#text-models">Models</a>
+          <a href="#text-results">Results</a>
+          <a href="#text-extensions">Extensions</a>
+        </div>
+
+        <div class="kpi-grid">
+          <article class="panel kpi-card">
+            <p class="kpi-label">Dataset</p>
+            <p class="kpi-value">Text Dataset</p>
+            <p class="kpi-note">To be updated</p>
+          </article>
+
+          <article class="panel kpi-card">
+            <p class="kpi-label">RNN result</p>
+            <p class="kpi-value">TBD</p>
+            <p class="kpi-note">RNN test metric</p>
+          </article>
+
+          <article class="panel kpi-card">
+            <p class="kpi-label">Transformer result</p>
+            <p class="kpi-value">TBD</p>
+            <p class="kpi-note">Transformer test metric</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="text-background" class="shell section theme-blue">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Background Knowledge</h2>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <article class="panel report-card">
+            <p class="card-kicker">Sequential Model</p>
+            <h3 class="card-title">LSTM (Long Short-Term Memory)</h3>
+            <p class="track-copy">
+              <span style="color: var(--primary); font-weight: bold;">&#10063;Architecture of a traditional RNN</span> Recurrent neural networks, also known as RNNs, are a class of neural networks that allow previous outputs to be used as inputs while having hidden states.<br>
+              <div class="figure-frame" style="margin-top: 1rem; max-width: 50%; margin-left: auto; margin-right: auto;">
+                <img
+                  src="../assets/assignment-1/rnn_arch.png"
+                  alt="Traditional RNN"
+                >
+              </div>
+              <p class="figure-caption" style="text-align: center;">
+                Image 1: Architecture of a traditional RNN
+              </p>
+            </p>
+          <p class="track-copy">
+            For each timestep \( t \), the activation \( a^{\langle t \rangle} \) and the output \( y^{\langle t \rangle} \) are expressed as follows:
+          </p>
+          <div style="text-align: center; margin: 1.5rem 0;">
+            <span style="display: inline-block; border: 1px solid white; padding: 0.5rem; margin-right: 1.5rem;">
+              \( a^{\langle t \rangle} = g_1( W_{aa} a^{\langle t-1 \rangle} + W_{ax} x^{\langle t \rangle} + b_a ) \)
+            </span>
+            <span>and</span>
+            <span style="display: inline-block; border: 1px solid white; padding: 0.5rem; margin-left: 1.5rem;">
+              \( y^{\langle t \rangle} = g_2( W_{ya} a^{\langle t \rangle} + b_y ) \)
+            </span>
+          </div>
+          <div>
+            Where \( W_{ax}, W_{aa}, W_{ya}, b_{a}, b{y} \) are coefficients that are shared temporally and \( g_{1}, g_{2} \) activation functions.
+          </div>
+          <div class="track-copy" style="margin-top: 1.5rem;">
+            <span style="color: var(--primary); font-weight: bold;">&#10063; Loss function</span> In the case of a recurrent neural network, the loss function \( \mathcal{L} \) of all time steps is defined based on the loss at every time step:
+          </div>
+          <div style="text-align: center; margin: 1.5rem 0;">
+            <span style="display: inline-block; border: 1px solid white; padding: 1rem 2rem;">
+              \( \displaystyle \mathcal{L}(\hat{y}, y) = \sum_{t=1}^{T_y} \mathcal{L}(\hat{y}^{\langle t \rangle}, y^{\langle t \rangle}) \)
+            </span>
+          </div>
+          <div class="track-copy" style="margin-top: 1.5rem;">
+            <span style="color: var(--primary); font-weight: bold;">&#10063; Backpropagation through time</span> — Backpropagation is done at each point in time. At timestep \( T \), the derivative of the loss \( \mathcal{L} \) with respect to weight matrix \( W \) is expressed:
+          </div>
+          <div style="text-align: center; margin: 1.5rem 0;">
+            <span style="display: inline-block; border: 1px solid white; padding: 1rem 2rem;">
+              \( \displaystyle \frac{\partial \mathcal{L}^{(T)}}{\partial W} = \sum_{t=1}^{T} \left. \frac{\partial \mathcal{L}^{(T)}}{\partial W} \right|_{(t)} \)
+            </span>
+          </div>
+
+          <div class="track-copy" style="margin-top: 2rem;">
+            <span style="color: var(--primary); font-weight: bold;">&#10063; Types of gates</span> — In order to remedy the vanishing gradient problem, specific gates are used in some types of RNNs and usually have a well-defined purpose. They are usually noted \( \Gamma \) and are equal to:
+          </div>
+          <div style="text-align: center; margin: 1.5rem 0;">
+            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+              \( \Gamma = \sigma(W x^{\langle t \rangle} + U a^{\langle t-1 \rangle} + b) \)
+            </span>
+          </div>
+          <div class="track-copy" style="margin-bottom: 1rem;">
+            where \( W, U, b \) are coefficients specific to the gate and \( \sigma \) is the sigmoid function. The main ones are summed up in the table below:
+          </div>
+          <div class="compare-table-wrap" style="margin-bottom: 2rem; margin-right: auto; margin-left: auto;">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Type of gate</th>
+                  <th>Role</th>
+                  <th>Value range</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Update gate \( \Gamma_u \)</td>
+                  <td>How much past should matter now?</td>
+                  <td>0 (ignore) &rarr; 1 (update fully)</td>
+                </tr>
+                <tr>
+                  <td>Relevance gate \( \Gamma_r \)</td>
+                  <td>Drop previous information?</td>
+                  <td>0 (drop) &rarr; 1 (keep)</td>
+                </tr>
+                <tr>
+                  <td>Forget gate \( \Gamma_f \)</td>
+                  <td>Erase a cell or not?</td>
+                  <td>0 (erase) &rarr; 1 (remember)</td>
+                </tr>
+                <tr>
+                  <td>Output gate \( \Gamma_o \)</td>
+                  <td>How much to reveal of a cell?</td>
+                  <td>0 (hide) &rarr; 1 (reveal)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="track-copy" style="margin-top: 2rem;">
+            <span style="color: var(--primary); font-weight: bold;">&#10063; LSTM</span> — Long Short-Term Memory units (LSTM) deal with the vanishing gradient problem encountered by traditional RNNs.
+          </div>
+          
+          <div class="figure-frame" style="margin-top: 1.5rem; max-width: 65%; margin-left: auto; margin-right: auto;">
+            <img src="../assets/assignment-1/lstm_arch.png" alt="LSTM Architecture">
+          </div>
+          <p class="figure-caption" style="text-align: center; margin-bottom: 1.5rem;">
+            Image 2: Architecture of an LSTM memory cell
+          </p>
+
+          <div class="track-copy">
+            The multiplicative nodes in an LSTM memory cell function like gates that control the flow of information through the network. They enable the network to decide how much of each signal from the input data should pass through. There are three main places where these multiplicative interactions occur. An LSTM cell contains three gates and one cell state.<br><br>
+
+            The <strong>forget gate</strong> multiplies the previous cell state by another value between 0 and 1, deciding how much information from the previous time step to retain or discard.
+          </div>
+          <div style="text-align: center; margin: 1.5rem 0;">
+            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+              \( f_t = \sigma(W_f [h_{t-1}, x_t] + b_f) \)
+            </span>
+          </div>
+
+          <div class="track-copy">
+            The <strong>input gate</strong> multiplies the candidate cell state by a value produced by a sigmoid function as the activation function, between 0 and 1, determining how much new information from the current input to add to the memory.
+          </div>
+          <div style="text-align: center; margin: 1.5rem 0;">
+            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+              \( i_t = \sigma(W_i [h_{t-1}, x_t] + b_i) \)
+            </span>
+          </div>
+
+          <div class="track-copy">
+            The input gate then generates a new candidate cell state:
+          </div>
+          <div style="text-align: center; margin: 1.5rem 0;">
+            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+              \( \tilde{C}_t = \tanh(W_c [h_{t-1}, x_t] + b_c) \)
+            </span>
+          </div>
+
+          <div class="track-copy">
+            The cell state \( C_t \) is updated by the long-term memory:
+          </div>
+          <div style="text-align: center; margin: 1.5rem 0;">
+            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+              \( C_t = f_t \star C_{t-1} + i_t \star \tilde{C}_t \)
+            </span>
+          </div>
+
+          <div class="track-copy">
+            Finally, the <strong>output gate</strong> multiplies the updated cell state (after passing through a tanh) by a gating value to determine what part of the internal state becomes visible as output \( o_t \) and a new hidden state \( h_t \):
+          </div>
+          <div style="text-align: center; margin: 1.5rem 0;">
+            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem; margin-right: 1rem;">
+              \( o_t = \sigma(W_o [h_{t-1}, x_t] + b_o) \)
+            </span>
+            <span style="font-weight: bold; margin: 0 0.5rem;">and</span>
+            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem; margin-left: 1rem;">
+              \( h_t = o_t \star \tanh(C_t) \)
+            </span>
+          </div>
+
+          <div class="track-copy" style="margin-bottom: 1rem;">
+            Below is a table summing up the characterizing equations of the architecture:
+          </div>
+          <div class="compare-table-wrap" style="margin-bottom: 1rem;">
+            <table class="compare-table" style="min-width: 0;">
+              <thead>
+                <tr>
+                  <th>Characterization</th>
+                  <th>Definition</th>
+                  <th>Equation (LSTM)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align: center; color: white;">\( \tilde{C}_t \)</td>
+                  <td style="color: white;">Candidate cell state</td>
+                  <td style="color: white;">\( \tanh(W_c [h_{t-1}, x_t] + b_c) \)</td>
+                </tr>
+                <tr>
+                  <td style="text-align: center; color: white;">\( C_t \)</td>
+                  <td style="color: white;">Updated cell state (Long-term memory)</td>
+                  <td style="color: white;">\( f_t \star C_{t-1} + i_t \star \tilde{C}_t \)</td>
+                </tr>
+                <tr>
+                  <td style="text-align: center; color: white;">\( h_t \)</td>
+                  <td style="color: white;">Hidden state (Output/Short-term memory)</td>
+                  <td style="color: white;">\( o_t \star \tanh(C_t) \)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">Attention Model</p>
+            <h3 class="card-title">DistilBERT</h3>
+            <p class="track-copy">
+              [Write a brief description of the DistilBERT architecture here, e.g., self-attention, knowledge distillation, and transformer blocks.]
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="text-eda" class="shell section theme-blue">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">1. Problem Statement - Exploratory Data Analysis</h2>
+            <p class="section-copy">
+              The text task is a classification problem comparing an LSTM baseline and a DistilBERT model.
+            </p>
+          </div>
+        </div>
+
+        <div class="report-grid">
+          <article class="panel report-card">
+            <p class="card-kicker">Problem statement</p>
+            <h3 class="card-title">Text Classification</h3>
+            <p class="track-copy">
+              The goal is to classify text input into categories and compare the efficiency, context understanding, 
+              and results between Recurrent Neural Networks and Self-Attention mechanisms.
+            </p>
+            <ul class="mini-list">
+              <li>RNN baseline: LSTM</li>
+              <li>Transformer model: DistilBERT</li>
+            </ul>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">Dataset summary</p>
+            <h3 class="card-title">Dataset information</h3>
+            <ul class="mono-list">
+              <li>Dataset Name: TBD</li>
+              <li>Classes: TBD</li>
+              <li>Training samples: TBD</li>
+              <li>Test samples: TBD</li>
+            </ul>
+            <p class="deliverable-note">
+              Description of why this dataset is suitable for RNN and Transformer comparison.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Extension -->
       <section id="extensions" class="shell section">
         <div class="section-head">
           <div>
-            <h2 class="section-title">5. Extension reports</h2>
+            <h2 class="section-title">Extension reports</h2>
             <p class="section-copy">
               The image track already includes three extensions beyond raw classification.
             </p>
@@ -562,9 +852,10 @@
         </p>
         <div class="footer-links">
           <a href="../index.html">Home</a>
-          <a href="#deliverables">Deliverables</a>
-          <a href="#image-report">Image report</a>
-          <a href="#extensions">Extensions</a>
+          <a href="#image-report">Image report content</a>
+          <a href="#text-report">RNN vs Transformer report</a>
+          <a href="#multi-report">Multimodal report</a>
+          <a href="#extensions">Extension</a>
         </div>
       </div>
     </footer>
