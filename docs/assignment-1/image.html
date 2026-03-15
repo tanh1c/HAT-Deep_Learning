@@ -10,7 +10,7 @@
     >
     <link rel="stylesheet" href="../assets/styles.css">
   </head>
-  <body>
+  <body class="image-report-page">
     <a class="skip-link" href="#main-content">Skip to content</a>
 
     <header class="topbar">
@@ -56,6 +56,10 @@
               <p class="meta-value">Chu Nguyen Tuan Anh</p>
             </div>
             <div class="meta-item">
+              <p class="meta-label">Instructor</p>
+              <p class="meta-value">Le Thanh Sach</p>
+            </div>
+            <div class="meta-item">
               <p class="meta-label">Dataset</p>
               <p class="meta-value">CIFAR-10</p>
             </div>
@@ -71,8 +75,24 @@
         </article>
 
         <aside class="panel page-callout">
+          <p class="card-kicker">Assignment links</p>
+          <h2 class="card-title">Image owner, instructor, and shared links</h2>
+          <ul class="mini-list">
+            <li>Member: Chu Nguyen Tuan Anh</li>
+            <li>Instructor: Le Thanh Sach</li>
+            <li>Assignment: Assignment 1</li>
+          </ul>
+          <div class="assignment-links">
+            <a class="button button-secondary" href="./index.html#deliverables">Team demo video</a>
+            <a class="button button-secondary" href="./index.html#deliverables">Presentation video</a>
+            <a class="button button-primary" href="https://github.com/tanh1c/HAT-Deep_Learning" target="_blank" rel="noreferrer">Code repository</a>
+          </div>
+          <p class="deliverable-note">
+            The final team demo and presentation URLs are maintained on the shared Assignment 1 overview page until the videos are published.
+          </p>
+          <div class="soft-divider"></div>
           <p class="card-kicker">Working assets</p>
-          <h2 class="card-title">Image track files</h2>
+          <h3 class="card-title">Image track files</h3>
           <ul class="mono-list">
             <li>assignments/assignment-1/image/notebooks/</li>
             <li>assignments/assignment-1/image/models/</li>
@@ -143,52 +163,56 @@
           </div>
         </div>
 
-        <div class="report-grid">
-          <article class="panel report-card">
-            <p class="card-kicker">Problem statement</p>
-            <h3 class="card-title">CNN vs ViT on CIFAR-10</h3>
-            <p class="track-copy">
-              The goal is to classify each image into one of ten semantic categories and compare two
-              major model families under the same dataset and evaluation protocol.
-            </p>
-            <ul class="mini-list">
-              <li>CNN model: ResNet-18</li>
-              <li>Transformer model: ViT-B/16</li>
-              <li>Both initialized from ImageNet-pretrained weights</li>
-            </ul>
-          </article>
+        <article class="panel report-card content-card">
+          <div class="story-grid">
+            <section class="story-block">
+              <p class="card-kicker">Problem statement</p>
+              <h3 class="card-title">CNN vs ViT on CIFAR-10</h3>
+              <p class="track-copy">
+                The goal is to classify each image into one of ten semantic categories and compare two
+                major model families under the same dataset and evaluation protocol.
+              </p>
+              <ul class="mini-list">
+                <li>CNN model: ResNet-18</li>
+                <li>Transformer model: ViT-B/16</li>
+                <li>Both initialized from ImageNet-pretrained weights</li>
+              </ul>
+            </section>
 
-          <article class="panel report-card">
-            <p class="card-kicker">Dataset summary</p>
-            <h3 class="card-title">Why CIFAR-10 fits this assignment</h3>
-            <ul class="mono-list">
-              <li>10 classes</li>
-              <li>50,000 training images</li>
-              <li>10,000 test images</li>
-              <li>Original size: 32 x 32</li>
-            </ul>
-            <p class="deliverable-note">
-              CIFAR-10 is balanced, standard, and strong enough to reveal meaningful differences
-              between CNN and Transformer representations.
-            </p>
-          </article>
-        </div>
-
-        <article class="panel report-card">
-          <p class="card-kicker">Class labels</p>
-          <h3 class="card-title">CIFAR-10 categories used in the image task</h3>
-          <div class="chip-cloud">
-            <span class="chip">airplane</span>
-            <span class="chip">automobile</span>
-            <span class="chip">bird</span>
-            <span class="chip">cat</span>
-            <span class="chip">deer</span>
-            <span class="chip">dog</span>
-            <span class="chip">frog</span>
-            <span class="chip">horse</span>
-            <span class="chip">ship</span>
-            <span class="chip">truck</span>
+            <section class="story-block">
+              <p class="card-kicker">Dataset summary</p>
+              <h3 class="card-title">Why CIFAR-10 fits this assignment</h3>
+              <ul class="mono-list">
+                <li>10 classes</li>
+                <li>50,000 training images</li>
+                <li>10,000 test images</li>
+                <li>Original size: 32 x 32</li>
+              </ul>
+              <p class="deliverable-note">
+                CIFAR-10 is balanced, standard, and strong enough to reveal meaningful differences
+                between CNN and Transformer representations.
+              </p>
+            </section>
           </div>
+
+          <div class="soft-divider"></div>
+
+          <section class="story-block">
+            <p class="card-kicker">Class labels</p>
+            <h3 class="card-title">CIFAR-10 categories used in the image task</h3>
+            <div class="chip-cloud">
+              <span class="chip">airplane</span>
+              <span class="chip">automobile</span>
+              <span class="chip">bird</span>
+              <span class="chip">cat</span>
+              <span class="chip">deer</span>
+              <span class="chip">dog</span>
+              <span class="chip">frog</span>
+              <span class="chip">horse</span>
+              <span class="chip">ship</span>
+              <span class="chip">truck</span>
+            </div>
+          </section>
         </article>
       </section>
 
@@ -202,37 +226,51 @@
           </div>
         </div>
 
-        <div class="report-grid report-grid-wide">
-          <article class="panel report-card">
-            <p class="card-kicker">Shared pipeline</p>
-            <h3 class="card-title">Data loading and preprocessing</h3>
-            <ul class="mono-list">
-              <li>torchvision.datasets.CIFAR10</li>
-              <li>Resize to 224 x 224</li>
-              <li>Batch size: 64</li>
-              <li>num_workers: 4</li>
-              <li>pin_memory: True</li>
-              <li>persistent_workers: True</li>
-            </ul>
-            <p class="deliverable-note">
-              Both models are ImageNet-pretrained, so CIFAR-10 images are resized before inference and training.
-            </p>
-          </article>
+        <article class="panel report-card content-card">
+          <div class="story-grid story-grid-triple">
+            <section class="story-block">
+              <p class="card-kicker">Shared pipeline</p>
+              <h3 class="card-title">Data loading and preprocessing</h3>
+              <ul class="mono-list">
+                <li>torchvision.datasets.CIFAR10</li>
+                <li>Resize to 224 x 224</li>
+                <li>Batch size: 64</li>
+                <li>num_workers: 4</li>
+                <li>pin_memory: True</li>
+                <li>persistent_workers: True</li>
+              </ul>
+              <p class="deliverable-note">
+                Both models are ImageNet-pretrained, so CIFAR-10 images are resized before inference and training.
+              </p>
+            </section>
 
-          <article class="panel report-card">
-            <p class="card-kicker">Normalization and augmentation</p>
-            <h3 class="card-title">Lightweight augmentation for both models</h3>
-            <ul class="mini-list">
-              <li>Normalize with mean = (0.4914, 0.4822, 0.4465)</li>
-              <li>Normalize with std = (0.2470, 0.2435, 0.2616)</li>
-              <li>RandomHorizontalFlip for training</li>
-              <li>No augmentation on test split</li>
-            </ul>
-            <p class="deliverable-note">
-              The augmentation policy is intentionally simple to keep the CNN vs ViT comparison focused on architecture and fine-tuning strategy.
-            </p>
-          </article>
-        </div>
+            <section class="story-block">
+              <p class="card-kicker">CNN transform</p>
+              <h3 class="card-title">ResNet-18 augmentation</h3>
+              <ul class="mini-list">
+                <li>Train: Resize, RandomHorizontalFlip, RandomRotation</li>
+                <li>Train: ColorJitter, RandomAffine, Normalize, RandomErasing</li>
+                <li>Test: Resize, ToTensor, Normalize</li>
+              </ul>
+              <p class="deliverable-note">
+                The CNN notebook uses moderate augmentation to regularize transfer learning on CIFAR-10.
+              </p>
+            </section>
+
+            <section class="story-block">
+              <p class="card-kicker">Transformer transform</p>
+              <h3 class="card-title">ViT-B/16 augmentation</h3>
+              <ul class="mini-list">
+                <li>Train: Resize, RandomHorizontalFlip, RandomRotation</li>
+                <li>Train: ColorJitter, Normalize, RandomErasing</li>
+                <li>Test: Resize, ToTensor, Normalize</li>
+              </ul>
+              <p class="deliverable-note">
+                The ViT notebook also uses moderate augmentation, keeping the comparison fair without relying on heavy tricks.
+              </p>
+            </section>
+          </div>
+        </article>
       </section>
 
       <section id="image-models" class="shell section">
@@ -245,72 +283,76 @@
           </div>
         </div>
 
-        <div class="report-grid">
-          <article class="panel report-card">
-            <p class="card-kicker">CNN model</p>
-            <h3 class="card-title">ResNet-18</h3>
-            <ul class="mini-list">
-              <li>Backbone: ResNet-18 pretrained on ImageNet</li>
-              <li>Final head replaced for 10 classes</li>
-              <li>Full fine-tuning for 30 epochs</li>
-              <li>Optimizer: AdamW, LR: 3e-4, weight decay: 1e-4</li>
-              <li>Warmup + cosine schedule</li>
-              <li>Total params: 11.18M</li>
-            </ul>
-          </article>
+        <article class="panel report-card content-card">
+          <div class="story-grid">
+            <section class="story-block">
+              <p class="card-kicker">CNN model</p>
+              <h3 class="card-title">ResNet-18</h3>
+              <ul class="mini-list">
+                <li>Backbone: ResNet-18 pretrained on ImageNet</li>
+                <li>Final head replaced for 10 classes</li>
+                <li>Full fine-tuning for 30 epochs</li>
+                <li>Optimizer: AdamW, LR: 3e-4, weight decay: 1e-4</li>
+                <li>Warmup + cosine schedule</li>
+                <li>Total params: 11.18M</li>
+              </ul>
+            </section>
 
-          <article class="panel report-card">
-            <p class="card-kicker">Transformer model</p>
-            <h3 class="card-title">ViT-B/16</h3>
-            <ul class="mini-list">
-              <li>Backbone: ViT-B/16 pretrained on ImageNet</li>
-              <li>Final head replaced for 10 classes</li>
-              <li>2-phase training: freeze 3 epochs, then full fine-tune 15 epochs</li>
-              <li>Optimizer: AdamW, phase-2 LR: 3e-5</li>
-              <li>Cosine schedule</li>
-              <li>Total params: 85.81M</li>
-            </ul>
-          </article>
-        </div>
-
-        <article class="panel report-card">
-          <p class="card-kicker">Comparison table</p>
-          <h3 class="card-title">Final image-model comparison</h3>
-          <div class="compare-table-wrap">
-            <table class="compare-table">
-              <thead>
-                <tr>
-                  <th>Model</th>
-                  <th>Family</th>
-                  <th>Params</th>
-                  <th>Training strategy</th>
-                  <th>Test accuracy</th>
-                  <th>Macro F1</th>
-                  <th>ECE</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>ResNet-18</td>
-                  <td>CNN</td>
-                  <td>11.18M</td>
-                  <td>Full fine-tuning, 30 epochs</td>
-                  <td>96.55%</td>
-                  <td>0.97</td>
-                  <td>0.0200</td>
-                </tr>
-                <tr>
-                  <td>ViT-B/16</td>
-                  <td>Transformer</td>
-                  <td>85.81M</td>
-                  <td>Freeze 3 epochs + fine-tune 15 epochs</td>
-                  <td>98.36%</td>
-                  <td>0.98</td>
-                  <td>0.0069</td>
-                </tr>
-              </tbody>
-            </table>
+            <section class="story-block">
+              <p class="card-kicker">Transformer model</p>
+              <h3 class="card-title">ViT-B/16</h3>
+              <ul class="mini-list">
+                <li>Backbone: ViT-B/16 pretrained on ImageNet</li>
+                <li>Final head replaced for 10 classes</li>
+                <li>2-phase training: freeze backbone for 3 epochs, then fine-tune all for 15 epochs</li>
+                <li>Optimizer: AdamW, phase-1 LR: 1e-3, phase-2 LR: 3e-5, weight decay: 1e-4</li>
+                <li>CosineAnnealingLR schedule in both phases</li>
+                <li>Total params: 85.81M</li>
+              </ul>
+            </section>
           </div>
+
+          <div class="soft-divider"></div>
+
+          <section class="story-block">
+            <p class="card-kicker">Comparison table</p>
+            <h3 class="card-title">Final image-model comparison</h3>
+            <div class="compare-table-wrap">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Family</th>
+                    <th>Params</th>
+                    <th>Training strategy</th>
+                    <th>Test accuracy</th>
+                    <th>Macro F1</th>
+                    <th>ECE</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>ResNet-18</td>
+                    <td>CNN</td>
+                    <td>11.18M</td>
+                    <td>Full fine-tuning, 30 epochs</td>
+                    <td>96.55%</td>
+                    <td>0.97</td>
+                    <td>0.0200</td>
+                  </tr>
+                  <tr>
+                    <td>ViT-B/16</td>
+                    <td>Transformer</td>
+                    <td>85.81M</td>
+                    <td>Freeze 3 epochs + fine-tune 15 epochs</td>
+                    <td>98.36%</td>
+                    <td>0.98</td>
+                    <td>0.0069</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
         </article>
       </section>
 
@@ -324,51 +366,64 @@
           </div>
         </div>
 
-        <div class="figure-grid">
-          <article class="panel figure-card">
-            <p class="card-kicker">Calibration figure</p>
-            <h3 class="card-title">ResNet-18 reliability diagram</h3>
-            <div class="figure-frame">
-              <img src="../assets/assignment-1/resnet18_calibration_full.png" alt="ResNet-18 calibration plot">
-            </div>
-            <p class="figure-caption">
-              Exported from the CNN notebook on the full 10,000-image CIFAR-10 test set. ECE = 0.0200.
-            </p>
-          </article>
+        <article class="panel figure-card content-card">
+          <p class="card-kicker">Calibration figures</p>
+          <h3 class="card-title">Reliability diagrams exported from the notebooks</h3>
+          <div class="figure-stack">
+            <section class="figure-stack-item">
+              <div class="figure-frame">
+                <img src="../assets/assignment-1/resnet18_calibration_full.png" alt="ResNet-18 calibration plot">
+              </div>
+              <p class="figure-caption">
+                ResNet-18 on the full 10,000-image CIFAR-10 test set. ECE = 0.0200.
+              </p>
+            </section>
 
-          <article class="panel figure-card">
-            <p class="card-kicker">Calibration figure</p>
-            <h3 class="card-title">ViT-B/16 reliability diagram</h3>
-            <div class="figure-frame">
-              <img src="../assets/assignment-1/vit_b16_calibration_full.png" alt="ViT-B/16 calibration plot">
-            </div>
-            <p class="figure-caption">
-              Exported from the ViT notebook on the full 10,000-image CIFAR-10 test set. ECE = 0.0069.
-            </p>
-          </article>
-        </div>
+            <section class="figure-stack-item">
+              <div class="figure-frame">
+                <img src="../assets/assignment-1/vit_b16_calibration_full.png" alt="ViT-B/16 calibration plot">
+              </div>
+              <p class="figure-caption">
+                ViT-B/16 on the full 10,000-image CIFAR-10 test set. ECE = 0.0069.
+              </p>
+            </section>
+          </div>
+        </article>
 
-        <div class="report-grid">
-          <article class="panel report-card">
-            <p class="card-kicker">Main takeaways</p>
-            <h3 class="card-title">Accuracy and efficiency trade-off</h3>
-            <ul class="mini-list">
-              <li>ViT-B/16 achieves the strongest final accuracy and lower ECE.</li>
-              <li>ResNet-18 is much smaller and cheaper to train.</li>
-              <li>Both models are strong enough to make the architecture comparison meaningful.</li>
-            </ul>
-          </article>
+        <article class="panel report-card content-card">
+          <div class="story-grid story-grid-triple">
+            <section class="story-block">
+              <p class="card-kicker">Main takeaways</p>
+              <h3 class="card-title">Accuracy and efficiency trade-off</h3>
+              <ul class="mini-list">
+                <li>ViT-B/16 achieves the strongest final accuracy and lower ECE.</li>
+                <li>ResNet-18 is much smaller and cheaper to train.</li>
+                <li>Both models are strong enough to make the architecture comparison meaningful.</li>
+              </ul>
+            </section>
 
-          <article class="panel report-card">
-            <p class="card-kicker">Discussion</p>
-            <h3 class="card-title">What the comparison shows</h3>
-            <ul class="mini-list">
-              <li>Residual errors are concentrated more in visually similar classes.</li>
-              <li>The ViT model produces more trustworthy confidence estimates.</li>
-              <li>The CNN model remains valuable as a compact, efficient baseline.</li>
-            </ul>
-          </article>
-        </div>
+            <section class="story-block">
+              <p class="card-kicker">Discussion</p>
+              <h3 class="card-title">What the comparison shows</h3>
+              <ul class="mini-list">
+                <li>Residual errors are concentrated more in visually similar classes.</li>
+                <li>The ViT model produces more trustworthy confidence estimates.</li>
+                <li>The CNN model remains valuable as a compact, efficient baseline.</li>
+              </ul>
+            </section>
+
+            <section class="story-block">
+              <p class="card-kicker">Additional notebook outputs</p>
+              <h3 class="card-title">Figures and reports already available</h3>
+              <ul class="mini-list">
+                <li>Confusion matrix for ResNet-18 in the CNN notebook</li>
+                <li>Confusion matrix for ViT-B/16 in the ViT notebook</li>
+                <li>Classification reports with macro F1 = 0.97 and 0.98</li>
+                <li>Training curves and full calibration metrics exported from the notebooks</li>
+              </ul>
+            </section>
+          </div>
+        </article>
       </section>
 
       <section id="image-extensions" class="shell section">
@@ -381,58 +436,60 @@
           </div>
         </div>
 
-        <div class="deliverable-grid">
-          <article class="panel deliverable-card">
-            <p class="card-kicker">Application demo</p>
-            <h3 class="card-title">Interactive Gradio app</h3>
-            <p class="deliverable-note">
-              The local app in <code>assignments/assignment-1/app/main.py</code> loads both image models, runs prediction,
-              calibration mode, and model explanation directly from the reorganized structure.
-            </p>
-            <div class="assignment-meta">
-              <span class="status-pill">Implemented</span>
-              <span class="chip">Web demo</span>
-            </div>
-          </article>
+        <article class="panel deliverable-card content-card">
+          <div class="extension-stack">
+            <section class="extension-item">
+              <p class="card-kicker">Application demo</p>
+              <h3 class="card-title">Interactive Gradio app</h3>
+              <p class="deliverable-note">
+                The local app in <code>assignments/assignment-1/app/main.py</code> loads both image models, runs prediction,
+                calibration mode, and model explanation directly from the reorganized structure.
+              </p>
+              <div class="assignment-meta">
+                <span class="status-pill">Implemented</span>
+                <span class="chip">Web demo</span>
+              </div>
+            </section>
 
-          <article class="panel deliverable-card">
-            <p class="card-kicker">Interpretability</p>
-            <h3 class="card-title">Grad-CAM and attention visualization</h3>
-            <p class="deliverable-note">
-              ResNet-18 uses Grad-CAM, while ViT-B/16 uses attention-based visualization so the
-              project can show where each model focuses during prediction.
-            </p>
-            <div class="assignment-meta">
-              <span class="status-pill">Implemented</span>
-              <span class="chip">Qualitative analysis</span>
-            </div>
-          </article>
+            <section class="extension-item">
+              <p class="card-kicker">Interpretability</p>
+              <h3 class="card-title">Grad-CAM and attention visualization</h3>
+              <p class="deliverable-note">
+                ResNet-18 uses Grad-CAM, while ViT-B/16 uses attention-based visualization so the
+                project can show where each model focuses during prediction.
+              </p>
+              <div class="assignment-meta">
+                <span class="status-pill">Implemented</span>
+                <span class="chip">Qualitative analysis</span>
+              </div>
+            </section>
 
-          <article class="panel deliverable-card">
-            <p class="card-kicker">Calibration</p>
-            <h3 class="card-title">ECE and reliability diagrams</h3>
-            <p class="deliverable-note">
-              Both models were evaluated with full-test calibration analysis and exported notebook artifacts for fast web display.
-            </p>
-            <div class="assignment-meta">
-              <span class="status-pill">Implemented</span>
-              <span class="chip">Notebook artifacts</span>
-            </div>
-          </article>
+            <section class="extension-item">
+              <p class="card-kicker">Calibration</p>
+              <h3 class="card-title">ECE and reliability diagrams</h3>
+              <p class="deliverable-note">
+                Both models were evaluated with full-test calibration analysis and exported notebook artifacts for fast web display.
+              </p>
+              <div class="assignment-meta">
+                <span class="status-pill">Implemented</span>
+                <span class="chip">Notebook artifacts</span>
+              </div>
+            </section>
 
-          <article class="panel deliverable-card">
-            <p class="card-kicker">Section status</p>
-            <h3 class="card-title">Ready for GitHub Pages and presentation</h3>
-            <p class="deliverable-note">
-              The image component already has notebooks, trained weights, exported figures, a web demo,
-              and integrated report content for the assignment page.
-            </p>
-            <div class="assignment-meta">
-              <span class="status-pill">Ready</span>
-              <span class="chip">Report + demo</span>
-            </div>
-          </article>
-        </div>
+            <section class="extension-item">
+              <p class="card-kicker">Section status</p>
+              <h3 class="card-title">Ready for GitHub Pages and presentation</h3>
+              <p class="deliverable-note">
+                The image component already has notebooks, trained weights, exported figures, a web demo,
+                and integrated report content for the assignment page.
+              </p>
+              <div class="assignment-meta">
+                <span class="status-pill">Ready</span>
+                <span class="chip">Report + demo</span>
+              </div>
+            </section>
+          </div>
+        </article>
       </section>
     </main>
 

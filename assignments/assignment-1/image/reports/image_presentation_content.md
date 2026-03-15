@@ -136,8 +136,12 @@ Training transform used in the CNN notebook:
 
 - `Resize((224, 224))`
 - `RandomHorizontalFlip(p=0.5)`
+- `RandomRotation(15)`
+- `ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2)`
+- `RandomAffine(degrees=0, translate=(0.1, 0.1))`
 - `ToTensor()`
 - `Normalize(mean, std)`
+- `RandomErasing(p=0.1)`
 
 Test transform used in the CNN notebook:
 
@@ -145,7 +149,7 @@ Test transform used in the CNN notebook:
 - `ToTensor()`
 - `Normalize(mean, std)`
 
-This augmentation is intentionally simple. Horizontal flipping is appropriate for CIFAR-10, while normalization keeps the input distribution stable for transfer learning.
+This augmentation is better described as `moderate` rather than minimal. It combines geometric and appearance-based perturbations with normalization and random erasing, which helps regularize transfer learning on CIFAR-10.
 
 ### 2.5 Augmentation for ViT-B/16
 
@@ -153,8 +157,11 @@ Training transform used in the ViT notebook:
 
 - `Resize((224, 224))`
 - `RandomHorizontalFlip()`
+- `RandomRotation(15)`
+- `ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2)`
 - `ToTensor()`
 - `Normalize(mean, std)`
+- `RandomErasing(p=0.1)`
 
 Test transform used in the ViT notebook:
 
@@ -162,7 +169,7 @@ Test transform used in the ViT notebook:
 - `ToTensor()`
 - `Normalize(mean, std)`
 
-The augmentation policy remains lightweight here as well. This helps keep the comparison between CNN and ViT focused on architecture and fine-tuning strategy rather than on aggressive augmentation tricks.
+The augmentation policy for ViT-B/16 is also `moderate`. It is strong enough to improve robustness without turning the comparison into an augmentation-heavy benchmark.
 
 ### 2.6 Discussion of preprocessing choices
 
@@ -228,7 +235,7 @@ Main training setup:
 - `phase 2 learning rate = 3e-5`
 - `weight decay = 1e-4`
 - optimizer: `AdamW`
-- scheduler: `CosineAnnealingLR`
+- scheduler: `CosineAnnealingLR` in each phase
 
 Parameter scale:
 

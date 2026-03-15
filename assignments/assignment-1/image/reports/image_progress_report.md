@@ -83,9 +83,13 @@ Main setup:
 
 Data preprocessing / augmentation observed in the notebook:
 
-- `RandomHorizontalFlip`
+- `Resize((224, 224))`
+- `RandomHorizontalFlip(p=0.5)`
+- `RandomRotation(15)`
+- `ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2)`
+- `RandomAffine(degrees=0, translate=(0.1, 0.1))`
 - `Normalize`
-- resize to the image size expected by the pretrained model
+- `RandomErasing(p=0.1)`
 
 Result:
 
@@ -114,8 +118,12 @@ Main setup:
 
 Data preprocessing / augmentation observed in the notebook:
 
-- `Resize`
+- `Resize((224, 224))`
+- `RandomHorizontalFlip()`
+- `RandomRotation(15)`
+- `ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2)`
 - `Normalize`
+- `RandomErasing(p=0.1)`
 
 Result:
 
