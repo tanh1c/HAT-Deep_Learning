@@ -3,18 +3,14 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Assignment 1 | Deep Learning Portfolio</title>
+    <title>Assignment 1 | Common Page</title>
     <meta
       name="description"
-      content="Assignment 1 page for image, text, and multimodal classification, with the image track already published."
+      content="Common landing page for Assignment 1, with shared deliverables and separate report pages for image, text, and multimodal tracks."
     >
     <link rel="stylesheet" href="../assets/styles.css">
-    
-    <!-- MathJax for rendering equations -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   </head>
-  <body>
+  <body class="assignment-overview-page">
     <a class="skip-link" href="#main-content">Skip to content</a>
 
     <header class="topbar">
@@ -23,35 +19,127 @@
           <span class="brand-mark" aria-hidden="true"></span>
           <span class="brand-copy">
             <p class="brand-label">Assignment 1</p>
-            <p class="brand-note">Image track published first, team page ready for merge</p>
+            <p class="brand-note">Shared overview page with separate report pages for each dataset track</p>
           </span>
         </a>
 
-        <nav class="topnav" aria-label="Primary">
+        <nav class="topnav topnav-strong" aria-label="Primary">
           <a href="../index.html">Home</a>
-          <a href="#image-report">Image report content</a>
-          <a href="#text-report">RNN vs Transformer report</a>
-          <a href="#multi-report">Multimodal report</a>
-          <a href="#extensions">Extension</a>
+          <a href="#deliverables">Deliverables</a>
+          <a href="./image.html">Image</a>
+          <a href="./text.html">Text</a>
+          <a href="./multimodal.html">Multimodal</a>
         </nav>
       </div>
     </header>
 
     <main id="main-content">
-      <section class="shell page-hero section">
+      <div class="shell assignment-layout">
+        <aside class="side-rail-nav" aria-label="Assignment 1 page navigation">
+          <a class="side-rail-link side-rail-link-home" href="../index.html">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 10.5L12 3l9 7.5"></path>
+                <path d="M5.5 9.5V21h13V9.5"></path>
+                <path d="M9.5 21v-6h5v6"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Home</span>
+          </a>
+
+          <a class="side-rail-link" href="#overview" data-section-link="overview">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="6" y1="4" x2="6" y2="20"></line>
+                <line x1="12" y1="7" x2="12" y2="17"></line>
+                <line x1="18" y1="5" x2="18" y2="19"></line>
+                <circle cx="6" cy="9" r="2"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+                <circle cx="18" cy="10" r="2"></circle>
+              </svg>
+            </span>
+            <span class="side-rail-label">Overview</span>
+          </a>
+          <a class="side-rail-link" href="#deliverables" data-section-link="deliverables">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 3h6l1 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3z"></path>
+                <path d="M9 12h6"></path>
+                <path d="M9 16h6"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Deliverables</span>
+          </a>
+          <a class="side-rail-link" href="#tracks" data-section-link="tracks">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="8" height="7" rx="1.8"></rect>
+                <rect x="13" y="4" width="8" height="7" rx="1.8"></rect>
+                <rect x="3" y="13" width="8" height="7" rx="1.8"></rect>
+                <rect x="13" y="13" width="8" height="7" rx="1.8"></rect>
+              </svg>
+            </span>
+            <span class="side-rail-label">Tracks</span>
+          </a>
+          <a class="side-rail-link" href="#edit-guide" data-section-link="edit-guide">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2z"></path>
+                <path d="M14 3.5V8h4"></path>
+                <path d="M8.5 13h7"></path>
+                <path d="M8.5 16.5h5"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Guide</span>
+          </a>
+
+          <a class="side-rail-link side-rail-link-track" href="./image.html">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="2.2"></rect>
+                <circle cx="8.2" cy="9" r="1.5"></circle>
+                <path d="M21 16l-5.3-5.3a1 1 0 0 0-1.4 0L7 18"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Image</span>
+          </a>
+          <a class="side-rail-link side-rail-link-track" href="./text.html">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 6.5h16"></path>
+                <path d="M8 6.5v11"></path>
+                <path d="M16 6.5v11"></path>
+                <path d="M5 17.5h14"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Text</span>
+          </a>
+          <a class="side-rail-link side-rail-link-track" href="./multimodal.html">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3l2.1 4.9L19 10l-4.9 2.1L12 17l-2.1-4.9L5 10l4.9-2.1z"></path>
+                <circle cx="18" cy="18" r="2.5"></circle>
+              </svg>
+            </span>
+            <span class="side-rail-label">Multimodal</span>
+          </a>
+        </aside>
+
+        <div class="assignment-flow">
+      <section id="overview" class="page-hero section">
         <article class="panel hero-card">
           <p class="eyebrow">Assignment 1</p>
           <h1>
-            Classification across <span>image, text, and multimodal</span> data.
+            Image, text, and <span>multimodal</span> classification.
           </h1>
           <p class="page-subtitle">
-            This page now publishes the completed <code>image</code> track first. The image
-            section compares a CNN and a Vision Transformer on CIFAR-10, and already includes
-            calibration, interpretability, and web-demo extensions.
+            This page keeps the assignment-level information in one place, while each dataset
+            track now has its own dedicated report page so teammates can edit independently.
           </p>
+
           <div class="button-row">
-            <a class="button button-primary" href="#image-report">Open image report</a>
-            <a class="button button-secondary" href="../index.html">Back to common page</a>
+            <a class="button button-primary" href="#tracks">Open dataset pages</a>
+            <a class="button button-secondary" href="https://github.com/tanh1c/HAT-Deep_Learning" target="_blank" rel="noreferrer">Open code repo</a>
           </div>
 
           <div class="hero-meta">
@@ -64,19 +152,19 @@
               <p class="meta-value">Le Thanh Sach</p>
             </div>
             <div class="meta-item">
-              <p class="meta-label">Published now</p>
-              <p class="meta-value">Image track</p>
+              <p class="meta-label">Members</p>
+              <p class="meta-value">3 tracks</p>
             </div>
             <div class="meta-item">
-              <p class="meta-label">To merge later</p>
-              <p class="meta-value">Text and multimodal</p>
+              <p class="meta-label">Report pages</p>
+              <p class="meta-value">Image, Text, Multimodal</p>
             </div>
           </div>
         </article>
 
         <aside class="panel page-callout">
           <p class="card-kicker">Team split</p>
-          <h2 class="card-title">Current ownership for Assignment 1</h2>
+          <h2 class="card-title">Assignment 1 ownership</h2>
           <ul class="mini-list">
             <li>Image: Chu Nguyen Tuan Anh</li>
             <li>Text: Nguyen Quoc Hieu</li>
@@ -84,21 +172,21 @@
             <li>Instructor: Le Thanh Sach</li>
           </ul>
           <div class="assignment-meta">
-            <span class="status-pill">Image published</span>
-            <span class="chip">CNN + ViT</span>
-            <span class="chip">Calibration</span>
-            <span class="chip">Interpretability</span>
+            <span class="status-pill">Shared page</span>
+            <span class="chip">Assignment overview</span>
+            <span class="chip">Deliverables</span>
+            <span class="chip">Track links</span>
           </div>
         </aside>
       </section>
 
-      <section id="deliverables" class="shell section">
+      <section id="deliverables" class="section">
         <div class="section-head">
           <div>
-            <h2 class="section-title">Deliverables</h2>
+            <h2 class="section-title">Shared Deliverables</h2>
             <p class="section-copy">
-              Required assignment-page items. Image content is already integrated below, while
-              team-level public links can be filled in after final upload.
+              Assignment-level items stay here, while the report content is split into three
+              separate pages for easier collaboration.
             </p>
           </div>
         </div>
@@ -106,9 +194,9 @@
         <div class="deliverable-grid">
           <article class="panel deliverable-card">
             <p class="card-kicker">Demo video</p>
-            <h3 class="card-title">Team link pending</h3>
+            <h3 class="card-title">Team demo link</h3>
             <p class="deliverable-note">
-              Add the final Assignment 1 demo video URL here after the team records the walkthrough.
+              Add the final Assignment 1 demo video URL here after the team records the full walkthrough.
             </p>
             <div class="assignment-meta">
               <span class="status-pill planned">Pending final link</span>
@@ -117,9 +205,9 @@
 
           <article class="panel deliverable-card">
             <p class="card-kicker">Presentation video</p>
-            <h3 class="card-title">YouTube link pending</h3>
+            <h3 class="card-title">YouTube presentation link</h3>
             <p class="deliverable-note">
-              Add the final presentation video URL here before submission so the instructor can review it.
+              Add the final presentation video URL here before submission for remote grading.
             </p>
             <div class="assignment-meta">
               <span class="status-pill planned">Pending final link</span>
@@ -128,736 +216,206 @@
 
           <article class="panel deliverable-card">
             <p class="card-kicker">Code</p>
-            <h3 class="card-title">Working assets already in this repo</h3>
-            <ul class="mono-list">
-              <li>assignments/assignment-1/image/notebooks/</li>
-              <li>assignments/assignment-1/app/main.py</li>
-              <li>assignments/assignment-1/image/models/</li>
-              <li>assignments/assignment-1/image/artifacts/</li>
-            </ul>
+            <h3 class="card-title">Main repository</h3>
             <p class="deliverable-note">
-              Add the final public GitHub repository URL after publishing.
+              The full project code, notebooks, GitHub Pages content, and deployment helpers live in the main course repository.
             </p>
+            <div class="assignment-links">
+              <a class="button button-secondary" href="https://github.com/tanh1c/HAT-Deep_Learning" target="_blank" rel="noreferrer">Open GitHub repository</a>
+            </div>
           </article>
 
           <article class="panel deliverable-card">
             <p class="card-kicker">Presentation content</p>
-            <h3 class="card-title">Integrated directly in this page</h3>
+            <h3 class="card-title">Separated by dataset type</h3>
             <p class="deliverable-note">
-              The image-track report content below follows the five required report categories in the brief.
-            </p>
-            <div class="assignment-links">
-              <a class="button button-secondary" href="#image-report">Jump to image report</a>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="shell section">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">Track status</h2>
-            <p class="section-copy">
-              The image section is complete and published first; the remaining team tracks can be merged later.
-            </p>
-          </div>
-        </div>
-
-        <div class="track-grid">
-          <article class="panel track-card">
-            <p class="card-kicker">Image</p>
-            <h3 class="card-title">Published now</h3>
-            <p class="track-copy">
-              CIFAR-10 dataset, ResNet-18 and ViT-B/16 comparison, notebook training, model export,
-              calibration artifacts, and web-demo integration are complete.
-            </p>
-            <div class="assignment-meta">
-              <span class="status-pill">Complete</span>
-              <span class="chip">Chu Nguyen Tuan Anh</span>
-            </div>
-          </article>
-
-          <article class="panel track-card track-card-pending">
-            <p class="card-kicker">Text</p>
-            <h3 class="card-title">To be merged by teammate</h3>
-            <p class="track-copy">
-              The page slot and navigation are already ready. This section can be replaced with the
-              final text-classification content when available.
-            </p>
-            <div class="assignment-meta">
-              <span class="status-pill planned">Pending merge</span>
-              <span class="chip">Nguyen Quoc Hieu</span>
-            </div>
-          </article>
-
-          <article class="panel track-card track-card-pending">
-            <p class="card-kicker">Multimodal</p>
-            <h3 class="card-title">To be merged by teammate</h3>
-            <p class="track-copy">
-              The page structure already reserves a clean slot for the multimodal part without changing the layout later.
-            </p>
-            <div class="assignment-meta">
-              <span class="status-pill planned">Pending merge</span>
-              <span class="chip">Vu Hai Tuan</span>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section id="image-report" class="shell section">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">Image report content</h2>
-            <p class="section-copy">
-              This section follows the exact report structure required by the assignment for the image track.
-            </p>
-          </div>
-        </div>
-
-        <div class="report-nav">
-          <a href="#eda">EDA</a>
-          <a href="#pipeline">Data pipeline</a>
-          <a href="#models">Models</a>
-          <a href="#results">Results</a>
-          <a href="#extensions">Extensions</a>
-        </div>
-
-        <div class="kpi-grid">
-          <article class="panel kpi-card">
-            <p class="kpi-label">Dataset</p>
-            <p class="kpi-value">CIFAR-10</p>
-            <p class="kpi-note">10 classes, 50k train, 10k test, resized to 224x224</p>
-          </article>
-
-          <article class="panel kpi-card">
-            <p class="kpi-label">CNN result</p>
-            <p class="kpi-value">96.55%</p>
-            <p class="kpi-note">ResNet-18 test accuracy</p>
-          </article>
-
-          <article class="panel kpi-card">
-            <p class="kpi-label">ViT result</p>
-            <p class="kpi-value">98.36%</p>
-            <p class="kpi-note">ViT-B/16 test accuracy</p>
-          </article>
-
-          <article class="panel kpi-card">
-            <p class="kpi-label">Calibration</p>
-            <p class="kpi-value">0.0200 / 0.0069</p>
-            <p class="kpi-note">ECE for ResNet-18 and ViT-B/16</p>
-          </article>
-        </div>
-      </section>
-
-      <section id="eda" class="shell section">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">1. Problem and dataset exploration (EDA)</h2>
-            <p class="section-copy">
-              The image task is a multi-class classification problem comparing a CNN baseline and a Vision Transformer.
-            </p>
-          </div>
-        </div>
-
-        <div class="report-grid">
-          <article class="panel report-card">
-            <p class="card-kicker">Problem statement</p>
-            <h3 class="card-title">CNN vs ViT on CIFAR-10</h3>
-            <p class="track-copy">
-              The goal is to classify each image into one of ten semantic categories and compare two
-              major model families under the same dataset and evaluation protocol.
-            </p>
-            <ul class="mini-list">
-              <li>CNN model: ResNet-18</li>
-              <li>Transformer model: ViT-B/16</li>
-              <li>Both initialized from ImageNet-pretrained weights</li>
-            </ul>
-          </article>
-
-          <article class="panel report-card">
-            <p class="card-kicker">Dataset summary</p>
-            <h3 class="card-title">Why CIFAR-10 fits this assignment</h3>
-            <ul class="mono-list">
-              <li>10 classes</li>
-              <li>50,000 training images</li>
-              <li>10,000 test images</li>
-              <li>Original size: 32 x 32</li>
-            </ul>
-            <p class="deliverable-note">
-              CIFAR-10 is balanced, standard, and strong enough to reveal meaningful differences
-              between CNN and Transformer representations.
-            </p>
-          </article>
-        </div>
-
-        <article class="panel report-card">
-          <p class="card-kicker">Class labels</p>
-          <h3 class="card-title">CIFAR-10 categories used in the image task</h3>
-          <div class="chip-cloud">
-            <span class="chip">airplane</span>
-            <span class="chip">automobile</span>
-            <span class="chip">bird</span>
-            <span class="chip">cat</span>
-            <span class="chip">deer</span>
-            <span class="chip">dog</span>
-            <span class="chip">frog</span>
-            <span class="chip">horse</span>
-            <span class="chip">ship</span>
-            <span class="chip">truck</span>
-          </div>
-        </article>
-      </section>
-
-      <section id="pipeline" class="shell section">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">2. Dataset, DataLoader, and augmentation setup</h2>
-            <p class="section-copy">
-              Both notebooks use the same CIFAR-10 source and a consistent preprocessing strategy for fair comparison.
-            </p>
-          </div>
-        </div>
-
-        <div class="report-grid report-grid-wide">
-          <article class="panel report-card">
-            <p class="card-kicker">Shared pipeline</p>
-            <h3 class="card-title">Data loading and preprocessing</h3>
-            <ul class="mono-list">
-              <li>torchvision.datasets.CIFAR10</li>
-              <li>Resize to 224 x 224</li>
-              <li>Batch size: 64</li>
-              <li>num_workers: 4</li>
-              <li>pin_memory: True</li>
-              <li>persistent_workers: True</li>
-            </ul>
-            <p class="deliverable-note">
-              Both models are ImageNet-pretrained, so CIFAR-10 images are resized before inference and training.
-            </p>
-          </article>
-
-          <article class="panel report-card">
-            <p class="card-kicker">Normalization and augmentation</p>
-            <h3 class="card-title">Lightweight augmentation for both models</h3>
-            <ul class="mini-list">
-              <li>Normalize with mean = (0.4914, 0.4822, 0.4465)</li>
-              <li>Normalize with std = (0.2470, 0.2435, 0.2616)</li>
-              <li>RandomHorizontalFlip for training</li>
-              <li>No augmentation on test split</li>
-            </ul>
-            <p class="deliverable-note">
-              The augmentation policy is intentionally simple to keep the CNN vs ViT comparison focused on architecture and fine-tuning strategy.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section id="models" class="shell section">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">3. Model building, training, evaluation, and comparison</h2>
-            <p class="section-copy">
-              The image section compares a lighter CNN baseline with a larger Transformer model.
-            </p>
-          </div>
-        </div>
-
-        <div class="report-grid">
-          <article class="panel report-card">
-            <p class="card-kicker">CNN model</p>
-            <h3 class="card-title">ResNet-18</h3>
-            <ul class="mini-list">
-              <li>Backbone: ResNet-18 pretrained on ImageNet</li>
-              <li>Final head replaced for 10 classes</li>
-              <li>Full fine-tuning for 30 epochs</li>
-              <li>Optimizer: AdamW, LR: 3e-4, weight decay: 1e-4</li>
-              <li>Warmup + cosine schedule</li>
-              <li>Total params: 11.18M</li>
-            </ul>
-          </article>
-
-          <article class="panel report-card">
-            <p class="card-kicker">Transformer model</p>
-            <h3 class="card-title">ViT-B/16</h3>
-            <ul class="mini-list">
-              <li>Backbone: ViT-B/16 pretrained on ImageNet</li>
-              <li>Final head replaced for 10 classes</li>
-              <li>2-phase training: freeze 3 epochs, then full fine-tune 15 epochs</li>
-              <li>Optimizer: AdamW, phase-2 LR: 3e-5</li>
-              <li>Cosine schedule</li>
-              <li>Total params: 85.81M</li>
-            </ul>
-          </article>
-        </div>
-
-        <article class="panel report-card">
-          <p class="card-kicker">Comparison table</p>
-          <h3 class="card-title">Final image-model comparison</h3>
-          <div class="compare-table-wrap">
-            <table class="compare-table">
-              <thead>
-                <tr>
-                  <th>Model</th>
-                  <th>Family</th>
-                  <th>Params</th>
-                  <th>Training strategy</th>
-                  <th>Test accuracy</th>
-                  <th>Macro F1</th>
-                  <th>ECE</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>ResNet-18</td>
-                  <td>CNN</td>
-                  <td>11.18M</td>
-                  <td>Full fine-tuning, 30 epochs</td>
-                  <td>96.55%</td>
-                  <td>0.97</td>
-                  <td>0.0200</td>
-                </tr>
-                <tr>
-                  <td>ViT-B/16</td>
-                  <td>Transformer</td>
-                  <td>85.81M</td>
-                  <td>Freeze 3 epochs + fine-tune 15 epochs</td>
-                  <td>98.36%</td>
-                  <td>0.98</td>
-                  <td>0.0069</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </article>
-      </section>
-
-      <section id="results" class="shell section">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">4. Experimental results, figures, analysis, and discussion</h2>
-            <p class="section-copy">
-              The ViT model achieves the best final accuracy and the best confidence calibration on the CIFAR-10 test set.
-            </p>
-          </div>
-        </div>
-
-        <div class="figure-grid">
-          <article class="panel figure-card">
-            <p class="card-kicker">Calibration figure</p>
-            <h3 class="card-title">ResNet-18 reliability diagram</h3>
-            <div class="figure-frame">
-              <img
-                src="../assets/assignment-1/resnet18_calibration_full.png"
-                alt="ResNet-18 calibration plot"
-              >
-            </div>
-            <p class="figure-caption">
-              Exported from the CNN notebook on the full 10,000-image CIFAR-10 test set. ECE = 0.0200.
-            </p>
-          </article>
-
-          <article class="panel figure-card">
-            <p class="card-kicker">Calibration figure</p>
-            <h3 class="card-title">ViT-B/16 reliability diagram</h3>
-            <div class="figure-frame">
-              <img
-                src="../assets/assignment-1/vit_b16_calibration_full.png"
-                alt="ViT-B/16 calibration plot"
-              >
-            </div>
-            <p class="figure-caption">
-              Exported from the ViT notebook on the full 10,000-image CIFAR-10 test set. ECE = 0.0069.
-            </p>
-          </article>
-        </div>
-
-        <div class="report-grid">
-          <article class="panel report-card">
-            <p class="card-kicker">Main takeaways</p>
-            <h3 class="card-title">Accuracy and efficiency trade-off</h3>
-            <ul class="mini-list">
-              <li>ViT-B/16 achieves the strongest final accuracy and lower ECE.</li>
-              <li>ResNet-18 is much smaller and cheaper to train.</li>
-              <li>Both models are strong enough to make the architecture comparison meaningful.</li>
-            </ul>
-          </article>
-
-          <article class="panel report-card">
-            <p class="card-kicker">Discussion</p>
-            <h3 class="card-title">What the comparison shows</h3>
-            <ul class="mini-list">
-              <li>Residual errors are concentrated more in visually similar classes.</li>
-              <li>The ViT model produces more trustworthy confidence estimates.</li>
-              <li>The CNN model remains valuable as a compact, efficient baseline.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section id="text-report" class="shell section theme-blue">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">RNN vs Transformer report</h2>
-            <p class="section-copy">
-              This section explores the performance and architectural differences between sequential and attention-based deep learning models. Specifically, we compare an <strong>LSTM (Long Short-Term Memory)</strong> network, a type of RNN designed to mitigate the vanishing gradient problem and capture long-term dependencies in sequential data, against <strong>DistilBERT</strong>, a smaller, faster, and distilled version of the BERT Transformer that leverages bidirectional self-attention to understand context and relationships within text.
-            </p>
-          </div>
-        </div>
-
-        <div class="report-nav">
-          <a href="#text-background">Background</a>
-          <a href="#text-eda">EDA</a>
-          <a href="#text-pipeline">Data pipeline</a>
-          <a href="#text-models">Models</a>
-          <a href="#text-results">Results</a>
-          <a href="#text-extensions">Extensions</a>
-        </div>
-
-        <div class="kpi-grid">
-          <article class="panel kpi-card">
-            <p class="kpi-label">Dataset</p>
-            <p class="kpi-value">Text Dataset</p>
-            <p class="kpi-note">To be updated</p>
-          </article>
-
-          <article class="panel kpi-card">
-            <p class="kpi-label">RNN result</p>
-            <p class="kpi-value">TBD</p>
-            <p class="kpi-note">RNN test metric</p>
-          </article>
-
-          <article class="panel kpi-card">
-            <p class="kpi-label">Transformer result</p>
-            <p class="kpi-value">TBD</p>
-            <p class="kpi-note">Transformer test metric</p>
-          </article>
-        </div>
-      </section>
-
-      <section id="text-background" class="shell section theme-blue">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">Background Knowledge</h2>
-          </div>
-        </div>
-
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
-          <article class="panel report-card">
-            <p class="card-kicker">Sequential Model</p>
-            <h3 class="card-title">LSTM (Long Short-Term Memory)</h3>
-            <p class="track-copy">
-              <span style="color: var(--primary); font-weight: bold;">&#10063;Architecture of a traditional RNN</span> Recurrent neural networks, also known as RNNs, are a class of neural networks that allow previous outputs to be used as inputs while having hidden states.<br>
-              <div class="figure-frame" style="margin-top: 1rem; max-width: 50%; margin-left: auto; margin-right: auto;">
-                <img
-                  src="../assets/assignment-1/rnn_arch.png"
-                  alt="Traditional RNN"
-                >
-              </div>
-              <p class="figure-caption" style="text-align: center;">
-                Image 1: Architecture of a traditional RNN
-              </p>
-            </p>
-          <p class="track-copy">
-            For each timestep \( t \), the activation \( a^{\langle t \rangle} \) and the output \( y^{\langle t \rangle} \) are expressed as follows:
-          </p>
-          <div style="text-align: center; margin: 1.5rem 0;">
-            <span style="display: inline-block; border: 1px solid white; padding: 0.5rem; margin-right: 1.5rem;">
-              \( a^{\langle t \rangle} = g_1( W_{aa} a^{\langle t-1 \rangle} + W_{ax} x^{\langle t \rangle} + b_a ) \)
-            </span>
-            <span>and</span>
-            <span style="display: inline-block; border: 1px solid white; padding: 0.5rem; margin-left: 1.5rem;">
-              \( y^{\langle t \rangle} = g_2( W_{ya} a^{\langle t \rangle} + b_y ) \)
-            </span>
-          </div>
-          <div>
-            Where \( W_{ax}, W_{aa}, W_{ya}, b_{a}, b{y} \) are coefficients that are shared temporally and \( g_{1}, g_{2} \) activation functions.
-          </div>
-          <div class="track-copy" style="margin-top: 1.5rem;">
-            <span style="color: var(--primary); font-weight: bold;">&#10063; Loss function</span> In the case of a recurrent neural network, the loss function \( \mathcal{L} \) of all time steps is defined based on the loss at every time step:
-          </div>
-          <div style="text-align: center; margin: 1.5rem 0;">
-            <span style="display: inline-block; border: 1px solid white; padding: 1rem 2rem;">
-              \( \displaystyle \mathcal{L}(\hat{y}, y) = \sum_{t=1}^{T_y} \mathcal{L}(\hat{y}^{\langle t \rangle}, y^{\langle t \rangle}) \)
-            </span>
-          </div>
-          <div class="track-copy" style="margin-top: 1.5rem;">
-            <span style="color: var(--primary); font-weight: bold;">&#10063; Backpropagation through time</span> — Backpropagation is done at each point in time. At timestep \( T \), the derivative of the loss \( \mathcal{L} \) with respect to weight matrix \( W \) is expressed:
-          </div>
-          <div style="text-align: center; margin: 1.5rem 0;">
-            <span style="display: inline-block; border: 1px solid white; padding: 1rem 2rem;">
-              \( \displaystyle \frac{\partial \mathcal{L}^{(T)}}{\partial W} = \sum_{t=1}^{T} \left. \frac{\partial \mathcal{L}^{(T)}}{\partial W} \right|_{(t)} \)
-            </span>
-          </div>
-
-          <div class="track-copy" style="margin-top: 2rem;">
-            <span style="color: var(--primary); font-weight: bold;">&#10063; Types of gates</span> — In order to remedy the vanishing gradient problem, specific gates are used in some types of RNNs and usually have a well-defined purpose. They are usually noted \( \Gamma \) and are equal to:
-          </div>
-          <div style="text-align: center; margin: 1.5rem 0;">
-            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
-              \( \Gamma = \sigma(W x^{\langle t \rangle} + U a^{\langle t-1 \rangle} + b) \)
-            </span>
-          </div>
-          <div class="track-copy" style="margin-bottom: 1rem;">
-            where \( W, U, b \) are coefficients specific to the gate and \( \sigma \) is the sigmoid function. The main ones are summed up in the table below:
-          </div>
-          <div class="compare-table-wrap" style="margin-bottom: 2rem; margin-right: auto; margin-left: auto;">
-            <table class="compare-table">
-              <thead>
-                <tr>
-                  <th>Type of gate</th>
-                  <th>Role</th>
-                  <th>Value range</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Update gate \( \Gamma_u \)</td>
-                  <td>How much past should matter now?</td>
-                  <td>0 (ignore) &rarr; 1 (update fully)</td>
-                </tr>
-                <tr>
-                  <td>Relevance gate \( \Gamma_r \)</td>
-                  <td>Drop previous information?</td>
-                  <td>0 (drop) &rarr; 1 (keep)</td>
-                </tr>
-                <tr>
-                  <td>Forget gate \( \Gamma_f \)</td>
-                  <td>Erase a cell or not?</td>
-                  <td>0 (erase) &rarr; 1 (remember)</td>
-                </tr>
-                <tr>
-                  <td>Output gate \( \Gamma_o \)</td>
-                  <td>How much to reveal of a cell?</td>
-                  <td>0 (hide) &rarr; 1 (reveal)</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="track-copy" style="margin-top: 2rem;">
-            <span style="color: var(--primary); font-weight: bold;">&#10063; LSTM</span> — Long Short-Term Memory units (LSTM) deal with the vanishing gradient problem encountered by traditional RNNs.
-          </div>
-          
-          <div class="figure-frame" style="margin-top: 1.5rem; max-width: 65%; margin-left: auto; margin-right: auto;">
-            <img src="../assets/assignment-1/lstm_arch.png" alt="LSTM Architecture">
-          </div>
-          <p class="figure-caption" style="text-align: center; margin-bottom: 1.5rem;">
-            Image 2: Architecture of an LSTM memory cell
-          </p>
-
-          <div class="track-copy">
-            The multiplicative nodes in an LSTM memory cell function like gates that control the flow of information through the network. They enable the network to decide how much of each signal from the input data should pass through. There are three main places where these multiplicative interactions occur. An LSTM cell contains three gates and one cell state.<br><br>
-
-            The <strong>forget gate</strong> multiplies the previous cell state by another value between 0 and 1, deciding how much information from the previous time step to retain or discard.
-          </div>
-          <div style="text-align: center; margin: 1.5rem 0;">
-            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
-              \( f_t = \sigma(W_f [h_{t-1}, x_t] + b_f) \)
-            </span>
-          </div>
-
-          <div class="track-copy">
-            The <strong>input gate</strong> multiplies the candidate cell state by a value produced by a sigmoid function as the activation function, between 0 and 1, determining how much new information from the current input to add to the memory.
-          </div>
-          <div style="text-align: center; margin: 1.5rem 0;">
-            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
-              \( i_t = \sigma(W_i [h_{t-1}, x_t] + b_i) \)
-            </span>
-          </div>
-
-          <div class="track-copy">
-            The input gate then generates a new candidate cell state:
-          </div>
-          <div style="text-align: center; margin: 1.5rem 0;">
-            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
-              \( \tilde{C}_t = \tanh(W_c [h_{t-1}, x_t] + b_c) \)
-            </span>
-          </div>
-
-          <div class="track-copy">
-            The cell state \( C_t \) is updated by the long-term memory:
-          </div>
-          <div style="text-align: center; margin: 1.5rem 0;">
-            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
-              \( C_t = f_t \star C_{t-1} + i_t \star \tilde{C}_t \)
-            </span>
-          </div>
-
-          <div class="track-copy">
-            Finally, the <strong>output gate</strong> multiplies the updated cell state (after passing through a tanh) by a gating value to determine what part of the internal state becomes visible as output \( o_t \) and a new hidden state \( h_t \):
-          </div>
-          <div style="text-align: center; margin: 1.5rem 0;">
-            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem; margin-right: 1rem;">
-              \( o_t = \sigma(W_o [h_{t-1}, x_t] + b_o) \)
-            </span>
-            <span style="font-weight: bold; margin: 0 0.5rem;">and</span>
-            <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem; margin-left: 1rem;">
-              \( h_t = o_t \star \tanh(C_t) \)
-            </span>
-          </div>
-
-          <div class="track-copy" style="margin-bottom: 1rem;">
-            Below is a table summing up the characterizing equations of the architecture:
-          </div>
-          <div class="compare-table-wrap" style="margin-bottom: 1rem;">
-            <table class="compare-table" style="min-width: 0;">
-              <thead>
-                <tr>
-                  <th>Characterization</th>
-                  <th>Definition</th>
-                  <th>Equation (LSTM)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td style="text-align: center; color: white;">\( \tilde{C}_t \)</td>
-                  <td style="color: white;">Candidate cell state</td>
-                  <td style="color: white;">\( \tanh(W_c [h_{t-1}, x_t] + b_c) \)</td>
-                </tr>
-                <tr>
-                  <td style="text-align: center; color: white;">\( C_t \)</td>
-                  <td style="color: white;">Updated cell state (Long-term memory)</td>
-                  <td style="color: white;">\( f_t \star C_{t-1} + i_t \star \tilde{C}_t \)</td>
-                </tr>
-                <tr>
-                  <td style="text-align: center; color: white;">\( h_t \)</td>
-                  <td style="color: white;">Hidden state (Output/Short-term memory)</td>
-                  <td style="color: white;">\( o_t \star \tanh(C_t) \)</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          </article>
-
-          <article class="panel report-card">
-            <p class="card-kicker">Attention Model</p>
-            <h3 class="card-title">DistilBERT</h3>
-            <p class="track-copy">
-              [Write a brief description of the DistilBERT architecture here, e.g., self-attention, knowledge distillation, and transformer blocks.]
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section id="text-eda" class="shell section theme-blue">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">1. Problem Statement - Exploratory Data Analysis</h2>
-            <p class="section-copy">
-              The text task is a classification problem comparing an LSTM baseline and a DistilBERT model.
-            </p>
-          </div>
-        </div>
-
-        <div class="report-grid">
-          <article class="panel report-card">
-            <p class="card-kicker">Problem statement</p>
-            <h3 class="card-title">Text Classification</h3>
-            <p class="track-copy">
-              The goal is to classify text input into categories and compare the efficiency, context understanding, 
-              and results between Recurrent Neural Networks and Self-Attention mechanisms.
-            </p>
-            <ul class="mini-list">
-              <li>RNN baseline: LSTM</li>
-              <li>Transformer model: DistilBERT</li>
-            </ul>
-          </article>
-
-          <article class="panel report-card">
-            <p class="card-kicker">Dataset summary</p>
-            <h3 class="card-title">Dataset information</h3>
-            <ul class="mono-list">
-              <li>Dataset Name: TBD</li>
-              <li>Classes: TBD</li>
-              <li>Training samples: TBD</li>
-              <li>Test samples: TBD</li>
-            </ul>
-            <p class="deliverable-note">
-              Description of why this dataset is suitable for RNN and Transformer comparison.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <!-- Extension -->
-      <section id="extensions" class="shell section">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">Extension reports</h2>
-            <p class="section-copy">
-              The image track already includes three extensions beyond raw classification.
-            </p>
-          </div>
-        </div>
-
-        <div class="deliverable-grid">
-          <article class="panel deliverable-card">
-            <p class="card-kicker">Application demo</p>
-            <h3 class="card-title">Interactive Gradio app</h3>
-            <p class="deliverable-note">
-              The local app in <code>assignments/assignment-1/app/main.py</code> loads both image models, runs prediction,
-              calibration mode, and model explanation directly from the reorganized
-              <code>assignments/assignment-1/</code> structure.
-            </p>
-            <div class="assignment-meta">
-              <span class="status-pill">Implemented</span>
-              <span class="chip">Web demo</span>
-            </div>
-          </article>
-
-          <article class="panel deliverable-card">
-            <p class="card-kicker">Interpretability</p>
-            <h3 class="card-title">Grad-CAM and attention visualization</h3>
-            <p class="deliverable-note">
-              ResNet-18 uses Grad-CAM, while ViT-B/16 uses attention-based visualization so the
-              project can show where each model focuses during prediction.
-            </p>
-            <div class="assignment-meta">
-              <span class="status-pill">Implemented</span>
-              <span class="chip">Qualitative analysis</span>
-            </div>
-          </article>
-
-          <article class="panel deliverable-card">
-            <p class="card-kicker">Calibration</p>
-            <h3 class="card-title">ECE and reliability diagrams</h3>
-            <p class="deliverable-note">
-              Both models were evaluated with full-test calibration analysis and exported notebook artifacts for fast web display.
-            </p>
-            <div class="assignment-meta">
-              <span class="status-pill">Implemented</span>
-              <span class="chip">Notebook artifacts</span>
-            </div>
-          </article>
-
-          <article class="panel deliverable-card">
-            <p class="card-kicker">Image section status</p>
-            <h3 class="card-title">Ready for GitHub Pages and presentation</h3>
-            <p class="deliverable-note">
-              The image component now has notebooks, trained weights, exported figures, a web demo,
-              and integrated report content for the assignment page.
+              Each dataset track now owns its own report page, with a dedicated header nav and room for independent edits.
             </p>
             <div class="assignment-meta">
               <span class="status-pill">Ready</span>
-              <span class="chip">Report + demo</span>
+              <span class="chip">Image page</span>
+              <span class="chip">Text page</span>
+              <span class="chip">Multimodal page</span>
             </div>
           </article>
         </div>
       </section>
+
+      <section id="tracks" class="section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Dataset Report Pages</h2>
+            <p class="section-copy">
+              Each teammate can now work inside one dedicated HTML file instead of editing the whole Assignment 1 page.
+            </p>
+          </div>
+        </div>
+
+        <div class="assignment-grid">
+          <article class="panel assignment-card active">
+            <p class="card-kicker">Image dataset</p>
+            <h3 class="card-title">CNN vs ViT on CIFAR-10</h3>
+            <p class="deliverable-note">
+              Full image report content with EDA, pipeline, model comparison, figures, and extensions.
+            </p>
+            <div class="assignment-meta">
+              <span class="status-pill">Published</span>
+              <span class="chip">Chu Nguyen Tuan Anh</span>
+            </div>
+            <div class="assignment-links">
+              <a class="button button-primary" href="./image.html">Open image report page</a>
+            </div>
+          </article>
+
+          <article class="panel assignment-card active">
+            <p class="card-kicker">Text dataset</p>
+            <h3 class="card-title">RNN vs Transformer</h3>
+            <p class="deliverable-note">
+              Dedicated page for the text report with background material, EDA, and placeholders for the remaining required sections.
+            </p>
+            <div class="assignment-meta">
+              <span class="status-pill">In progress</span>
+              <span class="chip">Nguyen Quoc Hieu</span>
+            </div>
+            <div class="assignment-links">
+              <a class="button button-primary" href="./text.html">Open text report page</a>
+            </div>
+          </article>
+
+          <article class="panel assignment-card planned">
+            <p class="card-kicker">Multimodal dataset</p>
+            <h3 class="card-title">Multimodal report workspace</h3>
+            <p class="deliverable-note">
+              Skeleton page with all required report headings, ready for the multimodal track to fill in.
+            </p>
+            <div class="assignment-meta">
+              <span class="status-pill planned">Skeleton ready</span>
+              <span class="chip">Vu Hai Tuan</span>
+            </div>
+            <div class="assignment-links">
+              <a class="button button-secondary" href="./multimodal.html">Open multimodal report page</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="edit-guide" class="section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Editing Guide</h2>
+            <p class="section-copy">
+              Use this split to avoid merge conflicts and let each teammate own one report file.
+            </p>
+          </div>
+        </div>
+
+        <div class="report-grid">
+          <article class="panel report-card">
+            <p class="card-kicker">Keep here</p>
+            <h3 class="card-title">Assignment-level content</h3>
+            <ul class="mini-list">
+              <li>Assignment name</li>
+              <li>Member names and instructor</li>
+              <li>Demo video link</li>
+              <li>Presentation video link</li>
+              <li>Main code link</li>
+            </ul>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">Edit in track pages</p>
+            <h3 class="card-title">Dataset-specific report content</h3>
+            <ul class="mini-list">
+              <li>EDA</li>
+              <li>Dataset, DataLoader, and augmentation setup</li>
+              <li>Model building, training, evaluation, and comparison</li>
+              <li>Results, figures, analysis, and discussion</li>
+              <li>Extensions</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+        </div>
+      </div>
     </main>
 
     <footer class="shell footer">
       <div class="panel footer-card">
         <p>
-          Assignment 1 currently publishes the completed image track first, with text and multimodal content ready to merge later.
+          Assignment 1 now uses one shared overview page plus three dataset-specific report pages.
         </p>
         <div class="footer-links">
           <a href="../index.html">Home</a>
-          <a href="#image-report">Image report content</a>
-          <a href="#text-report">RNN vs Transformer report</a>
-          <a href="#multi-report">Multimodal report</a>
-          <a href="#extensions">Extension</a>
+          <a href="./image.html">Image</a>
+          <a href="./text.html">Text</a>
+          <a href="./multimodal.html">Multimodal</a>
         </div>
       </div>
     </footer>
+
+    <script>
+      (function () {
+        const body = document.body;
+        const overview = document.getElementById("overview");
+        const sectionLinks = Array.from(document.querySelectorAll("[data-section-link]"));
+        const sections = sectionLinks
+          .map((link) => document.getElementById(link.dataset.sectionLink))
+          .filter(Boolean);
+
+        if (!overview || !sectionLinks.length || !sections.length) {
+          return;
+        }
+
+        const updateDockedState = () => {
+          const shouldDock = window.scrollY > Math.max(140, overview.offsetTop + 120);
+          body.classList.toggle("nav-docked", shouldDock);
+        };
+
+        const sectionObserver = new IntersectionObserver(
+          (entries) => {
+            const visible = entries
+              .filter((entry) => entry.isIntersecting)
+              .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+            if (!visible) {
+              return;
+            }
+
+            sectionLinks.forEach((link) => {
+              const isActive = link.dataset.sectionLink === visible.target.id;
+              link.classList.toggle("is-active", isActive);
+
+              if (isActive) {
+                link.setAttribute("aria-current", "location");
+              } else {
+                link.removeAttribute("aria-current");
+              }
+            });
+          },
+          {
+            rootMargin: "-22% 0px -50% 0px",
+            threshold: [0.2, 0.45, 0.7]
+          }
+        );
+
+        sections.forEach((section) => sectionObserver.observe(section));
+        updateDockedState();
+
+        let ticking = false;
+        window.addEventListener("scroll", () => {
+          if (ticking) {
+            return;
+          }
+
+          ticking = true;
+          window.requestAnimationFrame(() => {
+            updateDockedState();
+            ticking = false;
+          });
+        }, { passive: true });
+
+        window.addEventListener("resize", updateDockedState);
+      })();
+    </script>
   </body>
 </html>

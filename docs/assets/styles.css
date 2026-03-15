@@ -196,8 +196,171 @@ img {
   transform: translateY(-1px);
 }
 
+.topnav-strong a {
+  border: 1px solid rgba(193, 95, 60, 0.22);
+  background: rgba(193, 95, 60, 0.08);
+  color: var(--text-strong);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.topnav-strong a:hover,
+.topnav-strong a:focus-visible {
+  background: linear-gradient(135deg, rgba(193, 95, 60, 0.92), rgba(159, 73, 42, 0.94));
+  border-color: rgba(255, 235, 227, 0.16);
+  color: #ffffff;
+}
+
+.assignment-layout {
+  position: relative;
+}
+
+.assignment-flow {
+  min-width: 0;
+}
+
+.assignment-overview-page .topbar {
+  transition: opacity 0.36s ease, transform 0.44s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.assignment-overview-page.nav-docked .topbar {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-1.4rem);
+}
+
+.side-rail-nav {
+  position: fixed;
+  left: 1.15rem;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 4.45rem;
+  padding: 0.78rem 0.55rem;
+  border: 1px solid rgba(193, 95, 60, 0.16);
+  border-radius: 2.15rem;
+  background: rgba(12, 10, 9, 0.88);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.32);
+  opacity: 0;
+  transform: translate(-0.9rem, -50%);
+  pointer-events: none;
+  z-index: 48;
+  overflow: hidden;
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.36s ease, transform 0.52s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.34s ease, box-shadow 0.38s ease;
+}
+
+.assignment-overview-page.nav-docked .side-rail-nav {
+  opacity: 1;
+  transform: translate(0, -50%);
+  pointer-events: auto;
+}
+
+.side-rail-nav:hover,
+.side-rail-nav:focus-within {
+  width: 13.8rem;
+  border-color: rgba(193, 95, 60, 0.22);
+  box-shadow: 0 26px 58px rgba(0, 0, 0, 0.38);
+}
+
+.side-rail-kicker,
+.side-rail-divider {
+  display: none;
+}
+
+.side-rail-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  min-height: 3.35rem;
+  padding: 0.72rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: rgba(244, 243, 238, 0.74);
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.15;
+  white-space: nowrap;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.side-rail-nav:hover .side-rail-link,
+.side-rail-nav:focus-within .side-rail-link {
+  justify-content: flex-start;
+  gap: 0.95rem;
+}
+
+.side-rail-link:hover,
+.side-rail-link:focus-visible,
+.side-rail-link.is-active {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(193, 95, 60, 0.22);
+  color: var(--text-strong);
+  transform: translateX(0.12rem);
+}
+
+.side-rail-link.is-active {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+}
+
+.side-rail-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 2.32rem;
+  height: 2.32rem;
+  border: 1px solid rgba(244, 243, 238, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  color: rgba(244, 243, 238, 0.88);
+  transition: color 0.3s ease, transform 0.34s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.34s ease;
+}
+
+.side-rail-icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.side-rail-label {
+  overflow: hidden;
+  max-width: 0;
+  opacity: 0;
+  transform: translateX(-0.4rem);
+  color: rgba(244, 243, 238, 0.84);
+  transition: max-width 0.42s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease, transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.side-rail-nav:hover .side-rail-label,
+.side-rail-nav:focus-within .side-rail-label {
+  max-width: 8rem;
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.04s;
+}
+
+.side-rail-link:hover .side-rail-icon,
+.side-rail-link:focus-visible .side-rail-icon,
+.side-rail-link.is-active .side-rail-icon {
+  color: #ffffff;
+  border-color: rgba(193, 95, 60, 0.22);
+  background: rgba(193, 95, 60, 0.12);
+  box-shadow: 0 0 0 0.22rem rgba(193, 95, 60, 0.08);
+  transform: scale(1.05);
+}
+
+.side-rail-link-home,
+.side-rail-link-track {
+  color: rgba(244, 243, 238, 0.9);
+}
+
 .section {
   margin-top: 1.8rem;
+}
+
+#deliverables {
+  scroll-margin-top: -0.75rem;
 }
 
 .hero {
@@ -1083,6 +1246,17 @@ img {
 }
 
 @media (max-width: 1100px) {
+  .side-rail-nav {
+    display: none;
+  }
+
+  .assignment-overview-page .topbar,
+  .assignment-overview-page.nav-docked .topbar {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
   .hero,
   .page-hero,
   .page-grid {
