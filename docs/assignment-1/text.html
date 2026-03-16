@@ -111,8 +111,8 @@
         <div class="kpi-grid">
           <article class="panel kpi-card">
             <p class="kpi-label">Dataset</p>
-            <p class="kpi-value">Text Dataset</p>
-            <p class="kpi-note">To be updated</p>
+            <p class="kpi-value">20 Newsgroups</p>
+            <p class="kpi-note">18,846 docs, 20 classes</p>
           </article>
 
           <article class="panel kpi-card">
@@ -123,8 +123,8 @@
 
           <article class="panel kpi-card">
             <p class="kpi-label">Transformer result</p>
-            <p class="kpi-value">TBD</p>
-            <p class="kpi-note">Transformer test metric</p>
+            <p class="kpi-value">73.10%</p>
+            <p class="kpi-note">DistilBERT test accuracy</p>
           </article>
         </div>
       </section>
@@ -538,10 +538,11 @@
 
           <article class="panel report-card">
             <p class="card-kicker">2. Text Preprocessing</p>
-            <h3 class="card-title">Truncation and word statistics</h3>
+            <h3 class="card-title">Cleaning and Truncation</h3>
             <ul class="mini-list">
-              <li>Truncation: Max 2000 words &rarr; clips 150 extreme outliers (from 11,765)</li>
-              <li>Word stats: Mean = 181.6, Median = 83, Max = 11765</li>
+              <li>Text cleaning: removed quoted text, email headers, and signatures</li>
+              <li>Short doc removal: dropped &lt; 50 chars (~544 docs, 2.9%)</li>
+              <li>Truncation: max 400 words (aligned with BERT 512 token limit)</li>
             </ul>
           </article>
         </div>
@@ -556,24 +557,24 @@
                   <tr>
                     <th>Split</th>
                     <th>Samples</th>
-                    <th>Percentage</th>
+                    <th>Note</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>Train</td>
-                    <td>9051</td>
-                    <td>48%</td>
+                    <td>8,584</td>
+                    <td>Stratified</td>
                   </tr>
                   <tr>
                     <td>Validation</td>
-                    <td>2263</td>
-                    <td>12%</td>
+                    <td>2,146</td>
+                    <td>Stratified</td>
                   </tr>
                   <tr>
                     <td>Test</td>
-                    <td>7,532</td>
-                    <td>40%</td>
+                    <td>7,112</td>
+                    <td>Stratified</td>
                   </tr>
                 </tbody>
               </table>
@@ -607,7 +608,7 @@
             <p class="card-kicker">6. DataLoader</p>
             <h3 class="card-title">Batch setup</h3>
             <ul class="mini-list">
-              <li>Batch size: 16 (train), 32 (val/test)</li>
+              <li>Batch size: 12 (train), 36 (val/test)</li>
               <li>Dynamic padding per batch</li>
               <li>No .set_format('torch') to the dataset, let <strong>DataCollator</strong> handle tensor conversion</li>
             </ul>
@@ -618,9 +619,6 @@
         <div class="section-head">
           <div>
             <h2 class="section-title">3. Model building, training, evaluation, and comparison</h2>
-            <p class="section-copy">
-              Use this section for architecture details, hyperparameters, and the training strategy for both models.
-            </p>
           </div>
         </div>
 
@@ -640,12 +638,28 @@
           <article class="panel report-card">
             <p class="card-kicker">Transformer model</p>
             <h3 class="card-title">DistilBERT</h3>
+            
+            <p style="margin-top: 1rem; font-weight: bold; color: var(--primary);">Model building</p>
             <ul class="mini-list">
-              <li>Pretrained checkpoint: TBD</li>
-              <li>Classification head: TBD</li>
-              <li>Fine-tuning epochs: TBD</li>
-              <li>Optimizer and learning rate: TBD</li>
-              <li>Scheduler: TBD</li>
+              <li>Pretrained checkpoint: <strong>distilbert-base-uncased</strong></li>
+              <li>Classification head: pre_classifier (768&times;768) &rarr; ReLU &rarr; classifier (768&times;20)</li>
+            </ul>
+
+            <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Training</p>
+            <ul class="mini-list">
+              <li>Fine-tuning epochs: 15 (Phase 1: only head unfrozen, Phase 2: all layers and head unfrozen)</li>
+              <li>Optimizer: AdamW</li>
+              <li>Learning rate: In phase 1, the learning rate is set to <strong>5e-5</strong> to train the classifier layer for the specific task. In phase 2, the learning rate is kept unchanged for the classifier layer; in the backbone, the learning rate is set lower at <strong>1e-6</strong> for the embedding layers, and higher at <strong>2e-6</strong> and <strong>5e-5</strong> for the encoder layers.</li>
+              <li>Scheduler: Linear Warmup and Cosine Annealing</li>
+            </ul>
+
+            <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Evaluation</p>
+            <ul class="mini-list">
+              <li><strong>Evaluation Metrics:</strong> Test Accuracy, F1 Macro, F1 Weighted, and per-class <code>classification_report</code>.</li>
+            </ul>
+            <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Comparision</p>
+            <ul class="mini-list">
+              <li>TBD.</li>
             </ul>
           </article>
         </div>
@@ -661,46 +675,143 @@
           </div>
         </div>
 
-        <div class="report-grid">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
           <article class="panel report-card">
-            <p class="card-kicker">Results table</p>
-            <h3 class="card-title">Comparison placeholder</h3>
+            <p class="card-kicker">Evaluation</p>
+            <h3 class="card-title">DistilBERT Performance</h3>
+            <p class="track-copy">
+              After training, the model was evaluated on the held-out test set (7,112 samples) using multiple metrics to provide a comprehensive view of classification performance.
+            </p>
+            
+            <div style="margin: 1.5rem 0; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-md); background-color: rgba(255, 255, 255, 0.03);">
+              <strong style="color: var(--primary);">Test Results</strong>
+            <div class="compare-table-wrap" style="margin-top: 1rem;">
+              <table class="compare-table" style="min-width: auto;">
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Accuracy</td>
+                    <td>73.10%</td>
+                  </tr>
+                  <tr>
+                    <td>F1 Macro</td>
+                    <td>0.7186</td>
+                  </tr>
+                  <tr>
+                    <td>F1 Weighted</td>
+                    <td>0.7312</td>
+                  </tr>
+                  <tr>
+                    <td>Precision</td>
+                    <td>0.7206</td>
+                  </tr>
+                  <tr>
+                    <td>Recall</td>
+                    <td>0.7181</td>
+                  </tr>
+                  <tr>
+                    <td>Best class</td>
+                    <td>rec.sport.hockey (F1: 0.91)</td>
+                  </tr>
+                  <tr>
+                    <td>Worst class</td>
+                    <td>talk.religion.misc (F1: 0.32)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            </div>
+
+            <div class="figure-frame" style="margin-top: 2rem; display: flex; justify-content: center; width: 100%;">
+              <img src="../assets/assignment-1/distilBERT_cfm.png" alt="DistilBERT Confusion Matrix" style="width: 70%; border-radius: var(--radius-md);">
+            </div>
+            <p class="figure-caption" style="text-align: center; margin-bottom: 2rem;">
+              Image 4: DistilBERT Confusion Matrix
+            </p>
+
+            <div class="figure-frame" style="margin-top: 2rem; display: flex; justify-content: center; width: 100%;">
+              <img src="../assets/assignment-1/distilBERT_bar.png" alt="DistilBERT F1 Scores Bar Chart" style="width: 70%; border-radius: var(--radius-md);">
+            </div>
+            <p class="figure-caption" style="text-align: center; margin-bottom: 2rem;">
+              Image 5: DistilBERT F1 Scores Bar Chart
+            </p>
+
+            <p class="track-copy">
+              Per-class evaluation was conducted using <code>classification_report</code> from scikit-learn, which provides precision, recall, and F1-score for each of the 20 newsgroup categories. This is important because accuracy alone can be misleading in multi-class settings with slight class imbalance.
+            </p>
+
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Key observations from evaluation:</h4>
+            <ul class="mini-list">
+              <li>Classes with clear topical boundaries (e.g., <i>rec.sport.hockey</i>, <i>sci.space</i>) achieved higher F1 scores (~0.80+), as their vocabulary is more distinct.</li>
+              <li>Semantically overlapping classes (e.g., <i>talk.politics.misc</i> vs <i>talk.politics.guns</i>, <i>comp.sys.ibm.pc.hardware</i> vs <i>comp.sys.mac.hardware</i>) showed lower precision and recall, which is expected given their shared vocabulary.</li>
+              <li>The gap between validation accuracy (76.19%) and test accuracy (73.10%) suggests mild overfitting. This is partly attributed to the relatively small training set (~8,500 samples) distributed across 20 classes.</li>
+              <li>Class weighting in the loss function helped improve recall for underrepresented classes like <i>talk.religion.misc</i> (628 samples) and <i>talk.politics.misc</i> (775 samples), though these classes still had the lowest per-class F1 scores.</li>
+            </ul>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">Comparison</p>
+            <h3 class="card-title">Systematic Comparison</h3>
+            <p class="track-copy">
+              A systematic comparison will be conducted across three dimensions:
+            </p>
+
+            <ol class="mini-list" style="margin-left: 1rem;">
+              <li><strong>Architecture comparison:</strong> DistilBERT (67M params) vs BERT-base (110M params) vs LSTM &mdash; comparing transformer-based models against a recurrent baseline to evaluate the impact of self-attention and pretrained representations on text classification performance.</li>
+              <li><strong>Fine-tuning strategy comparison:</strong> For each transformer model, three strategies are evaluated:
+                <ul style="margin-top: 0.5rem; margin-left: 1rem; list-style-type: disc;">
+                  <li>Freeze backbone (train classification head only)</li>
+                  <li>Full fine-tuning (train all layers from start with layerwise LR)</li>
+                  <li>Hybrid (train head first, then unfreeze backbone with differential LR)</li>
+                </ul>
+              </li>
+              <li><strong>Model efficiency comparison:</strong> Accuracy vs model size, training time, and inference latency &mdash; to determine whether the larger BERT-base model justifies its additional computational cost over DistilBERT.</li>
+            </ol>
+
+            <p class="track-copy" style="margin-top: 2rem; margin-bottom: 1rem;">
+              Results will be reported in the following format after all experiments are completed:
+            </p>
+
             <div class="compare-table-wrap">
               <table class="compare-table">
                 <thead>
                   <tr>
                     <th>Model</th>
-                    <th>Accuracy</th>
-                    <th>F1</th>
-                    <th>Notes</th>
+                    <th>Val Acc</th>
+                    <th>Test Acc</th>
+                    <th>F1 Macro</th>
+                    <th>Train Time (s)</th>
+                    <th>Inference (ms)</th>
+                    <th>Params</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>LSTM</td>
-                    <td>TBD</td>
-                    <td>TBD</td>
-                    <td>Fill after evaluation</td>
+                    <td>DistilBERT</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>67M</td>
                   </tr>
                   <tr>
-                    <td>DistilBERT</td>
+                    <td>LSTM</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
                     <td>TBD</td>
-                    <td>TBD</td>
-                    <td>Fill after evaluation</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-          </article>
-
-          <article class="panel report-card">
-            <p class="card-kicker">Discussion</p>
-            <h3 class="card-title">Analysis placeholder</h3>
-            <ul class="mini-list">
-              <li>Which model performs better and why?</li>
-              <li>How does context modeling differ between LSTM and DistilBERT?</li>
-              <li>What trade-offs appear in accuracy, speed, and memory?</li>
-            </ul>
           </article>
         </div>
       </section>
@@ -709,26 +820,133 @@
         <div class="section-head">
           <div>
             <h2 class="section-title">5. Other extension reports</h2>
-            <p class="section-copy">
-              Document text-specific extensions here, such as interpretability, web integration, or calibration.
-            </p>
           </div>
         </div>
 
-        <div class="deliverable-grid">
-          <article class="panel deliverable-card">
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <article class="panel report-card">
             <p class="card-kicker">Extension 1</p>
-            <h3 class="card-title">Add your completed extension here</h3>
-            <p class="deliverable-note">
-              Replace this card with the actual extension description, figures, and results after the text pipeline is complete.
+            <h3 class="card-title">Fine-tuning Strategy Comparison</h3>
+            <p class="track-copy">
+              Three fine-tuning strategies were evaluated on both DistilBERT (67M params) and BERT-base (110M params):
             </p>
+            
+            <ul class="mini-list">
+              <li><strong>Freeze backbone:</strong> Train only the classification head; backbone weights remain frozen</li>
+              <li><strong>Full fine-tune:</strong> Train all layers from the start with layerwise differential learning rates</li>
+              <li><strong>Hybrid:</strong> Train classification head first (5 epochs), then unfreeze backbone with differential LR (15 epochs)</li>
+            </ul>
+
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Results</h4>
+            <div class="compare-table-wrap">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Strategy</th>
+                    <th>Val Acc</th>
+                    <th>Test Acc</th>
+                    <th>Train Time (s)</th>
+                    <th>Inference (ms)</th>
+                    <th>Params</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>DistilBERT</td><td>Freeze backbone</td><td>66.03%</td><td>64.90%</td><td>587</td><td>98.9</td><td>66,968,852</td></tr>
+                  <tr><td>DistilBERT</td><td>Full fine-tune</td><td>75.40%</td><td>72.89%</td><td>1,395</td><td>98.9</td><td>66,968,852</td></tr>
+                  <tr><td>DistilBERT</td><td>Hybrid</td><td><strong>76.19%</strong></td><td><strong>73.10%</strong></td><td>1,594</td><td>99.1</td><td>66,968,852</td></tr>
+                  <tr><td>BERT</td><td>Freeze backbone</td><td>63.51%</td><td>61.94%</td><td>1,051</td><td>197.2</td><td>109,497,620</td></tr>
+                  <tr><td>BERT</td><td>Full fine-tune</td><td>76.14%</td><td>73.23%</td><td>2,635</td><td>196.4</td><td>109,497,620</td></tr>
+                  <tr><td>BERT</td><td>Hybrid</td><td><strong>76.51%</strong></td><td><strong>73.73%</strong></td><td>2,977</td><td>197.2</td><td>109,497,620</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+              <div>
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/loss.png" alt="Training Loss Curves" style="width: 100%; border-radius: var(--radius-md);">
+                </div>
+                <p class="figure-caption" style="text-align: center;">
+                  Image 6: Training Loss Comparison
+                </p>
+              </div>
+              <div>
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/val_acc.png" alt="Validation Accuracy Curves" style="width: 100%; border-radius: var(--radius-md);">
+                </div>
+                <p class="figure-caption" style="text-align: center;">
+                  Image 7: Validation Accuracy Comparison
+                </p>
+              </div>
+            </div>
+
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Analysis</h4>
+            <ul class="mini-list">
+              <li>The hybrid strategy achieved the best accuracy for both models, outperforming full fine-tuning by ~0.2-0.5% on test accuracy. Training the classification head first provides a stable initialization before updating the pretrained backbone, which leads to slightly better convergence.</li>
+              <li>Full fine-tuning performed comparably to hybrid but with slightly lower accuracy, suggesting that updating all layers simultaneously without a warm-up phase can lead to suboptimal adaptation of the classification head.</li>
+              <li>Freeze backbone performed significantly worse (~10% lower than hybrid), confirming that the pretrained representations alone are insufficient for this 20-class task and backbone adaptation is necessary.</li>
+              <li>Training time scales linearly with model complexity: hybrid takes ~15% longer than full fine-tune due to the additional Phase 1 epochs, but the accuracy gain justifies the cost.</li>
+            </ul>
           </article>
 
-          <article class="panel deliverable-card">
+          <article class="panel report-card">
             <p class="card-kicker">Extension 2</p>
-            <h3 class="card-title">Optional second extension</h3>
-            <p class="deliverable-note">
-              Use this space for any extra experiment or demo feature that supports the text track.
+            <h3 class="card-title">Model Efficiency Comparison</h3>
+            <p class="track-copy">
+              A comparison of model efficiency across DistilBERT and BERT-base, evaluating accuracy vs model size and inference time.
+            </p>
+            
+            <div class="compare-table-wrap" style="margin-top: 1rem;">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>DistilBERT</th>
+                    <th>BERT-base</th>
+                    <th>Ratio</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Parameters</td><td>67M</td><td>110M</td><td>1.6x</td></tr>
+                  <tr><td>Best Test Accuracy</td><td>73.10%</td><td>73.73%</td><td>+0.63%</td></tr>
+                  <tr><td>Training Time (hybrid)</td><td>1,594s</td><td>2,977s</td><td>1.9x</td></tr>
+                  <tr><td>Inference Time</td><td>98.9ms</td><td>197.2ms</td><td>2.0x</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Analysis</h4>
+            <ul class="mini-list">
+              <li>BERT-base provides only a marginal accuracy improvement (+0.63%) over DistilBERT while requiring 1.6x more parameters, 1.9x longer training time, and 2.0x slower inference.</li>
+              <li>DistilBERT offers a significantly better accuracy-to-efficiency trade-off: it achieves 99.1% of BERT's accuracy at roughly half the computational cost, making it the more practical choice for deployment scenarios where latency and resource constraints matter.</li>
+              <li>This result aligns with the design goal of knowledge distillation &mdash; DistilBERT retains ~97% of BERT's language understanding capability while being 60% smaller and 2x faster.</li>
+            </ul>
+
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Simple Compression: DistilBERT as a Compressed Model</h4>
+            <p class="track-copy">
+              DistilBERT itself serves as a compressed version of BERT-base, produced through knowledge distillation during pretraining:
+            </p>
+            <div class="compare-table-wrap" style="margin-top: 1rem; margin-bottom: 1rem;">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Aspect</th>
+                    <th>BERT-base</th>
+                    <th>DistilBERT</th>
+                    <th>Reduction</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Encoder layers</td><td>12</td><td>6</td><td>50%</td></tr>
+                  <tr><td>Parameters</td><td>110M</td><td>67M</td><td>39%</td></tr>
+                  <tr><td>Inference time</td><td>197ms</td><td>99ms</td><td>50%</td></tr>
+                  <tr><td>Test accuracy (hybrid)</td><td>73.73%</td><td>73.10%</td><td>-0.63%</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="track-copy">
+              The experiment demonstrates that model compression via distillation is an effective strategy for reducing model size and inference latency with minimal accuracy loss. For this text classification task, the 39% parameter reduction and 50% inference speedup come at a cost of less than 1% accuracy &mdash; a favorable trade-off for most production applications.
             </p>
           </article>
         </div>
