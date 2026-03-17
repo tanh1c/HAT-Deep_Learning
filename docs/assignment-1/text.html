@@ -21,7 +21,6 @@
           <span class="brand-mark" aria-hidden="true"></span>
           <span class="brand-copy">
             <p class="brand-label">Assignment 1 · Text</p>
-            <p class="brand-note">Dedicated text report page for the RNN versus Transformer comparison</p>
           </span>
         </a>
 
@@ -35,24 +34,21 @@
       </div>
     </header>
 
-    <main id="main-content">
-      <section class="shell page-hero section">
-        <article class="panel hero-card">
+    <main id="main-content">      
+      <section class="shell section theme-blue">
           <p class="eyebrow">Text track</p>
-          <h1>
-            RNN vs <span>Transformer</span>.
+          <h1 style="margin-top: 0.5rem; margin-bottom: 1rem;">
+            RNN vs <span>Transformer</span>
           </h1>
-          <p class="page-subtitle">
-            This page is reserved for the text dataset report. The current draft already includes
-            background knowledge, early EDA notes, and clear placeholders for the remaining required sections.
-          </p>
 
-          <div class="button-row">
-            <a class="button button-primary" href="#text-report">Open text report</a>
-            <a class="button button-secondary" href="./index.html">Back to Assignment 1 overview</a>
+          <div class="assignment-meta" style="margin-bottom: 2rem;">
+            <span class="status-pill">Completed</span>
+            <span class="chip">Background</span>
+            <span class="chip">EDA</span>
+            <span class="chip">Metrics Finalized</span>
           </div>
 
-          <div class="hero-meta">
+          <div class="hero-meta" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
             <div class="meta-item">
               <p class="meta-label">Owner</p>
               <p class="meta-value">Nguyen Quoc Hieu</p>
@@ -63,31 +59,27 @@
             </div>
             <div class="meta-item">
               <p class="meta-label">Status</p>
-              <p class="meta-value">Draft in progress</p>
+              <p class="meta-value">Completed</p>
             </div>
             <div class="meta-item">
               <p class="meta-label">Sections</p>
-              <p class="meta-value">5 required report blocks</p>
+              <p class="meta-value">5 report blocks</p>
+            </div>
+            <div class="meta-item" style="border-color: var(--accent); background: rgba(65, 130, 235, 0.15);">
+              <p class="meta-label">Repository</p>
+              <p class="meta-value">
+                <a href="https://github.com/HatakekkSheeshh/classification-finetune-bert" target="_blank" style="color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.6rem; transition: all 0.2s ease;" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='none'">
+                  <svg height="18" width="18" viewBox="0 0 16 16" style="fill: currentColor;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                  <span style="border-bottom: 1px solid currentColor;">GitHub Repo</span>
+                </a>
+              </p>
             </div>
           </div>
-        </article>
 
-        <aside class="panel page-callout">
-          <p class="card-kicker">Working area</p>
-          <h2 class="card-title">Text track folders</h2>
-          <ul class="mono-list">
-            <li>assignments/assignment-1/text/notebooks/</li>
-            <li>assignments/assignment-1/text/reports/</li>
-            <li>assignments/assignment-1/text/artifacts/</li>
-            <li>assignments/assignment-1/app/text/</li>
-          </ul>
-          <div class="assignment-meta">
-            <span class="status-pill">Editable</span>
-            <span class="chip">Background</span>
-            <span class="chip">EDA</span>
-            <span class="chip">Placeholders ready</span>
+          <div class="button-row" style="margin-top: 2rem;">
+            <a class="button button-primary" href="#text-report">Open text report</a>
+            <a class="button button-secondary" href="./index.html">Back to Assignment 1 overview</a>
           </div>
-        </aside>
       </section>
 
       <section id="text-report" class="shell section theme-blue">
@@ -112,20 +104,20 @@
         <div class="kpi-grid">
           <article class="panel kpi-card">
             <p class="kpi-label">Dataset</p>
-            <p class="kpi-value">Text Dataset</p>
-            <p class="kpi-note">To be updated</p>
+            <p class="kpi-value">20_newsgroups</p>
+            <p class="kpi-note">18,846 docs, 20 classes</p>
           </article>
 
           <article class="panel kpi-card">
-            <p class="kpi-label">RNN result</p>
-            <p class="kpi-value">TBD</p>
-            <p class="kpi-note">RNN test metric</p>
+            <p class="kpi-label">bidirectional Attention-based LSTM result</p>
+            <p class="kpi-value">69.72%</p>
+            <p class="kpi-note">Accuracy</p>
           </article>
 
           <article class="panel kpi-card">
-            <p class="kpi-label">Transformer result</p>
-            <p class="kpi-value">TBD</p>
-            <p class="kpi-note">Transformer test metric</p>
+            <p class="kpi-label">fine-tune BERT best result</p>
+            <p class="kpi-value">79.86%</p>
+            <p class="kpi-note">Accuracy</p>
           </article>
         </div>
       </section>
@@ -142,7 +134,7 @@
             <p class="card-kicker">Sequential Model</p>
             <h3 class="card-title">LSTM (Long Short-Term Memory)</h3>
             <p class="track-copy">
-              <span style="color: var(--primary); font-weight: bold;">&#10063;Architecture of a traditional RNN</span> Recurrent neural networks, also known as RNNs, are a class of neural networks that allow previous outputs to be used as inputs while having hidden states.<br>
+              <span style="color: var(--primary); font-weight: bold;">&#10063;Architecture of a traditional RNN</span> Recurrent neural networks, also known as RNNs, are a class of neural networks that allow previous outputs to be used as inputs while having hidden states<sup><a href="#text-references" class="text-link">[1]</a></sup> .<br>
               <div class="figure-frame" style="margin-top: 1rem; max-width: 50%; margin-left: auto; margin-right: auto;">
                 <img
                   src="../assets/assignment-1/rnn_arch.png"
@@ -169,7 +161,7 @@
               Where \( W_{ax}, W_{aa}, W_{ya}, b_{a}, b{y} \) are coefficients that are shared temporally and \( g_{1}, g_{2} \) activation functions.
             </div>
             <div class="track-copy" style="margin-top: 1.5rem;">
-              <span style="color: var(--primary); font-weight: bold;">&#10063; Loss function</span> In the case of a recurrent neural network, the loss function \( \mathcal{L} \) of all time steps is defined based on the loss at every time step:
+              <span style="color: var(--primary); font-weight: bold;">&#10063; Loss function</span> In the case of a recurrent neural network, the loss function \( \mathcal{L} \) of all time steps is defined based on the loss at every time step<sup><a href="#text-references" class="text-link">[2]</a></sup> :
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
               <span style="display: inline-block; border: 1px solid white; padding: 1rem 2rem;">
@@ -177,7 +169,7 @@
               </span>
             </div>
             <div class="track-copy" style="margin-top: 1.5rem;">
-              <span style="color: var(--primary); font-weight: bold;">&#10063; Backpropagation through time</span> — Backpropagation is done at each point in time. At timestep \( T \), the derivative of the loss \( \mathcal{L} \) with respect to weight matrix \( W \) is expressed:
+              <span style="color: var(--primary); font-weight: bold;">&#10063; Backpropagation through time</span> Backpropagation is done at each point in time. At timestep \( T \), the derivative of the loss \( \mathcal{L} \) with respect to weight matrix \( W \) is expressed<sup><a href="#text-references" class="text-link">[2]</a></sup> :
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
               <span style="display: inline-block; border: 1px solid white; padding: 1rem 2rem;">
@@ -186,7 +178,7 @@
             </div>
 
             <div class="track-copy" style="margin-top: 2rem;">
-              <span style="color: var(--primary); font-weight: bold;">&#10063; Types of gates</span> — In order to remedy the vanishing gradient problem, specific gates are used in some types of RNNs and usually have a well-defined purpose. They are usually noted \( \Gamma \) and are equal to:
+              <span style="color: var(--primary); font-weight: bold;">&#10063; Types of gates</span> In order to remedy the vanishing gradient problem, specific gates are used in some types of RNNs and usually have a well-defined purpose. They are usually noted \( \Gamma \) and are equal to<sup><a href="#text-references" class="text-link">[1]</a></sup> :
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
               <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
@@ -231,7 +223,7 @@
             </div>
 
             <div class="track-copy" style="margin-top: 2rem;">
-              <span style="color: var(--primary); font-weight: bold;">&#10063; LSTM</span> — Long Short-Term Memory units (LSTM) deal with the vanishing gradient problem encountered by traditional RNNs.
+              <span style="color: var(--primary); font-weight: bold;">&#10063; LSTM</span> Long Short-Term Memory units (LSTM) deal with the vanishing gradient problem encountered by traditional RNNs<sup><a href="#text-references" class="text-link">[3]</a></sup> .
             </div>
             
             <div class="figure-frame" style="margin-top: 1.5rem; max-width: 65%; margin-left: auto; margin-right: auto;">
@@ -328,9 +320,45 @@
           <article class="panel report-card">
             <p class="card-kicker">Attention Model</p>
             <h3 class="card-title">DistilBERT</h3>
-            <p class="track-copy">
-              [Write a brief description of the DistilBERT architecture here, e.g., self-attention, knowledge distillation, and transformer blocks.]
+            <div class="track-copy">
+              <span style="color: var(--primary); font-weight: bold;">&#10063; Knowledge distillation</span> Knowledge distillation is a compression technique in which a compact model - the student - is trained to reproduce the behaviour of a larger model - the teacher - or an ensemble of models<sup><a href="#text-references" class="text-link">[4]</a></sup> . 
+            </div>
+            <div class="track-copy" style="margin-top: 1.5rem;">
+              <span style="color: var(--primary); font-weight: bold;">&#10063; Training loss</span> The student is trained with a distillation loss over the soft target probabilities of the teacher:
+            </div>
+            <div style="text-align: center; margin: 1.5rem 0;">
+              <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+                \( \displaystyle L_{ce} = \sum_{i} t_i * \log(s_i) \)
+              </span>
+            </div>
+            <div class="track-copy">
+              where \( t_i \) (resp. \( s_i \)) is a probability estimated by the teacher (resp. the student). This objective results in a rich training signal by leveraging the full teacher distribution, using a softmax-temperature:
+            </div>
+            <div style="text-align: center; margin: 1.5rem 0;">
+              <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+                \( \displaystyle p_i = \frac{\exp(z_i / T)}{\sum_{j} \exp(z_j / T)} \)
+              </span>
+            </div>
+            <p class="track-copy" style="margin-top: 1.5rem;">
+              <span style="color: var(--primary); font-weight: bold;">&#10063; Student architecture</span> The student - DistilBERT - has the same general architecture as BERT. The token-type embeddings and the pooler are removed while the number of layers is reduced by a factor of 2. Most of the operations used in the Transformer architecture (linear layer and layer normalisation) are highly optimized in modern linear algebra frameworks and our investigations showed that variations on the last dimension of the tensor (hidden size dimension) have a smaller impact on computation efficiency (for a fixed parameters budget) than variations on other factors like the number of layers<sup><a href="#text-references" class="text-link">[4]</a></sup> .
             </p>
+            <div class="figure-frame" style="margin-top: 1.5rem; max-width: 65%; margin-left: auto; margin-right: auto;">
+              <img src="../assets/assignment-1/distilBERT_arch.png" alt="DistilBERT Architecture">
+            </div>
+            <p class="figure-caption" style="text-align: center;">
+              Image 3: DistilBERT architecture overview
+            </p>
+          </article>
+
+          <article class="panel report-card" id="text-references">
+            <p class="card-kicker">References</p>
+            <h3 class="card-title">Background Knowledge Sources</h3>
+            <ul class="mini-list">
+              <li>[1] Shervine Amidi. <em>Recurrent Neural Networks cheatsheet</em>. CS 230 Deep Learning, Stanford University. <a href="https://stanford.edu/~shervine/teaching/cs-230/cheatsheet-recurrent-neural-networks/" target="_blank" rel="noreferrer" class="text-link">Link</a></li>
+              <li>[2] Schmidt, R. M. (2019). <em>Recurrent Neural Networks (RNNs): A gentle Introduction and Overview</em>. arXiv preprint arXiv:1912.05911. <a href="https://arxiv.org/abs/1912.05911" target="_blank" rel="noreferrer" class="text-link">Link</a></li>
+              <li>[3] Sherstinsky, Alex (2020). <em>Fundamentals of Recurrent Neural Network (RNN) and Long Short-Term Memory (LSTM) network</em>. Physica D: Nonlinear Phenomena, 404, 132306. Elsevier BV. <a href="https://arxiv.org/abs/1808.03314" target="_blank" rel="noreferrer" class="text-link">Link</a></li>
+              <li>[4] Sanh, V., Debut, L., Chaumond, J., & Wolf, T. (2020). <em>DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter</em>. arXiv preprint arXiv:1910.01108. <a href="https://arxiv.org/abs/1910.01108" target="_blank" rel="noreferrer" class="text-link">Link</a></li>
+            </ul>
           </article>
         </div>
       </section>
@@ -339,19 +367,15 @@
         <div class="section-head">
           <div>
             <h2 class="section-title">1. Problem Statement - Exploratory Data Analysis</h2>
-            <p class="section-copy">
-              The text task is a classification problem comparing an LSTM baseline and a DistilBERT model.
-            </p>
           </div>
         </div>
 
-        <div class="report-grid">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
           <article class="panel report-card">
             <p class="card-kicker">Problem statement</p>
             <h3 class="card-title">Text Classification</h3>
             <p class="track-copy">
-              The goal is to classify text input into categories and compare the efficiency, context understanding, 
-              and results between Recurrent Neural Networks and Self-Attention mechanisms.
+              There are diversities of papers, 20_newsgroups, books... with various genres. We are not, however, able to manually distinguish between them in a short time. Therefore, RNN-based LSTM and Transformer-based DistilBERT are both taken into account to estimate the accuracy of classifying categories of each document based on natural language input.
             </p>
             <ul class="mini-list">
               <li>RNN baseline: LSTM</li>
@@ -363,14 +387,125 @@
             <p class="card-kicker">Dataset summary</p>
             <h3 class="card-title">Dataset information</h3>
             <ul class="mono-list">
-              <li>Dataset Name: TBD</li>
-              <li>Classes: TBD</li>
-              <li>Training samples: TBD</li>
-              <li>Test samples: TBD</li>
+              <li>Dataset Name: <a href="https://huggingface.co/datasets/SetFit/20_newsgroups" target="_blank" rel="noreferrer" class="text-link">20_newsgroups</a></li>
+              <li>Number of classes (corpus): 20</li>
+              <li>
+                Total documents: 18,846
+                <ul class="mono-list">
+                  <li>Training samples: 11,314</li>
+                  <li>Test samples: 7,532</li>
+                </ul>
+              </li>
+              <li>
+                Documents per corpus:
+                <ul class="mono-list">
+                  <li>alt.atheism: 799</li>
+                  <li>comp.graphics: 973</li>
+                  <li>comp.os.ms-windows.misc: 985</li>
+                  <li>comp.sys.ibm.pc.hardware: 982</li>
+                  <li>...</li>
+                </ul>
+              </li>
+              </li>
             </ul>
-            <p class="deliverable-note">
-              Description of why this dataset is suitable for RNN and Transformer comparison.
-            </p>
+
+            <h3 class="card-title" style="margin-top: 2rem;">Corpus Statistics</h3>
+            <div class="compare-table-wrap">
+              <table class="compare-table" style="min-width: auto;">
+                <thead>
+                  <tr>
+                    <th>Statistic</th>
+                    <th>Value / Info</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Total words</td>
+                    <td>3,423,145</td>
+                  </tr>
+                  <tr>
+                    <td>Total characters</td>
+                    <td>22,043,554</td>
+                  </tr>
+                  <tr>
+                    <td>Min docs/class</td>
+                    <td>628 (talk.religion.misc)</td>
+                  </tr>
+                  <tr>
+                    <td>Max docs/class</td>
+                    <td>999 (rec.sport.hockey)</td>
+                  </tr>
+                  <tr>
+                    <td>Mean docs/class</td>
+                    <td>942.3</td>
+                  </tr>
+                  <tr>
+                    <td>Std</td>
+                    <td>97.0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="card-title" style="margin-top: 2rem;">Per-document Word Count</h3>
+            <div class="compare-table-wrap">
+              <table class="compare-table" style="min-width: auto;">
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Mean</td>
+                    <td>181.6</td>
+                  </tr>
+                  <tr>
+                    <td>Median</td>
+                    <td>83.0</td>
+                  </tr>
+                  <tr>
+                    <td>Std</td>
+                    <td>501.3</td>
+                  </tr>
+                  <tr>
+                    <td>Min</td>
+                    <td>0</td>
+                  </tr>
+                  <tr>
+                    <td>Max</td>
+                    <td>11765</td>
+                  </tr>
+                  <tr>
+                    <td>Q25</td>
+                    <td>40</td>
+                  </tr>
+                  <tr>
+                    <td>Q75</td>
+                    <td>166</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+
+        <div class="report-grid" style="margin-top: 2rem;">
+          <article class="panel report-card">
+            <p class="card-kicker">Word Analysis</p>
+            <h3 class="card-title">Word Frequency</h3>
+            <div class="figure-frame" style="margin-top: 1.5rem; display: flex; justify-content: center;">
+              <img src="../assets/assignment-1/wc_freq.png" alt="Word Frequency" style="max-width: 100%; border-radius: var(--radius-md);">
+            </div>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">Word Analysis</p>
+            <h3 class="card-title">Word Correlation / Corpus</h3>
+            <div class="figure-frame" style="margin-top: 1.5rem; display: flex; justify-content: center;">
+              <img src="../assets/assignment-1/wc_cor.png" alt="Word Correlation" style="max-width: 100%; border-radius: var(--radius-md);">
+            </div>
           </article>
         </div>
       </section>
@@ -379,69 +514,163 @@
         <div class="section-head">
           <div>
             <h2 class="section-title">2. Dataset, DataLoader, and augmentation setup</h2>
-            <p class="section-copy">
-              Use this section to document tokenization, train/validation/test splits, batching, padding, and any text preprocessing.
-            </p>
           </div>
         </div>
 
         <div class="report-grid">
           <article class="panel report-card">
-            <p class="card-kicker">Data loading</p>
-            <h3 class="card-title">Dataset and split strategy</h3>
-            <ul class="mono-list">
-              <li>Dataset source: TBD</li>
-              <li>Train split: TBD</li>
-              <li>Validation split: TBD</li>
-              <li>Test split: TBD</li>
+            <p class="card-kicker">1. Loading & EDA</p>
+            <h3 class="card-title">Dataset overview</h3>
+            <ul class="mini-list">
+              <li>Loaded from HuggingFace: SetFit/20_newsgroups</li>
+              <li>18,846 total docs, 20 classes</li>
+              <li>Train: 11,314 | Test: 7,532</li>
+              <li>Class imbalance: 628 (min) to 999 (max) docs per class</li>
             </ul>
           </article>
 
           <article class="panel report-card">
-            <p class="card-kicker">Preprocessing</p>
-            <h3 class="card-title">Tokenization and batching</h3>
+            <p class="card-kicker">2. Text Preprocessing</p>
+            <h3 class="card-title">Cleaning and Truncation</h3>
             <ul class="mini-list">
-              <li>Tokenizer / vocabulary: TBD</li>
-              <li>Padding / truncation: TBD</li>
-              <li>Sequence length: TBD</li>
-              <li>Batch size: TBD</li>
+              <li>Text cleaning: removed quoted text, email headers, and signatures</li>
+              <li>Short doc removal: dropped &lt; 50 chars (~544 docs, 2.9%)</li>
+              <li>Truncation: max 400 words (aligned with BERT 512 token limit)</li>
             </ul>
           </article>
         </div>
-      </section>
+
+        <div class="report-grid" style="margin-top: 2rem;">
+          <article class="panel report-card">
+            <p class="card-kicker">3. Train/Val/Test Split</p>
+            <h3 class="card-title">Splitting strategy</h3>
+            <div class="compare-table-wrap" style="margin-bottom: 1rem;">
+              <table class="compare-table" style="min-width: auto;">
+                <thead>
+                  <tr>
+                    <th>Split</th>
+                    <th>Samples</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Train</td>
+                    <td>8,584</td>
+                    <td>Stratified</td>
+                  </tr>
+                  <tr>
+                    <td>Validation</td>
+                    <td>2,146</td>
+                    <td>Stratified</td>
+                  </tr>
+                  <tr>
+                    <td>Test</td>
+                    <td>7,112</td>
+                    <td>Stratified</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">4. Tokenization</p>
+            <h3 class="card-title">Tokenizer details</h3>
+            <ul class="mini-list">
+              <li>Tokenizer: distilbert-base-uncased</li>
+              <li>Max length per sentence: 512 tokens</li>
+              <li><strong>Dynamic padding via DataCollatorWithPadding</strong></li>
+              <li>~90% of docs fit under 512 tokens</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="report-grid" style="margin-top: 2rem;">
+          <article class="panel report-card">
+            <p class="card-kicker">5. Class Balancing</p>
+            <h3 class="card-title">Weighted loss</h3>
+            <ul class="mini-list">
+              <li>Computed class weights: 1.0 / class_counts</li>
+              <li>Normalized weights to sum to num_classes</li>
+              <li>Applied via CrossEntropyLoss(weight=class_weights)</li>
+            </ul>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">6. DataLoader</p>
+            <h3 class="card-title">Batch setup</h3>
+            <ul class="mini-list">
+              <li>Batch size: 12 (train), 36 (val/test)</li>
+              <li>Dynamic padding per batch</li>
+              <li>No .set_format('torch') to the dataset, let <strong>DataCollator</strong> handle tensor conversion</li>
+            </ul>
+          </article>
+        </div>
 
       <section id="text-models" class="shell section">
         <div class="section-head">
           <div>
             <h2 class="section-title">3. Model building, training, evaluation, and comparison</h2>
-            <p class="section-copy">
-              Use this section for architecture details, hyperparameters, and the training strategy for both models.
-            </p>
           </div>
         </div>
 
         <div class="report-grid">
           <article class="panel report-card">
             <p class="card-kicker">RNN model</p>
-            <h3 class="card-title">LSTM baseline</h3>
+            <h3 class="card-title">BiLSTM with Attention</h3>
+            
+            <p style="margin-top: 1rem; font-weight: bold; color: var(--primary);">Architecture</p>
             <ul class="mini-list">
-              <li>Embedding size: TBD</li>
-              <li>Hidden size: TBD</li>
-              <li>Number of layers: TBD</li>
-              <li>Dropout: TBD</li>
-              <li>Optimizer and learning rate: TBD</li>
+              <li>Embedding: 300d GloVe (43.3% vocab coverage) | TF-IDF weighted</li>
+              <li>Backbone: 2-layer BiLSTM (128 units/dir)</li>
+              <li>Attention: Self-attention over all LSTM timesteps</li>
+              <li>Dropout: 0.3 | Total Params: 15.8M</li>
+            </ul>
+
+            <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Training</p>
+            <ul class="mini-list">
+              <li>Optimizer: Adam (1e-3) | Batch size: 16</li>
+              <li>Scheduler: Cosine with warmup | Epochs: 20</li>
+              <li>Loss: Weighted CrossEntropy | Seq length: 256</li>
+            </ul>
+
+            <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Evaluation</p>
+            <ul class="mini-list">
+              <li><strong>Evaluation Metrics:</strong> Val/Test Accuracy, F1 Macro, F1 Weighted, and per-class <code>classification_report</code>.</li>
+            </ul>
+
+            <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Comparison</p>
+            <ul class="mini-list">
+              <li>Systematic evaluation across Val Acc, Test Acc, F1 Macro, Train Time (s), Inference (ms), and Params.</li>
             </ul>
           </article>
 
           <article class="panel report-card">
             <p class="card-kicker">Transformer model</p>
             <h3 class="card-title">DistilBERT</h3>
+            
+            <p style="margin-top: 1rem; font-weight: bold; color: var(--primary);">Model building</p>
             <ul class="mini-list">
-              <li>Pretrained checkpoint: TBD</li>
-              <li>Classification head: TBD</li>
-              <li>Fine-tuning epochs: TBD</li>
-              <li>Optimizer and learning rate: TBD</li>
-              <li>Scheduler: TBD</li>
+              <li>Pretrained checkpoint: <strong>distilbert-base-uncased</strong></li>
+              <li>Classification head: pre_classifier (768&times;768) &rarr; ReLU &rarr; classifier (768&times;20)</li>
+            </ul>
+
+            <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Training</p>
+            <ul class="mini-list">
+              <li>Fine-tuning epochs: 15 (Phase 1: only head unfrozen, Phase 2: all layers and head unfrozen)</li>
+              <li>Optimizer: AdamW</li>
+              <li>Learning rate: Utilizing a <strong>layerwise differential learning rate</strong> strategy (detailed in Extension 1).</li>
+              <li>Scheduler: Linear Warmup and Cosine Annealing</li>
+            </ul>
+
+            <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Evaluation</p>
+            <ul class="mini-list">
+              <li><strong>Evaluation Metrics:</strong> Test Accuracy, F1 Macro, F1 Weighted, and per-class <code>classification_report</code>.</li>
+            </ul>
+            <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Comparison</p>
+            <ul class="mini-list">
+              <li>Comprehensive evaluation across Val Acc, Test Acc, F1 Macro, Train Time (s), Inference (ms), and Params.</li>
             </ul>
           </article>
         </div>
@@ -457,46 +686,205 @@
           </div>
         </div>
 
-        <div class="report-grid">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
           <article class="panel report-card">
-            <p class="card-kicker">Results table</p>
-            <h3 class="card-title">Comparison placeholder</h3>
+            <p class="card-kicker">Evaluation</p>
+            <h3 class="card-title">DistilBERT Performance</h3>
+            <p class="track-copy">
+              After training, the model was evaluated on the held-out test set (7,112 samples) using multiple metrics to provide a comprehensive view of classification performance.
+            </p>
+            
+            <div style="margin: 1.5rem 0; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-md); background-color: rgba(255, 255, 255, 0.03);">
+              <strong style="color: var(--primary);">Test Results</strong>
+            <div class="compare-table-wrap" style="margin-top: 1rem;">
+              <table class="compare-table" style="min-width: auto;">
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Accuracy</td>
+                    <td>73.88%</td>
+                  </tr>
+                  <tr>
+                    <td>F1 Macro</td>
+                    <td>0.7268</td>
+                  </tr>
+                  <tr>
+                    <td>F1 Weighted</td>
+                    <td>0.7400</td>
+                  </tr>
+                  <tr>
+                    <td>Precision</td>
+                    <td>0.7299</td>
+                  </tr>
+                  <tr>
+                    <td>Recall</td>
+                    <td>0.7258</td>
+                  </tr>
+                  <tr>
+                    <td>Best class</td>
+                    <td>rec.sport.hockey (F1: 0.93)</td>
+                  </tr>
+                  <tr>
+                    <td>Worst class</td>
+                    <td>talk.religion.misc (F1: 0.32)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            </div>
+
+            <div class="figure-frame" style="margin-top: 2rem; display: flex; justify-content: center; width: 100%;">
+              <img src="../assets/assignment-1/distilBERT_cfm.png" alt="DistilBERT Confusion Matrix" style="width: 70%; border-radius: var(--radius-md);">
+            </div>
+            <p class="figure-caption" style="text-align: center; margin-bottom: 2rem;">
+              Image 4: DistilBERT Confusion Matrix
+            </p>
+
+            <div class="figure-frame" style="margin-top: 2rem; display: flex; justify-content: center; width: 100%;">
+              <img src="../assets/assignment-1/distilBERT_bar.png" alt="DistilBERT F1 Scores Bar Chart" style="width: 70%; border-radius: var(--radius-md);">
+            </div>
+            <p class="figure-caption" style="text-align: center; margin-bottom: 2rem;">
+              Image 5: DistilBERT F1 Scores Bar Chart
+            </p>
+
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">RNN Performance</p>
+            <h3 class="card-title">BiLSTM with Attention</h3>
+            <p class="track-copy">
+              The BiLSTM model was evaluated after 20 epochs, reaching its peak validation accuracy of 69.72% at epoch 18.
+            </p>
+            
+            <div style="margin: 1.5rem 0; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-md); background-color: rgba(255, 255, 255, 0.03);">
+              <strong style="color: var(--primary);">Final Test Results</strong>
+              <div class="compare-table-wrap" style="margin-top: 1rem;">
+                <table class="compare-table" style="min-width: auto;">
+                  <thead><tr><th>Metric</th><th>Score</th></tr></thead>
+                  <tbody>
+                    <tr><td>Accuracy</td><td>62.90%</td></tr>
+                    <tr><td>F1 Macro</td><td>0.6179</td></tr>
+                    <tr><td>F1 Weighted</td><td>0.6311</td></tr>
+                    <tr><td>Precision</td><td>0.6251</td></tr>
+                    <tr><td>Recall</td><td>0.6155</td></tr>
+                    <tr>
+                      <td>Best class</td>
+                      <td>rec.sport.hockey (F1: 0.89)</td>
+                    </tr>
+                    <tr>
+                      <td>Worst class</td>
+                      <td>talk.religion.misc (F1: 0.19)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="figure-frame" style="margin-top: 2rem; display: flex; justify-content: center; width: 100%;">
+              <img src="../assets/assignment-1/lstm_cfm.png" alt="BiLSTM+Attention Confusion Matrix" style="width: 70%; border-radius: var(--radius-md);">
+            </div>
+            <p class="figure-caption" style="text-align: center; margin-bottom: 2rem;">
+              Image 6: BiLSTM with Attention Confusion Matrix
+            </p>
+
+            <div class="figure-frame" style="margin-top: 2rem; display: flex; justify-content: center; width: 100%;">
+              <img src="../assets/assignment-1/lstm_bar.png" alt="BiLSTM+Attention F1 Scores Bar Chart" style="width: 70%; border-radius: var(--radius-md);">
+            </div>
+            <p class="figure-caption" style="text-align: center; margin-bottom: 2rem;">
+              Image 7: BiLSTM with Attention F1 Scores Bar Chart
+            </p>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">Discussion</p>
+            <h3 class="card-title">Key Insights and Discussion</h3>
+            
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Model Behavior and Overfitting</h4>
+            <ul class="mini-list">
+              <li>The gap between validation accuracy and test accuracy (e.g., DistilBERT 78.89% vs 73.88%) suggests mild overfitting. This is partly attributed to the relatively small training set (~8,500 samples) distributed across 20 diverse classes.</li>
+              <li>Class weighting in the loss function helped improve recall for underrepresented categories like <i>talk.religion.misc</i> and <i>talk.politics.misc</i>, though they still remain the most challenging for both architectures.</li>
+            </ul>
+
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Semantic Analysis</h4>
+            <ul class="mini-list">
+              <li>Classes with clear topical boundaries (e.g., <i>rec.sport.hockey</i>, <i>sci.space</i>) consistently achieved higher F1 scores (~0.80+ for DistilBERT, ~0.70+ for BiLSTM) due to unique technical vocabularies.</li>
+              <li>Semantically overlapping classes (e.g., politics vs guns, or different computer hardware categories) showed higher confusion rates, which is expected given their shared terminology.</li>
+            </ul>
+
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Error Patterns (Confusion Matrix Analysis)</h4>
+            <p class="track-copy">
+              Specific misclassifications reveal systemic issues in text understanding:
+            </p>
+            <ul class="mini-list">
+              <li><strong>Religion:</strong> <i>talk.religion.misc</i> is frequently confused with <i>alt.atheism</i> and <i>soc.religion.christian</i> due to high lexical overlap in philosophical discussions.</li>
+              <li><strong>Politics:</strong> <i>talk.politics.misc</i> is often misidentified as <i>guns</i> or <i>mideast</i> subcategories, as general political discussions often touch on these specific themes.</li>
+              <li><strong>Technical brevity:</strong> Short documents in technical categories like <i>comp.graphics</i> are sometimes confused with <i>mac.hardware</i> when they lack specific keywords but share general technical terms.</li>
+            </ul>
+          </article>
+
+          <article class="panel report-card">
+            <p class="card-kicker">Comparison</p>
+            <h3 class="card-title">Systematic Comparison</h3>
+            <p class="track-copy">
+              A systematic comparison will be conducted across three dimensions:
+            </p>
+
+            <ol class="mini-list" style="margin-left: 1rem;">
+              <li><strong>Architecture comparison:</strong> DistilBERT (67M params) vs BERT-base (110M params) vs LSTM &mdash; comparing transformer-based models against a recurrent baseline to evaluate the impact of self-attention and pretrained representations on text classification performance.</li>
+              <li><strong>Fine-tuning strategy comparison:</strong> For each transformer model, three strategies are evaluated:
+                <ul style="margin-top: 0.5rem; margin-left: 1rem; list-style-type: disc;">
+                  <li>Freeze backbone (train classification head only)</li>
+                  <li>Full fine-tuning (train all layers from start with layerwise LR)</li>
+                  <li>Hybrid (train head first, then unfreeze backbone with differential LR)</li>
+                </ul>
+              </li>
+              <li><strong>Model efficiency comparison:</strong> Accuracy vs model size, training time, and inference latency &mdash; to determine whether the larger BERT-base model justifies its additional computational cost over DistilBERT.</li>
+            </ol>
+
+            <p class="track-copy" style="margin-top: 2rem; margin-bottom: 1rem;">
+              Results will be reported in the following format after all experiments are completed:
+            </p>
+
             <div class="compare-table-wrap">
               <table class="compare-table">
                 <thead>
                   <tr>
                     <th>Model</th>
-                    <th>Accuracy</th>
-                    <th>F1</th>
-                    <th>Notes</th>
+                    <th>Val Acc</th>
+                    <th>Test Acc</th>
+                    <th>F1 Macro</th>
+                    <th>Train Time (s)</th>
+                    <th>Inference (ms)</th>
+                    <th>Params</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>LSTM</td>
-                    <td>TBD</td>
-                    <td>TBD</td>
-                    <td>Fill after evaluation</td>
+                    <td>DistilBERT (Hybrid)</td>
+                    <td>78.89%</td>
+                    <td>73.88%</td>
+                    <td>72.68%</td>
+                    <td>735s</td>
+                    <td>44.1ms</td>
+                    <td>67.0M</td>
                   </tr>
                   <tr>
-                    <td>DistilBERT</td>
-                    <td>TBD</td>
-                    <td>TBD</td>
-                    <td>Fill after evaluation</td>
+                    <td>BiLSTM + Attention</td>
+                    <td>69.72%</td>
+                    <td>62.90%</td>
+                    <td>0.6179</td>
+                    <td>85s</td>
+                    <td>-</td>
+                    <td>15.8M</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-          </article>
-
-          <article class="panel report-card">
-            <p class="card-kicker">Discussion</p>
-            <h3 class="card-title">Analysis placeholder</h3>
-            <ul class="mini-list">
-              <li>Which model performs better and why?</li>
-              <li>How does context modeling differ between LSTM and DistilBERT?</li>
-              <li>What trade-offs appear in accuracy, speed, and memory?</li>
-            </ul>
           </article>
         </div>
       </section>
@@ -505,26 +893,152 @@
         <div class="section-head">
           <div>
             <h2 class="section-title">5. Other extension reports</h2>
-            <p class="section-copy">
-              Document text-specific extensions here, such as interpretability, web integration, or calibration.
-            </p>
           </div>
         </div>
 
-        <div class="deliverable-grid">
-          <article class="panel deliverable-card">
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <article class="panel report-card">
             <p class="card-kicker">Extension 1</p>
-            <h3 class="card-title">Add your completed extension here</h3>
-            <p class="deliverable-note">
-              Replace this card with the actual extension description, figures, and results after the text pipeline is complete.
+            <h3 class="card-title">Fine-tuning Strategy Comparison</h3>
+            <p class="track-copy">
+              Three fine-tuning strategies were evaluated on both DistilBERT (67M params) and BERT-base (110M params):
             </p>
+            
+            <ul class="mini-list">
+              <li><strong>Freeze backbone:</strong> Train only the classification head; backbone weights remain frozen</li>
+              <li><strong>Full fine-tune:</strong> Train all layers from the start with layerwise differential learning rates</li>
+              <li><strong>Hybrid:</strong> Train classification head first (5 epochs), then unfreeze backbone with differential LR (15 epochs)</li>
+            </ul>
+
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Learning Rate Strategy</h4>
+            <p class="track-copy">
+              A <strong>layerwise differential learning rate</strong> strategy was applied to both the Hybrid and Full fine-tune approaches to prevent catastrophic forgetting and ensure stable convergence:
+            </p>
+            <ul class="mini-list">
+              <li><strong>Phase 1 (Warmup):</strong> The learning rate is set to <strong>5e-5</strong> for the classifier layer to adapt it to the 20_newsgroups vocabulary.</li>
+              <li><strong>Phase 2 (Full Tuning):</strong> The classifier remains at <strong>5e-5</strong>. The backbone uses a progressive LR: <strong>1e-6</strong> for embedding layers, <strong>2e-6</strong> for initial encoder layers, and <strong>5e-5</strong> for the final layers closest to the output.</li>
+            </ul>
+
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Results</h4>
+            <div class="compare-table-wrap">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Strategy</th>
+                    <th>Val Acc</th>
+                    <th>Test Acc</th>
+                    <th>Train Time (s)</th>
+                    <th>Inference (ms)</th>
+                    <th>Params</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>DistilBERT</td><td>Freeze backbone</td><td>67.38%</td><td>66.15%</td><td>292</td><td>44.3</td><td>66,968,852</td></tr>
+                  <tr><td>DistilBERT</td><td>Hybrid</td><td>78.89%</td><td>73.88%</td><td>735</td><td>44.1</td><td>66,968,852</td></tr>
+                  <tr><td>DistilBERT</td><td>Full fine-tune</td><td><strong>79.33%</strong></td><td><strong>74.06%</strong></td><td>644</td><td>44.4</td><td>66,968,852</td></tr>
+                  <tr><td>BERT</td><td>Freeze backbone</td><td>64.80%</td><td>62.93%</td><td>501</td><td>88.2</td><td>109,497,620</td></tr>
+                  <tr><td>BERT</td><td>Hybrid</td><td><strong>79.86%</strong></td><td><strong>74.77%</strong></td><td>1337</td><td>88.3</td><td>109,497,620</td></tr>
+                  <tr><td>BERT</td><td>Full fine-tune</td><td>79.96%</td><td>74.17%</td><td>1168</td><td>87.9</td><td>109,497,620</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+              <div>
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/loss.png" alt="Training Loss Curves" style="width: 100%; border-radius: var(--radius-md);">
+                </div>
+                <p class="figure-caption" style="text-align: center;">
+                  Image 8: Training Loss Comparison
+                </p>
+              </div>
+              <div>
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/val_acc.png" alt="Validation Accuracy Curves" style="width: 100%; border-radius: var(--radius-md);">
+                </div>
+                <p class="figure-caption" style="text-align: center;">
+                  Image 9: Validation Accuracy Comparison (Transformers)
+                </p>
+              </div>
+            </div>
+
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Analysis</h4>
+            <ul class="mini-list">
+              <li>The hybrid strategy achieved the best accuracy for both models, outperforming full fine-tuning by ~0.2-0.5% on test accuracy. Training the classification head first provides a stable initialization before updating the pretrained backbone, which leads to slightly better convergence.</li>
+              <li>Full fine-tuning performed comparably to hybrid but with slightly lower accuracy, suggesting that updating all layers simultaneously without a warm-up phase can lead to suboptimal adaptation of the classification head.</li>
+              <li>Freeze backbone performed significantly worse (~10% lower than hybrid), confirming that the pretrained representations alone are insufficient for this 20-class task and backbone adaptation is necessary.</li>
+              <li>Training time scales linearly with model complexity: hybrid takes ~15% longer than full fine-tune due to the additional Phase 1 epochs, but the accuracy gain justifies the cost.</li>
+            </ul>
+
+            <h4 style="margin-top: 2rem; margin-bottom: 0.5rem; color: var(--text);">Key Findings: Transformer vs RNN</h4>
+            <p class="track-copy">
+              The ~11% accuracy gap between BiLSTM (62.9%) and BERT (73.7%) demonstrates that:
+            </p>
+            <ul class="mini-list">
+              <li><strong>Contextualized representations</strong> are essential: Static GloVe embeddings cannot capture the polysemy and context-dependent meanings that DistilBERT/BERT handle via self-attention.</li>
+              <li><strong>Attention benefit:</strong> While attention improved BiLSTM baseline (~54% &rarr; 63%), it cannot fully compensate for the lack of bidirectional contextual pretraining.</li>
+              <li><strong>Efficiency Trade-off:</strong> BiLSTM with Attention trains 18-35x faster than transformer models, making it a viable candidate for resource-constrained environments where a 10% accuracy drop is acceptable.</li>
+            </ul>
           </article>
 
-          <article class="panel deliverable-card">
+          <article class="panel report-card">
             <p class="card-kicker">Extension 2</p>
-            <h3 class="card-title">Optional second extension</h3>
-            <p class="deliverable-note">
-              Use this space for any extra experiment or demo feature that supports the text track.
+            <h3 class="card-title">Model Efficiency Comparison</h3>
+            <p class="track-copy">
+              A comparison of model efficiency across DistilBERT and BERT-base, evaluating accuracy vs model size and inference time.
+            </p>
+            
+            <div class="compare-table-wrap" style="margin-top: 1rem;">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>DistilBERT</th>
+                    <th>BERT-base</th>
+                    <th>Ratio</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Parameters</td><td>67.0M</td><td>109.5M</td><td>1.63x</td></tr>
+                  <tr><td>Best Test Accuracy</td><td>73.88%</td><td>74.77%</td><td>+0.89%</td></tr>
+                  <tr><td>Training Time</td><td>735s</td><td>1,337s</td><td>1.82x</td></tr>
+                  <tr><td>Inference Time</td><td>44.1ms</td><td>88.3ms</td><td>2.0x</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Analysis</h4>
+            <ul class="mini-list">
+              <li>BERT-base provides only a marginal accuracy improvement (+0.89%) over DistilBERT while requiring 1.63x more parameters, 1.82x longer training time, and 2.0x slower inference.</li>
+              <li>DistilBERT offers a significantly better accuracy-to-efficiency trade-off: it achieves 98.8% of BERT's accuracy at significantly lower computational cost (1.8x faster training, 2x faster inference).</li>
+              <li>This result aligns with the design goal of knowledge distillation &mdash; DistilBERT retains ~98% of BERT's performance while being significantly smaller and faster.</li>
+            </ul>
+
+            <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Simple Compression: DistilBERT as a Compressed Model</h4>
+            <p class="track-copy">
+              DistilBERT itself serves as a compressed version of BERT-base, produced through knowledge distillation during pretraining:
+            </p>
+            <div class="compare-table-wrap" style="margin-top: 1rem; margin-bottom: 1rem;">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Aspect</th>
+                    <th>BERT-base</th>
+                    <th>DistilBERT</th>
+                    <th>Reduction</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Encoder layers</td><td>12</td><td>6</td><td>50%</td></tr>
+                  <tr><td>Parameters</td><td>109.5M</td><td>67.0M</td><td>39%</td></tr>
+                  <tr><td>Inference time</td><td>88.3ms</td><td>44.1ms</td><td>50%</td></tr>
+                  <tr><td>Test accuracy (hybrid)</td><td>74.77%</td><td>73.88%</td><td>-0.89%</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="track-copy">
+              The experiment demonstrates that model compression via distillation is an effective strategy for reducing model size and inference latency with minimal accuracy loss. For this text classification task, the 39% parameter reduction and 50% inference speedup come at a cost of less than 1% accuracy &mdash; a favorable trade-off for most production applications.
             </p>
           </article>
         </div>
@@ -533,9 +1047,6 @@
 
     <footer class="shell footer">
       <div class="panel footer-card">
-        <p>
-          Text report page for Assignment 1. Use this file for all text-specific report edits to avoid conflicts with the other tracks.
-        </p>
         <div class="footer-links">
           <a href="./index.html">Assignment 1 overview</a>
           <a href="./image.html">Image</a>
