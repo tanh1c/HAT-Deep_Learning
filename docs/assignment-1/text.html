@@ -637,7 +637,7 @@
 
             <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Evaluation</p>
             <ul class="mini-list">
-              <li><strong>Evaluation Metrics:</strong> Val/Test Accuracy, F1 Macro, F1 Weighted, and per-class <code>classification_report</code>.</li>
+              <li><strong>Evaluation Metrics:</strong>Accuracy, F1 Macro, F1 Weighted, and per-class <code>classification_report</code>.</li>
             </ul>
 
             <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Comparison</p>
@@ -666,7 +666,7 @@
 
             <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Evaluation</p>
             <ul class="mini-list">
-              <li><strong>Evaluation Metrics:</strong> Test Accuracy, F1 Macro, F1 Weighted, and per-class <code>classification_report</code>.</li>
+              <li><strong>Evaluation Metrics:</strong>Accuracy, F1 Macro, F1 Weighted, and per-class <code>classification_report</code>.</li>
             </ul>
             <p style="margin-top: 1.5rem; font-weight: bold; color: var(--primary);">Comparison</p>
             <ul class="mini-list">
@@ -835,7 +835,7 @@
             </p>
 
             <ol class="mini-list" style="margin-left: 1rem;">
-              <li><strong>Architecture comparison:</strong> DistilBERT (67M params) vs BERT-base (110M params) vs LSTM &mdash; comparing transformer-based models against a recurrent baseline to evaluate the impact of self-attention and pretrained representations on text classification performance.</li>
+              <li><strong>Architecture comparison:</strong> DistilBERT (67M params) vs LSTM &mdash; comparing transformer-based models against a recurrent baseline to evaluate the impact of self-attention and pretrained representations on text classification performance.</li>
               <li><strong>Fine-tuning strategy comparison:</strong> For each transformer model, three strategies are evaluated:
                 <ul style="margin-top: 0.5rem; margin-left: 1rem; list-style-type: disc;">
                   <li>Freeze backbone (train classification head only)</li>
@@ -843,7 +843,7 @@
                   <li>Hybrid (train head first, then unfreeze backbone with differential LR)</li>
                 </ul>
               </li>
-              <li><strong>Model efficiency comparison:</strong> Accuracy vs model size, training time, and inference latency &mdash; to determine whether the larger BERT-base model justifies its additional computational cost over DistilBERT.</li>
+              <li><strong>Model efficiency comparison:</strong> Accuracy vs F1 Macro, Training time, Inference latency and Number of Parameters &mdash; to determine whether the larger BERT-base model justifies its additional computational cost over DistilBERT.</li>
             </ol>
 
             <p class="track-copy" style="margin-top: 2rem; margin-bottom: 1rem;">
@@ -885,7 +885,15 @@
                 </tbody>
               </table>
             </div>
-          </article>
+            <h4 style="margin-top: 2rem; margin-bottom: 0.5rem; color: var(--text);">Key Findings: Transformer vs RNN</h4>
+            <p class="track-copy">
+              The ~11% accuracy gap between BiLSTM (62.9%) and BERT (73.88%) demonstrates that:
+            </p>
+            <ul class="mini-list">
+              <li><strong>Contextualized representations</strong> are essential: Static GloVe embeddings cannot capture the polysemy and context-dependent meanings that DistilBERT/BERT handle via self-attention.</li>
+              <li><strong>Attention benefit:</strong> While attention improved BiLSTM baseline (~54% &rarr; 63%), it cannot fully compensate for the lack of bidirectional contextual pretraining.</li>
+              <li><strong>Efficiency Trade-off:</strong> BiLSTM with Attention trains 18-35x faster than transformer models, making it a viable candidate for resource-constrained environments where a 10% accuracy drop is acceptable.</li>
+            </ul>
         </div>
       </section>
 
@@ -969,16 +977,6 @@
               <li>Full fine-tuning performed comparably to hybrid but with slightly lower accuracy, suggesting that updating all layers simultaneously without a warm-up phase can lead to suboptimal adaptation of the classification head.</li>
               <li>Freeze backbone performed significantly worse (~10% lower than hybrid), confirming that the pretrained representations alone are insufficient for this 20-class task and backbone adaptation is necessary.</li>
               <li>Training time scales linearly with model complexity: hybrid takes ~15% longer than full fine-tune due to the additional Phase 1 epochs, but the accuracy gain justifies the cost.</li>
-            </ul>
-
-            <h4 style="margin-top: 2rem; margin-bottom: 0.5rem; color: var(--text);">Key Findings: Transformer vs RNN</h4>
-            <p class="track-copy">
-              The ~11% accuracy gap between BiLSTM (62.9%) and BERT (73.7%) demonstrates that:
-            </p>
-            <ul class="mini-list">
-              <li><strong>Contextualized representations</strong> are essential: Static GloVe embeddings cannot capture the polysemy and context-dependent meanings that DistilBERT/BERT handle via self-attention.</li>
-              <li><strong>Attention benefit:</strong> While attention improved BiLSTM baseline (~54% &rarr; 63%), it cannot fully compensate for the lack of bidirectional contextual pretraining.</li>
-              <li><strong>Efficiency Trade-off:</strong> BiLSTM with Attention trains 18-35x faster than transformer models, making it a viable candidate for resource-constrained environments where a 10% accuracy drop is acceptable.</li>
             </ul>
           </article>
 
