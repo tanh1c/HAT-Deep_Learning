@@ -1,0 +1,235 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{pgfgantt}
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+\definecolor{barblue}{RGB}{153,204,254}
+\definecolor{groupblue}{RGB}{51,102,254}
+\definecolor{linkred}{RGB}{165,0,33}
+\hfuzz=20pt
+\setganttlinklabel{s-s}{SS}
+\setganttlinklabel{f-s}{FS}
+\setganttlinklabel{f-f}{FF}
+
+\begin{document}
+
+\AddToShipoutPictureFG*{%
+  \begin{tikzpicture}[remember picture,overlay]
+      \node[anchor=south east]
+            at ([xshift=-1cm,yshift=1cm]current page.south east)
+                  {\includegraphics[width=1cm]{hcmut.png}};
+  \end{tikzpicture}%
+}
+
+\begin{center}
+    \textbf{SOCIALIST REPUBLIC OF VIETNAM}\\
+    \textbf{Independence - Freedom - Happiness}\\[2em]
+    \textbf{Vietnam National University, Ho Chi Minh City}\\
+    \textbf{HO CHI MINH CITY UNIVERSITY OF TECHNOLOGY}\\[1em]
+    \textbf{\LARGE PROGRESS REPORT}\\[1em]
+    \textbf{Deep Learning and Its Applications (CO3133)}\\
+    \textbf{Topic: Assignment-1 --- Classification}\\
+    \textbf{CLASS: CLC\_HK252 [CC01]}\\
+    \textbf{GROUP: HAT}\\
+    \vspace{1em}
+
+    ------------
+\end{center}
+
+\noindent
+\begin{tabular}{@{}ll@{}}
+\textbf{Project title:} & Assignment-1 Classification \\
+\textbf{Course:} & Deep Learning and Its Applications (CO3133) \\
+\textbf{Class:} & CLC\_HK252 [CC01] \\
+\textbf{Current submission:} & Report 1 (due 23:59, 26 March 2026) \\
+\textbf{Final submission planned:} & Final report (due 23:59, 06 April 2026)
+\end{tabular}
+
+\vspace{0.5em}
+\noindent \textbf{TEAM MEMBERS:}
+
+\subsection*{Chu Nguyen Tuan Anh --- Student ID: 2352022}
+\begin{itemize}[leftmargin=*, nosep]
+    \item \textbf{Main responsibility:} Image classification track on CIFAR-10.
+    \item \textbf{Completed work:}
+    \begin{itemize}[leftmargin=*, nosep]
+        \item Prepared the CIFAR-10 data pipeline, including resizing, normalization, augmentation, and train/test evaluation workflow.
+        \item Trained and evaluated two pretrained image models: ResNet-18 as the CNN baseline and ViT-B/16 as the Transformer baseline.
+        \item Obtained final reported test accuracy of 96.55\% for ResNet-18 and 98.36\% for ViT-B/16.
+        \item Completed the image-track extensions: web demo integration, interpretability visualization, and calibration analysis with exported reliability-diagram artifacts.
+    \end{itemize}
+    \item \textbf{Ongoing / remaining work:}
+    \begin{itemize}[leftmargin=*, nosep]
+        \item Finalize the selected figures/tables for the final slide deck and presentation video.
+        \item Support final integration of the shared Assignment 1 site and team deliverables.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Nguyen Quoc Hieu --- Student ID: 2352344}
+\begin{itemize}[leftmargin=*, nosep]
+    \item \textbf{Main responsibility:} Text classification track on the 20 Newsgroups dataset.
+    \item \textbf{Completed work:}
+    \begin{itemize}[leftmargin=*, nosep]
+        \item Prepared the text pipeline and report materials for the 20 Newsgroups classification task.
+        \item Implemented and compared recurrent and Transformer-based text models, including a BiLSTM-with-attention baseline and Transformer fine-tuning experiments.
+        \item Consolidated current reported results on the text page, including 69.72\% validation accuracy for the BiLSTM baseline and a best reported Transformer result of 79.86\% validation accuracy / 74.77\% test accuracy.
+        \item Added text-track figures and comparison tables such as confusion matrices, loss curves, and model-efficiency summaries.
+    \end{itemize}
+    \item \textbf{Ongoing / remaining work:}
+    \begin{itemize}[leftmargin=*, nosep]
+        \item Finalize wording, figure selection, and the final presentation-ready summary for the text track.
+        \item Coordinate the final shared deliverables and optional future integration into the common demo workflow if needed.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Vu Hai Tuan --- Student ID: 2353280}
+\begin{itemize}[leftmargin=*, nosep]
+    \item \textbf{Main responsibility:} Multimodal image-text classification track.
+    \item \textbf{Completed work:}
+    \begin{itemize}[leftmargin=*, nosep]
+        \item Prepared the multimodal dataset pipeline using paired image-text samples from the UPMC-Food101 subset used in the report.
+        \item Implemented zero-shot and few-shot multimodal classification experiments with CLIP ViT-B/16 as the main backbone and CLIP RN50 as the extension backbone.
+        \item Reported current multimodal results, including 89.59\% zero-shot accuracy on the main backbone and 92.24\% for the best 10-shot ViT-B/16 setting.
+        \item Added result tables, calibration/error-analysis figures, and augmentation-vs-no-augmentation comparisons for the multimodal track.
+    \end{itemize}
+    \item \textbf{Ongoing / remaining work:}
+    \begin{itemize}[leftmargin=*, nosep]
+        \item Finalize the multimodal write-up and select the most representative tables/figures for the final presentation.
+        \item Sync the shared overview page and final assignment-level deliverables with the completed multimodal results.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Overall progress summary}
+\begin{itemize}[leftmargin=*, nosep]
+    \item The team has completed the core experimentation and reporting work for all three tracks: image, text, and multimodal.
+    \item Each member now has a dedicated report page containing dataset description, model setup, quantitative results, and supporting figures.
+    \item The image track is fully integrated into the interactive Gradio demo, while the text and multimodal tracks are already documented on the shared GitHub Pages site.
+    \item At the current progress checkpoint, the main remaining tasks are:
+    \begin{itemize}[leftmargin=*, nosep]
+        \item polishing the final report wording and harmonizing status across the shared pages;
+        \item preparing slide presentation and presentation video assets;
+        \item recording the demo video and attaching the final links on the assignment page.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Extension / Additional Implementation}
+\begin{itemize}[leftmargin=*, nosep]
+    \item The group has built a shared GitHub Pages site with a common home page, a dedicated Assignment 1 overview page, and separate report pages for the image, text, and multimodal tracks.
+    \item The interactive Gradio demo is currently implemented for the image track and supports prediction, interpretability, and calibration analysis.
+    \item Additional extension work already present in the project includes text-model fine-tuning strategy comparison and multimodal zero-shot vs few-shot analysis with calibration/error-analysis figures.
+\end{itemize}
+
+% =================== PROJECT CHART ===================
+\noindent \textbf{Timeline (Weeks 11--15; Report 1 due 26 March 2026, Final report due 06 April 2026)}
+
+\begingroup
+\hfuzz=20pt
+\begin{ganttchart}[
+  x unit=1.2cm,
+  y unit chart=0.55cm,
+  bar height=0.5,
+  group height=.45,
+  canvas/.append style={fill=none, draw=black!5, line width=.6pt},
+  hgrid style/.style={draw=black!5, line width=.6pt},
+  vgrid={*1{draw=black!5, line width=.6pt}},
+  title/.style={draw=none, fill=none},
+  title label font=\scriptsize\bfseries,
+  title label node/.append style={below=5pt},
+  include title in canvas=false,
+  bar label font=\scriptsize\color{black!85},
+  bar label node/.append style={left=0.9cm},
+  bar/.append style={draw=none, fill=black!63},
+  bar incomplete/.append style={fill=barblue},
+  group incomplete/.append style={fill=groupblue},
+  group label node/.append style={left=.4cm},
+  link/.style={-latex, line width=.9pt, linkred},
+  link label font=\tiny\bfseries,
+  link label node/.append style={midway, sloped, fill=white, inner sep=1pt, yshift=-2pt}
+]{1}{5}
+
+\gantttitle[title label node/.append style={below left=5pt and -2pt}]{WEEKS: }{0}
+\gantttitlelist{11,12,13,14,15}{1} \\
+
+% ===== Week 11 =====
+\ganttgroup{Data}{1}{1} \\
+\ganttbar[name=imgdata]{Image data (Anh)}{1}{1} \\
+\ganttbar[name=textdata]{Text data (Hieu)}{1}{1} \\
+\ganttbar[name=multidata]{Multimodal data (Tuan)}{1}{1} \\[grid]
+
+% ===== Week 12 =====
+\ganttgroup{Models}{2}{2} \\
+\ganttbar[name=imgmodel]{Image model (Anh)}{2}{2} \\
+\ganttbar[name=textmodel]{Text model (Hieu)}{2}{2} \\
+\ganttbar[name=multimodel]{Multimodal model (Tuan)}{2}{2} \\[grid]
+
+% ===== Week 13 =====
+\ganttgroup{Eval + Report}{3}{3} \\
+\ganttbar[name=eval]{Evaluation}{3}{3} \\
+\ganttbar[name=report1]{Progress report}{3}{3} \\
+\ganttmilestone[name=progressms]{Report 1}{3} \\[grid]
+
+% ===== Week 14 =====
+\ganttgroup{Final Prep}{4}{4} \\
+\ganttbar[name=tuning]{Polish report pages}{4}{4} \\
+\ganttbar[name=webdemo]{Sync site + demo}{4}{4} \\
+\ganttbar[name=slides]{Slides}{4}{4} \\[grid]
+
+% ===== Week 15 =====
+\ganttgroup{Delivery}{5}{5} \\
+\ganttbar[name=video]{Demo video}{5}{5} \\
+\ganttbar[name=revision]{Final report pack}{5}{5} \\
+\ganttmilestone[name=finalms]{Final}{5}
+
+% ---- Dependencies ----
+\ganttlink[link type=f-s]{imgdata}{imgmodel}
+\ganttlink[link type=f-s]{textdata}{textmodel}
+\ganttlink[link type=f-s]{multidata}{multimodel}
+\ganttlink[link type=f-s]{imgmodel}{eval}
+\ganttlink[link type=f-s]{textmodel}{eval}
+\ganttlink[link type=f-s]{multimodel}{eval}
+\ganttlink[link type=f-s]{eval}{report1}
+\ganttlink[link type=f-s]{report1}{tuning}
+\ganttlink[link type=f-s]{tuning}{webdemo}
+\ganttlink[link type=f-s]{webdemo}{slides}
+\ganttlink[link type=f-s]{slides}{video}
+\ganttlink[link type=f-s]{video}{revision}
+
+\end{ganttchart}
+\endgroup
+
+\subsection*{Detailed weekly progress}
+\begin{itemize}[leftmargin=*, nosep]
+    \item \textbf{Week 11:} Team prepared the three assigned datasets and built the initial preprocessing pipelines for image, text, and multimodal classification.
+    \item \textbf{Week 12:} Team implemented the main model families for each track and ran the core experiments: CNN vs ViT for image, RNN/Transformer comparison for text, and zero-shot/few-shot CLIP-based experiments for multimodal.
+    \item \textbf{Week 13:} Team consolidated quantitative results, created report figures/pages, and prepared this progress report based on the current state of the project.
+    \item \textbf{Week 14:} Team will finalize assignment-level polishing, presentation slides, video materials, and final page links.
+    \item \textbf{Week 15:} Team will complete the final submission package, including the final report, presentation assets, and demo showcase.
+\end{itemize}
+
+\subsection*{Notes}
+\begin{itemize}[leftmargin=*, nosep]
+    \item Up to Report 1, the group has already completed the main experiments and most of the technical/reporting content for all three tracks.
+    \item The current repository already contains the shared report site, image demo application, and the major figures/tables used in the assignment pages.
+    \item The main unfinished deliverables are the final video links, slide deck polishing, and final consistency checks across the shared pages.
+    \item The final submission will include the completed report pages, presentation slides, demo showcase, and video materials required by the assignment brief.
+\end{itemize}
+
+\noindent
+\begin{tabular}{@{}p{0.9\textwidth}@{}}
+\textbf{GROUP REPRESENTATIVE}\\[0.5em]
+Name\\[1.5em]
+\includegraphics[width=3cm]{signature.png}\\[0.5em]
+\textbf{Nguyen Quoc Hieu}
+\end{tabular}
+
+\vspace*{0.8cm}
+
+\end{document}
