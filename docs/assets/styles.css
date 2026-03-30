@@ -154,6 +154,23 @@ img {
   transform: rotate(16deg);
 }
 
+.brand-mark.has-logo {
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.brand-mark.has-logo::before {
+  display: none;
+}
+
+.brand-mark-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .brand-copy {
   min-width: 0;
 }
@@ -1592,6 +1609,12 @@ html[data-home-theme="dark"] .home-report-page {
   border-radius: 0.05rem;
   transform: none;
   background: var(--primary);
+}
+
+.home-report-page .brand-mark.has-logo {
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: none;
 }
 
 .topbar-actions {
@@ -3180,6 +3203,11 @@ html[data-assignment-theme="light"] body.assignment-overview-page::after {
   background: var(--topbar-surface);
   border-color: var(--line);
   box-shadow: var(--panel-shadow);
+}
+
+.assignment-overview-page .brand-mark.has-logo {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: var(--line);
 }
 
 .assignment-overview-page .assignment-theme-actions {
