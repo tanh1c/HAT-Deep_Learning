@@ -5,105 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Assignment 1 | Multimodal Report</title>
     <meta name="description" content="Multimodal report in red theme: problem, dataset, methods, experiments, results, analysis, and conclusion.">
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("hat-multimodal-theme");
+          document.documentElement.setAttribute("data-multimodal-theme", saved || "light");
+        } catch (error) {
+          document.documentElement.setAttribute("data-multimodal-theme", "light");
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="../assets/styles.css">
     <style>
-      .theme-red {
-        --primary: #d64545;
-        --primary-deep: #a92e2e;
-        --accent: #d64545;
-        --accent-soft: rgba(214, 69, 69, 0.15);
-      }
-
-      .theme-red .button-primary {
-        background: linear-gradient(135deg, #d64545, #ff5f5f);
-        border-color: rgba(214, 69, 69, 0.7);
-      }
-
-      .theme-red .button-secondary,
-      .theme-red .chip,
-      .theme-red .status-pill,
-      .theme-red .report-nav a,
-      .theme-red .panel,
-      .theme-red .meta-item,
-      .theme-red .kpi-card,
-      .theme-red .report-card,
-      .theme-red .deliverable-card,
-      .theme-red .footer-card,
-      .theme-red .page-callout {
-        border-color: rgba(214, 69, 69, 0.45);
-        background: rgba(214, 69, 69, 0.1);
-      }
-
-      .theme-red .report-nav a:hover,
-      .theme-red .report-nav a:focus-visible,
-      .theme-red .button-secondary:hover,
-      .theme-red .button-secondary:focus-visible {
-        border-color: rgba(214, 69, 69, 0.75);
-        background: rgba(214, 69, 69, 0.2);
-      }
-
-      .theme-red .brand-mark::before {
-        background: linear-gradient(135deg, #d64545, #ff5f5f);
-      }
-
-      .theme-red .compare-table thead th {
-        background: rgba(214, 69, 69, 0.22);
-      }
-
-      .theme-red .hero-card h1 {
+      .multimodal-report-page .hero-card h1 {
         font-size: clamp(2.9rem, 5.2vw, 4.4rem);
         line-height: 1.05;
       }
 
-      .theme-red .hero-card .page-subtitle {
+      .multimodal-report-page .hero-card .page-subtitle {
         font-size: 1.35rem;
         line-height: 1.45;
       }
 
-      .theme-red .hero-card .meta-label,
-      .theme-red .page-callout .meta-label {
+      .multimodal-report-page .hero-card .meta-label,
+      .multimodal-report-page .page-callout .meta-label {
         font-size: 1.02rem;
       }
 
-      .theme-red .hero-card .meta-value {
+      .multimodal-report-page .hero-card .meta-value {
         font-size: 1.55rem;
         line-height: 1.2;
         font-weight: 750;
       }
 
-      .theme-red .page-callout .meta-value {
+      .multimodal-report-page .page-callout .meta-value {
         font-size: 1.62rem;
         line-height: 1.2;
         font-weight: 800;
         word-break: break-word;
       }
 
-      .theme-red .page-callout .meta-item {
+      .multimodal-report-page .page-callout .meta-item {
         padding: 0.85rem 0.95rem;
         min-height: unset;
       }
 
-      .theme-red .page-callout .card-kicker {
+      .multimodal-report-page .page-callout .card-kicker {
         font-size: 1.15rem;
       }
 
-      .theme-red .page-callout .card-title {
+      .multimodal-report-page .page-callout .card-title {
         font-size: 2rem;
       }
 
-      .theme-red .page-callout .deliverable-note,
-      .theme-red .page-callout .mini-list li {
+      .multimodal-report-page .page-callout .deliverable-note,
+      .multimodal-report-page .page-callout .mini-list li {
         font-size: 1.26rem;
         line-height: 1.45;
       }
 
-      .theme-red .page-callout .status-pill,
-      .theme-red .page-callout .chip {
+      .multimodal-report-page .page-callout .status-pill,
+      .multimodal-report-page .page-callout .chip {
         font-size: 1.02rem;
       }
     </style>
   </head>
-  <body class="theme-red">
+  <body class="multimodal-report-page theme-red">
     <a class="skip-link" href="#main-content">Skip to content</a>
 
     <header class="topbar">
@@ -125,11 +92,152 @@
           <a href="./text.html">Text</a>
           <a href="#multi-conclusion">Conclusion</a>
         </nav>
+
+        <div class="topbar-actions multimodal-theme-actions">
+          <button class="theme-toggle multimodal-theme-toggle" type="button" data-multimodal-theme-toggle aria-label="Switch color theme">
+            <span class="theme-toggle-indicator" aria-hidden="true"></span>
+            <span data-multimodal-theme-label>Light mode</span>
+          </button>
+        </div>
       </div>
     </header>
 
     <main id="main-content">
-      <section class="shell page-hero section" style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 1.25rem; align-items: stretch;">
+      <div class="assignment-layout">
+        <aside class="side-rail-nav" aria-label="Multimodal report page navigation">
+          <a class="side-rail-link side-rail-link-home" href="../index.html">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 10.5L12 3l9 7.5"></path>
+                <path d="M5.5 9.5V21h13V9.5"></path>
+                <path d="M9.5 21v-6h5v6"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Home</span>
+          </a>
+
+          <a class="side-rail-link" href="#overview" data-section-link="overview">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="6" y1="4" x2="6" y2="20"></line>
+                <line x1="12" y1="7" x2="12" y2="17"></line>
+                <line x1="18" y1="5" x2="18" y2="19"></line>
+                <circle cx="6" cy="9" r="2"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+                <circle cx="18" cy="10" r="2"></circle>
+              </svg>
+            </span>
+            <span class="side-rail-label">Overview</span>
+          </a>
+
+          <a class="side-rail-link" href="#multi-outline" data-section-link="multi-outline">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 3h6l1 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3z"></path>
+                <path d="M9 12h6"></path>
+                <path d="M9 16h6"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Outline</span>
+          </a>
+
+          <a class="side-rail-link" href="#multi-dataset" data-section-link="multi-dataset">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 19V9"></path>
+                <path d="M12 19V5"></path>
+                <path d="M19 19v-7"></path>
+                <path d="M3 19h18"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Dataset</span>
+          </a>
+
+          <a class="side-rail-link" href="#multi-clip-parent" data-section-link="multi-clip-parent">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                <path d="M9 4v16"></path>
+                <path d="M15 4v16"></path>
+                <path d="M4 9h16"></path>
+                <path d="M4 15h16"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Method</span>
+          </a>
+
+          <a class="side-rail-link" href="#multi-results" data-section-link="multi-results">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19h16"></path>
+                <path d="M7 16V9"></path>
+                <path d="M12 16V5"></path>
+                <path d="M17 16v-4"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Results</span>
+          </a>
+
+          <a class="side-rail-link" href="#multi-discussion" data-section-link="multi-discussion">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 7.5h12"></path>
+                <path d="M6 12h12"></path>
+                <path d="M6 16.5h7"></path>
+                <rect x="3" y="4" width="18" height="16" rx="2.2"></rect>
+              </svg>
+            </span>
+            <span class="side-rail-label">Discussion</span>
+          </a>
+
+          <a class="side-rail-link" href="#multi-conclusion" data-section-link="multi-conclusion">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3l2.2 4.9L19 10l-4.8 2.2L12 17l-2.2-4.8L5 10l4.8-2.1z"></path>
+                <path d="M18.5 18.5l2.5 2.5"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Conclusion</span>
+          </a>
+
+          <a class="side-rail-link side-rail-link-track" href="./index.html">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="8" height="7" rx="1.8"></rect>
+                <rect x="13" y="4" width="8" height="7" rx="1.8"></rect>
+                <rect x="3" y="13" width="8" height="7" rx="1.8"></rect>
+                <rect x="13" y="13" width="8" height="7" rx="1.8"></rect>
+              </svg>
+            </span>
+            <span class="side-rail-label">Assignment 1</span>
+          </a>
+
+          <a class="side-rail-link side-rail-link-track" href="./image.html">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="2.2"></rect>
+                <circle cx="8.2" cy="9" r="1.5"></circle>
+                <path d="M21 16l-5.3-5.3a1 1 0 0 0-1.4 0L7 18"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Image</span>
+          </a>
+
+          <a class="side-rail-link side-rail-link-track" href="./text.html">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 6.5h16"></path>
+                <path d="M8 6.5v11"></path>
+                <path d="M16 6.5v11"></path>
+                <path d="M5 17.5h14"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Text</span>
+          </a>
+        </aside>
+
+        <div class="assignment-flow">
+      <section id="overview" class="shell page-hero section" style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 1.25rem; align-items: stretch;">
         <article class="panel hero-card">
           <p class="eyebrow">Multimodal classification</p>
           <h1>Zero-shot vs Few-shot on <span>Image + Text</span></h1>
@@ -930,6 +1038,8 @@
           </ul>
         </article>
       </section>
+        </div>
+      </div>
     </main>
 
     <footer class="shell footer">
@@ -941,5 +1051,100 @@
         </div>
       </div>
     </footer>
+
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const toggle = document.querySelector("[data-multimodal-theme-toggle]");
+        const label = document.querySelector("[data-multimodal-theme-label]");
+
+        if (!toggle) {
+          return;
+        }
+
+        function applyTheme(theme) {
+          root.setAttribute("data-multimodal-theme", theme);
+          toggle.setAttribute("aria-pressed", String(theme === "dark"));
+          toggle.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+
+          if (label) {
+            label.textContent = theme === "dark" ? "Dark mode" : "Light mode";
+          }
+        }
+
+        applyTheme(root.getAttribute("data-multimodal-theme") || "light");
+
+        toggle.addEventListener("click", function () {
+          const nextTheme = root.getAttribute("data-multimodal-theme") === "dark" ? "light" : "dark";
+          localStorage.setItem("hat-multimodal-theme", nextTheme);
+          applyTheme(nextTheme);
+        });
+      })();
+    </script>
+
+    <script>
+      (function () {
+        const body = document.body;
+        const overview = document.getElementById("overview");
+        const sectionLinks = Array.from(document.querySelectorAll("[data-section-link]"));
+        const sections = sectionLinks
+          .map((link) => document.getElementById(link.dataset.sectionLink))
+          .filter(Boolean);
+
+        if (!overview || !sectionLinks.length || !sections.length) {
+          return;
+        }
+
+        const updateDockedState = () => {
+          const shouldDock = window.scrollY > Math.max(140, overview.offsetTop + 120);
+          body.classList.toggle("nav-docked", shouldDock);
+        };
+
+        const sectionObserver = new IntersectionObserver(
+          (entries) => {
+            const visible = entries
+              .filter((entry) => entry.isIntersecting)
+              .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+            if (!visible) {
+              return;
+            }
+
+            sectionLinks.forEach((link) => {
+              const isActive = link.dataset.sectionLink === visible.target.id;
+              link.classList.toggle("is-active", isActive);
+
+              if (isActive) {
+                link.setAttribute("aria-current", "location");
+              } else {
+                link.removeAttribute("aria-current");
+              }
+            });
+          },
+          {
+            rootMargin: "-22% 0px -50% 0px",
+            threshold: [0.2, 0.45, 0.7]
+          }
+        );
+
+        sections.forEach((section) => sectionObserver.observe(section));
+        updateDockedState();
+
+        let ticking = false;
+        window.addEventListener("scroll", () => {
+          if (ticking) {
+            return;
+          }
+
+          ticking = true;
+          window.requestAnimationFrame(() => {
+            updateDockedState();
+            ticking = false;
+          });
+        }, { passive: true });
+
+        window.addEventListener("resize", updateDockedState);
+      })();
+    </script>
   </body>
 </html>

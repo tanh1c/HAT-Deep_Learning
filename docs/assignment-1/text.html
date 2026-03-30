@@ -8,11 +8,21 @@
       name="description"
       content="Text report page for Assignment 1, covering the RNN versus Transformer comparison."
     >
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("hat-text-theme");
+          document.documentElement.setAttribute("data-text-theme", saved || "light");
+        } catch (error) {
+          document.documentElement.setAttribute("data-text-theme", "light");
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="../assets/styles.css">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   </head>
-  <body class="theme-blue">
+  <body class="text-report-page theme-blue">
     <a class="skip-link" href="#main-content">Skip to content</a>
 
     <header class="topbar">
@@ -33,11 +43,163 @@
           <a href="./multimodal.html">Multimodal</a>
           <a href="#text-extensions">Extensions</a>
         </nav>
+
+        <div class="topbar-actions text-theme-actions">
+          <button class="theme-toggle text-theme-toggle" type="button" data-text-theme-toggle aria-label="Switch color theme">
+            <span class="theme-toggle-indicator" aria-hidden="true"></span>
+            <span data-text-theme-label>Light mode</span>
+          </button>
+        </div>
       </div>
     </header>
 
-    <main id="main-content">      
-      <section class="shell section theme-blue">
+    <main id="main-content">
+      <div class="assignment-layout">
+        <aside class="side-rail-nav" aria-label="Text report page navigation">
+          <a class="side-rail-link side-rail-link-home" href="../index.html">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 10.5L12 3l9 7.5"></path>
+                <path d="M5.5 9.5V21h13V9.5"></path>
+                <path d="M9.5 21v-6h5v6"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Home</span>
+          </a>
+
+          <a class="side-rail-link" href="#overview" data-section-link="overview">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="6" y1="4" x2="6" y2="20"></line>
+                <line x1="12" y1="7" x2="12" y2="17"></line>
+                <line x1="18" y1="5" x2="18" y2="19"></line>
+                <circle cx="6" cy="9" r="2"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+                <circle cx="18" cy="10" r="2"></circle>
+              </svg>
+            </span>
+            <span class="side-rail-label">Overview</span>
+          </a>
+
+          <a class="side-rail-link" href="#text-report" data-section-link="text-report">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 3h6l1 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3z"></path>
+                <path d="M9 12h6"></path>
+                <path d="M9 16h6"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Report</span>
+          </a>
+
+          <a class="side-rail-link" href="#text-background" data-section-link="text-background">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 6.5h16"></path>
+                <path d="M8 6.5v11"></path>
+                <path d="M16 6.5v11"></path>
+                <path d="M5 17.5h14"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Background</span>
+          </a>
+
+          <a class="side-rail-link" href="#text-eda" data-section-link="text-eda">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 19V9"></path>
+                <path d="M12 19V5"></path>
+                <path d="M19 19v-7"></path>
+                <path d="M3 19h18"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">EDA</span>
+          </a>
+
+          <a class="side-rail-link" href="#text-pipeline" data-section-link="text-pipeline">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="5" width="7" height="5" rx="1.4"></rect>
+                <rect x="14" y="5" width="7" height="5" rx="1.4"></rect>
+                <rect x="8.5" y="14" width="7" height="5" rx="1.4"></rect>
+                <path d="M10 7.5h4"></path>
+                <path d="M12 10v4"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Pipeline</span>
+          </a>
+
+          <a class="side-rail-link" href="#text-models" data-section-link="text-models">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                <path d="M9 4v16"></path>
+                <path d="M15 4v16"></path>
+                <path d="M4 9h16"></path>
+                <path d="M4 15h16"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Models</span>
+          </a>
+
+          <a class="side-rail-link" href="#text-results" data-section-link="text-results">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19h16"></path>
+                <path d="M7 16V9"></path>
+                <path d="M12 16V5"></path>
+                <path d="M17 16v-4"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Results</span>
+          </a>
+
+          <a class="side-rail-link" href="#text-extensions" data-section-link="text-extensions">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3l2.2 4.9L19 10l-4.8 2.2L12 17l-2.2-4.8L5 10l4.8-2.1z"></path>
+                <path d="M18.5 18.5l2.5 2.5"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Extensions</span>
+          </a>
+
+          <a class="side-rail-link side-rail-link-track" href="./index.html">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="8" height="7" rx="1.8"></rect>
+                <rect x="13" y="4" width="8" height="7" rx="1.8"></rect>
+                <rect x="3" y="13" width="8" height="7" rx="1.8"></rect>
+                <rect x="13" y="13" width="8" height="7" rx="1.8"></rect>
+              </svg>
+            </span>
+            <span class="side-rail-label">Assignment 1</span>
+          </a>
+
+          <a class="side-rail-link side-rail-link-track" href="./image.html">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="2.2"></rect>
+                <circle cx="8.2" cy="9" r="1.5"></circle>
+                <path d="M21 16l-5.3-5.3a1 1 0 0 0-1.4 0L7 18"></path>
+              </svg>
+            </span>
+            <span class="side-rail-label">Image</span>
+          </a>
+
+          <a class="side-rail-link side-rail-link-track" href="./multimodal.html">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3l2.1 4.9L19 10l-4.9 2.1L12 17l-2.1-4.9L5 10l4.9-2.1z"></path>
+                <circle cx="18" cy="18" r="2.5"></circle>
+              </svg>
+            </span>
+            <span class="side-rail-label">Multimodal</span>
+          </a>
+        </aside>
+
+        <div class="assignment-flow">
+      <section id="overview" class="shell section theme-blue">
           <p class="eyebrow">Text track</p>
           <h1 style="margin-top: 0.5rem; margin-bottom: 1rem;">
             RNN vs <span>Transformer</span>
@@ -67,10 +229,10 @@
               <p class="meta-label">Sections</p>
               <p class="meta-value">5 report blocks</p>
             </div>
-            <div class="meta-item" style="border-color: var(--accent); background: rgba(65, 130, 235, 0.15);">
+            <div class="meta-item text-repo-meta">
               <p class="meta-label">Repository</p>
               <p class="meta-value">
-                <a href="https://github.com/HatakekkSheeshh/classification-finetune-bert" target="_blank" style="color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.6rem; transition: all 0.2s ease;" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='none'">
+                <a class="text-repo-link" href="https://github.com/HatakekkSheeshh/classification-finetune-bert" target="_blank" rel="noreferrer">
                   <svg height="18" width="18" viewBox="0 0 16 16" style="fill: currentColor;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
                   <span style="border-bottom: 1px solid currentColor;">GitHub Repo</span>
                 </a>
@@ -151,11 +313,11 @@
               For each timestep \( t \), the activation \( a^{\langle t \rangle} \) and the output \( y^{\langle t \rangle} \) are expressed as follows:
             </p>
             <div style="text-align: center; margin: 1.5rem 0;">
-              <span style="display: inline-block; border: 1px solid white; padding: 0.5rem; margin-right: 1.5rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 0.5rem; margin-right: 1.5rem;">
                 \( a^{\langle t \rangle} = g_1( W_{aa} a^{\langle t-1 \rangle} + W_{ax} x^{\langle t \rangle} + b_a ) \)
               </span>
               <span>and</span>
-              <span style="display: inline-block; border: 1px solid white; padding: 0.5rem; margin-left: 1.5rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 0.5rem; margin-left: 1.5rem;">
                 \( y^{\langle t \rangle} = g_2( W_{ya} a^{\langle t \rangle} + b_y ) \)
               </span>
             </div>
@@ -166,7 +328,7 @@
               <span style="color: var(--primary); font-weight: bold;">&#10063; Loss function</span> In the case of a recurrent neural network, the loss function \( \mathcal{L} \) of all time steps is defined based on the loss at every time step<sup><a href="#text-references" class="text-link">[2]</a></sup> :
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
-              <span style="display: inline-block; border: 1px solid white; padding: 1rem 2rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 1rem 2rem;">
                 \( \displaystyle \mathcal{L}(\hat{y}, y) = \sum_{t=1}^{T_y} \mathcal{L}(\hat{y}^{\langle t \rangle}, y^{\langle t \rangle}) \)
               </span>
             </div>
@@ -174,7 +336,7 @@
               <span style="color: var(--primary); font-weight: bold;">&#10063; Backpropagation through time</span> Backpropagation is done at each point in time. At timestep \( T \), the derivative of the loss \( \mathcal{L} \) with respect to weight matrix \( W \) is expressed<sup><a href="#text-references" class="text-link">[2]</a></sup> :
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
-              <span style="display: inline-block; border: 1px solid white; padding: 1rem 2rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 1rem 2rem;">
                 \( \displaystyle \frac{\partial \mathcal{L}^{(T)}}{\partial W} = \sum_{t=1}^{T} \left. \frac{\partial \mathcal{L}^{(T)}}{\partial W} \right|_{(t)} \)
               </span>
             </div>
@@ -183,7 +345,7 @@
               <span style="color: var(--primary); font-weight: bold;">&#10063; Types of gates</span> In order to remedy the vanishing gradient problem, specific gates are used in some types of RNNs and usually have a well-defined purpose. They are usually noted \( \Gamma \) and are equal to<sup><a href="#text-references" class="text-link">[1]</a></sup> :
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
-              <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 0.8rem 1.5rem;">
                 \( \Gamma = \sigma(W x^{\langle t \rangle} + U a^{\langle t-1 \rangle} + b) \)
               </span>
             </div>
@@ -241,7 +403,7 @@
               The <strong>forget gate</strong> multiplies the previous cell state by another value between 0 and 1, deciding how much information from the previous time step to retain or discard.
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
-              <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 0.8rem 1.5rem;">
                 \( f_t = \sigma(W_f [h_{t-1}, x_t] + b_f) \)
               </span>
             </div>
@@ -250,7 +412,7 @@
               The <strong>input gate</strong> multiplies the candidate cell state by a value produced by a sigmoid function as the activation function, between 0 and 1, determining how much new information from the current input to add to the memory.
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
-              <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 0.8rem 1.5rem;">
                 \( i_t = \sigma(W_i [h_{t-1}, x_t] + b_i) \)
               </span>
             </div>
@@ -259,7 +421,7 @@
               The input gate then generates a new candidate cell state:
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
-              <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 0.8rem 1.5rem;">
                 \( \tilde{C}_t = \tanh(W_c [h_{t-1}, x_t] + b_c) \)
               </span>
             </div>
@@ -268,7 +430,7 @@
               The cell state \( C_t \) is updated by the long-term memory:
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
-              <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 0.8rem 1.5rem;">
                 \( C_t = f_t \star C_{t-1} + i_t \star \tilde{C}_t \)
               </span>
             </div>
@@ -277,11 +439,11 @@
               Finally, the <strong>output gate</strong> multiplies the updated cell state (after passing through a tanh) by a gating value to determine what part of the internal state becomes visible as output \( o_t \) and a new hidden state \( h_t \):
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
-              <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem; margin-right: 1rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 0.8rem 1.5rem; margin-right: 1rem;">
                 \( o_t = \sigma(W_o [h_{t-1}, x_t] + b_o) \)
               </span>
               <span style="font-weight: bold; margin: 0 0.5rem;">and</span>
-              <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem; margin-left: 1rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 0.8rem 1.5rem; margin-left: 1rem;">
                 \( h_t = o_t \star \tanh(C_t) \)
               </span>
             </div>
@@ -300,19 +462,19 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td style="text-align: center; color: white;">\( \tilde{C}_t \)</td>
-                    <td style="color: white;">Candidate cell state</td>
-                    <td style="color: white;">\( \tanh(W_c [h_{t-1}, x_t] + b_c) \)</td>
+                    <td style="text-align: center; color: var(--text-strong);">\( \tilde{C}_t \)</td>
+                    <td style="color: var(--text-strong);">Candidate cell state</td>
+                    <td style="color: var(--text-strong);">\( \tanh(W_c [h_{t-1}, x_t] + b_c) \)</td>
                   </tr>
                   <tr>
-                    <td style="text-align: center; color: white;">\( C_t \)</td>
-                    <td style="color: white;">Updated cell state (Long-term memory)</td>
-                    <td style="color: white;">\( f_t \star C_{t-1} + i_t \star \tilde{C}_t \)</td>
+                    <td style="text-align: center; color: var(--text-strong);">\( C_t \)</td>
+                    <td style="color: var(--text-strong);">Updated cell state (Long-term memory)</td>
+                    <td style="color: var(--text-strong);">\( f_t \star C_{t-1} + i_t \star \tilde{C}_t \)</td>
                   </tr>
                   <tr>
-                    <td style="text-align: center; color: white;">\( h_t \)</td>
-                    <td style="color: white;">Hidden state (Output/Short-term memory)</td>
-                    <td style="color: white;">\( o_t \star \tanh(C_t) \)</td>
+                    <td style="text-align: center; color: var(--text-strong);">\( h_t \)</td>
+                    <td style="color: var(--text-strong);">Hidden state (Output/Short-term memory)</td>
+                    <td style="color: var(--text-strong);">\( o_t \star \tanh(C_t) \)</td>
                   </tr>
                 </tbody>
               </table>
@@ -329,7 +491,7 @@
               <span style="color: var(--primary); font-weight: bold;">&#10063; Training loss</span> The student is trained with a distillation loss over the soft target probabilities of the teacher:
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
-              <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 0.8rem 1.5rem;">
                 \( \displaystyle L_{ce} = \sum_{i} t_i * \log(s_i) \)
               </span>
             </div>
@@ -337,7 +499,7 @@
               where \( t_i \) (resp. \( s_i \)) is a probability estimated by the teacher (resp. the student). This objective results in a rich training signal by leveraging the full teacher distribution, using a softmax-temperature:
             </div>
             <div style="text-align: center; margin: 1.5rem 0;">
-              <span style="display: inline-block; border: 1px solid white; padding: 0.8rem 1.5rem;">
+              <span style="display: inline-block; border: 1px solid var(--formula-border); color: var(--text-strong); padding: 0.8rem 1.5rem;">
                 \( \displaystyle p_i = \frac{\exp(z_i / T)}{\sum_{j} \exp(z_j / T)} \)
               </span>
             </div>
@@ -1043,6 +1205,8 @@
           </article>
         </div>
       </section>
+        </div>
+      </div>
     </main>
 
     <footer class="shell footer">
@@ -1054,5 +1218,100 @@
         </div>
       </div>
     </footer>
+
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const toggle = document.querySelector("[data-text-theme-toggle]");
+        const label = document.querySelector("[data-text-theme-label]");
+
+        if (!toggle) {
+          return;
+        }
+
+        function applyTheme(theme) {
+          root.setAttribute("data-text-theme", theme);
+          toggle.setAttribute("aria-pressed", String(theme === "dark"));
+          toggle.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+
+          if (label) {
+            label.textContent = theme === "dark" ? "Dark mode" : "Light mode";
+          }
+        }
+
+        applyTheme(root.getAttribute("data-text-theme") || "light");
+
+        toggle.addEventListener("click", function () {
+          const nextTheme = root.getAttribute("data-text-theme") === "dark" ? "light" : "dark";
+          localStorage.setItem("hat-text-theme", nextTheme);
+          applyTheme(nextTheme);
+        });
+      })();
+    </script>
+
+    <script>
+      (function () {
+        const body = document.body;
+        const overview = document.getElementById("overview");
+        const sectionLinks = Array.from(document.querySelectorAll("[data-section-link]"));
+        const sections = sectionLinks
+          .map((link) => document.getElementById(link.dataset.sectionLink))
+          .filter(Boolean);
+
+        if (!overview || !sectionLinks.length || !sections.length) {
+          return;
+        }
+
+        const updateDockedState = () => {
+          const shouldDock = window.scrollY > Math.max(140, overview.offsetTop + 120);
+          body.classList.toggle("nav-docked", shouldDock);
+        };
+
+        const sectionObserver = new IntersectionObserver(
+          (entries) => {
+            const visible = entries
+              .filter((entry) => entry.isIntersecting)
+              .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+            if (!visible) {
+              return;
+            }
+
+            sectionLinks.forEach((link) => {
+              const isActive = link.dataset.sectionLink === visible.target.id;
+              link.classList.toggle("is-active", isActive);
+
+              if (isActive) {
+                link.setAttribute("aria-current", "location");
+              } else {
+                link.removeAttribute("aria-current");
+              }
+            });
+          },
+          {
+            rootMargin: "-22% 0px -50% 0px",
+            threshold: [0.2, 0.45, 0.7]
+          }
+        );
+
+        sections.forEach((section) => sectionObserver.observe(section));
+        updateDockedState();
+
+        let ticking = false;
+        window.addEventListener("scroll", () => {
+          if (ticking) {
+            return;
+          }
+
+          ticking = true;
+          window.requestAnimationFrame(() => {
+            updateDockedState();
+            ticking = false;
+          });
+        }, { passive: true });
+
+        window.addEventListener("resize", updateDockedState);
+      })();
+    </script>
   </body>
 </html>
