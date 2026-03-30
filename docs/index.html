@@ -8,241 +8,337 @@
       name="description"
       content="Common GitHub Pages home for Deep Learning and Its Applications assignments, reports, demos, and code."
     >
+    <script>
+      (function () {
+        const saved = localStorage.getItem("hat-home-theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const theme = saved || (prefersDark ? "dark" : "light");
+        document.documentElement.setAttribute("data-home-theme", theme);
+      })();
+    </script>
     <link rel="stylesheet" href="./assets/styles.css">
   </head>
-  <body>
+  <body class="home-report-page">
     <a class="skip-link" href="#main-content">Skip to content</a>
 
     <header class="topbar">
       <div class="shell topbar-inner">
-        <a class="brand" href="./index.html" aria-label="Go to common page home">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <span class="brand-copy">
-            <p class="brand-label">Deep Learning Report</p>
-            <p class="brand-note">One repository for common page, assignments, and code</p>
-          </span>
-        </a>
+        <div class="topbar-cluster">
+          <a class="brand" href="./index.html" aria-label="Go to common page home">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-copy">
+              <p class="brand-label">HAT Report</p>
+              <p class="brand-note">Course hub for Assignment 1, reports, demos, and delivery</p>
+            </span>
+          </a>
 
-        <nav class="topnav" aria-label="Primary">
-          <a href="./index.html">Home</a>
-          <a href="#members">Members</a>
-          <a href="#assignments">Assignments</a>
-        </nav>
+          <nav class="topnav" aria-label="Primary">
+            <a href="#overview">Overview</a>
+            <a href="#system">System</a>
+            <a href="#proof">Proof</a>
+          </nav>
+        </div>
+
+        <div class="topbar-actions">
+          <a class="topbar-cta" href="./assignment-1/index.html">Open Assignment 1</a>
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme">
+            <span class="theme-toggle-indicator" aria-hidden="true"></span>
+            <span data-theme-label>Theme</span>
+          </button>
+        </div>
       </div>
     </header>
 
     <main id="main-content">
-      <section class="shell hero section">
-        <article class="panel hero-card">
-          <p class="eyebrow">Common Page</p>
-          <h1>
-            HAT portfolio for <span>deep learning assignments</span>.
-          </h1>
-          <p class="hero-subtitle">
-            Common GitHub Pages home for Assignment 1, Assignment 2, and Assignment 3.
-          </p>
-          <p class="note-line">
-            Includes the required group name, member list, instructor name, and assignment links.
-          </p>
+      <section id="overview" class="shell home-hero">
+        <div class="home-hero-grid">
+          <div class="hero-copy">
+            <div class="hero-label-row">
+              <span class="hero-dot" aria-hidden="true"></span>
+              <span class="hero-chip">Assignment 1 Live</span>
+            </div>
 
-          <div class="button-row">
-            <a class="button button-primary" href="./assignment-1/index.html">Assignment 1</a>
-            <a class="button button-secondary" href="#assignments">See all assignment pages</a>
-          </div>
+            <h1>
+              Build one system
+              <span>for deep learning reports.</span>
+            </h1>
 
-          <div class="hero-meta">
-            <div class="meta-item">
-              <p class="meta-label">Group name</p>
-              <p class="meta-value">HAT</p>
-            </div>
-            <div class="meta-item">
-              <p class="meta-label">Instructor</p>
-              <p class="meta-value">Le Thanh Sach</p>
-            </div>
-            <div class="meta-item">
-              <p class="meta-label">Members</p>
-              <p class="meta-value">3 members</p>
-            </div>
-            <div class="meta-item">
-              <p class="meta-label">Assignments</p>
-              <p class="meta-value">3 pages</p>
-            </div>
-          </div>
-        </article>
+            <div class="hero-summary">
+              <p>
+                HAT turns image, text, and multimodal work into one shared reporting surface with assignment pages,
+                source code, and a live image demo.
+              </p>
 
-        <aside class="hero-stage">
-          <div class="stage-grid">
-            <article class="stage-card stage-card-main">
-              <p class="card-kicker">Course site</p>
-              <h2 class="card-title">One home for all assignments.</h2>
-              <div class="stack-list">
-                <span class="status-pill">Ready</span>
-                <span class="chip">GitHub Pages</span>
-                <span class="chip">/docs</span>
+              <div class="hero-actions">
+                <a class="button button-primary" href="./assignment-1/index.html">Open Assignment 1</a>
+                <a class="button button-secondary" href="#system">Explore the system</a>
               </div>
-            </article>
 
-            <article class="stage-card stage-card-secondary">
-              <p class="card-kicker">Assignment roadmap</p>
-              <h3 class="card-title">A1 active, A2 and A3 prepared.</h3>
-              <ul class="mini-list">
-                <li>Assignment 1 page is the current focus.</li>
-                <li>Assignment 2 and 3 links are already in place.</li>
-              </ul>
-            </article>
+              <div class="hero-links" aria-label="Quick links">
+                <a class="hero-link" href="https://github.com/tanh1c/HAT-Deep_Learning" target="_blank" rel="noreferrer" aria-label="Open GitHub repository">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="currentColor" d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.5 0-.24-.01-1.04-.01-1.88-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.27 2.75 1.05A9.32 9.32 0 0 1 12 6.84c.85 0 1.71.12 2.51.36 1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.8 0 .27.18.6.69.5A10.25 10.25 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z"/>
+                  </svg>
+                  <span>GitHub</span>
+                </a>
 
-            <article class="stage-card stage-card-tertiary">
-              <p class="card-kicker">Quick facts</p>
-              <h3 class="card-title">HAT, 3 members, 3 assignment pages.</h3>
-              <ul class="mini-list">
-                <li>Instructor: Le Thanh Sach</li>
-                <li>Assignment 1 is split into image, text, and multimodal.</li>
-              </ul>
-            </article>
+                <a class="hero-link" href="https://huggingface.co/spaces/BoChay/DeepLearning" target="_blank" rel="noreferrer" aria-label="Open Hugging Face demo">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm-4.4 8.4a1.3 1.3 0 1 1 1.3-1.3a1.3 1.3 0 0 1-1.3 1.3Zm8.8 0a1.3 1.3 0 1 1 1.3-1.3a1.3 1.3 0 0 1-1.3 1.3Zm-.19 6.24A5.38 5.38 0 0 1 12 18.3a5.38 5.38 0 0 1-4.21-1.66a.7.7 0 1 1 1.08-.88A3.97 3.97 0 0 0 12 16.9a3.97 3.97 0 0 0 3.13-1.14a.7.7 0 0 1 1.06.92Z"/>
+                  </svg>
+                  <span>Demo</span>
+                </a>
+
+                <a class="hero-link" href="./report/main.tex" aria-label="Open report source">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="currentColor" d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 1.5V9h4.5M9 13h6m-6 3h6m-6-6h3"/>
+                  </svg>
+                  <span>Report</span>
+                </a>
+
+                <a class="hero-link" href="./assignment-1/index.html" aria-label="Open assignment overview">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="currentColor" d="M4 5a2 2 0 0 1 2-2h5v18H6a2 2 0 0 1-2-2Zm9-2h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5Zm2 4h3m-3 4h3m-3 4h3"/>
+                  </svg>
+                  <span>Page</span>
+                </a>
+              </div>
+            </div>
           </div>
-        </aside>
-      </section>
 
-      <section id="members" class="shell section">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">Members</h2>
-            <p class="section-copy">Required member list for the common page.</p>
-          </div>
-        </div>
-
-        <div class="member-grid">
-          <article
-            class="panel member-card"
-            aria-label="Member card for Chu Nguyen Tuan Anh"
-          >
-            <p class="card-kicker">Member 01</p>
-            <h3 class="member-name">Chu Nguyen Tuan Anh</h3>
-            <p class="member-id">Student ID: 2352022</p>
-            <p class="member-role">Assignment 1: image</p>
-            <div class="member-hover-card">
-              <p class="member-hover-label">GitHub profile</p>
-              <p class="member-hover-handle">github.com/tanh1c</p>
-              <a
-                class="member-hover-link"
-                href="https://github.com/tanh1c"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Open GitHub profile
-              </a>
+          <aside class="hero-aside" aria-label="Report system summary">
+            <div class="hero-aside-block">
+              <div class="hero-aside-row">
+                <span>Group</span>
+                <strong>HAT</strong>
+              </div>
+              <div class="hero-aside-row">
+                <span>Instructor</span>
+                <strong>Le Thanh Sach</strong>
+              </div>
+              <div class="hero-aside-row">
+                <span>Tracks</span>
+                <strong>Image / Text / Multimodal</strong>
+              </div>
+              <div class="hero-aside-row">
+                <span>Owners</span>
+                <strong>Chu Nguyen Tuan Anh · Nguyen Quoc Hieu · Vu Hai Tuan</strong>
+              </div>
             </div>
-          </article>
 
-          <article
-            class="panel member-card"
-            aria-label="Member card for Nguyen Quoc Hieu"
-          >
-            <p class="card-kicker">Member 02</p>
-            <h3 class="member-name">Nguyen Quoc Hieu</h3>
-            <p class="member-id">Student ID: 2352344</p>
-            <p class="member-role">Assignment 1: text</p>
-            <div class="member-hover-card">
-              <p class="member-hover-label">GitHub profile</p>
-              <p class="member-hover-handle">github.com/HatakekkSheeshh</p>
-              <a
-                class="member-hover-link"
-                href="https://github.com/HatakekkSheeshh"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Open GitHub profile
-              </a>
+            <div class="hero-aside-note">
+              <p class="hero-aside-label">Current Focus</p>
+              <h3>Assignment 1 is active.</h3>
+              <p>Three track pages, one report source, and one live image demo are already connected.</p>
             </div>
-          </article>
-
-          <article
-            class="panel member-card"
-            aria-label="Member card for Vu Hai Tuan"
-          >
-            <p class="card-kicker">Member 03</p>
-            <h3 class="member-name">Vu Hai Tuan</h3>
-            <p class="member-id">Student ID: 2353280</p>
-            <p class="member-role">Assignment 1: multimodal</p>
-            <div class="member-hover-card">
-              <p class="member-hover-label">GitHub profile</p>
-              <p class="member-hover-handle">github.com/Tuancoolboy</p>
-              <a
-                class="member-hover-link"
-                href="https://github.com/Tuancoolboy"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Open GitHub profile
-              </a>
-            </div>
-          </article>
+          </aside>
         </div>
       </section>
 
-      <section id="assignments" class="shell section">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">Assignment pages</h2>
-            <p class="section-copy">Required links to each assignment in the course.</p>
+      <section id="system" class="shell home-system">
+        <div class="system-intro">
+          <h2>One course hub for every report surface.</h2>
+          <p>
+            Structured for GitHub Pages, report writing, source control, and demo delivery without scattering ownership across disconnected files.
+          </p>
+        </div>
+
+        <div class="system-summary">
+          <div class="system-stat">
+            <span>Pages</span>
+            <strong>04</strong>
+          </div>
+          <div class="system-stat">
+            <span>Tracks</span>
+            <strong>03</strong>
+          </div>
+          <div class="system-stat">
+            <span>Owners</span>
+            <strong>03</strong>
+          </div>
+          <div class="system-stat">
+            <span>Live Demo</span>
+            <strong>01</strong>
           </div>
         </div>
 
-        <div class="assignment-grid">
-          <article class="panel assignment-card active">
-            <p class="card-kicker">Assignment 1</p>
-            <h3 class="card-title">Image, text, and multimodal classification</h3>
-            <div class="assignment-meta">
-              <span class="status-pill">Active draft</span>
-              <span class="chip">Image - Chu Nguyen Tuan Anh</span>
-              <span class="chip">Text - Nguyen Quoc Hieu</span>
-              <span class="chip">Multimodal - Vu Hai Tuan</span>
+        <div class="system-ledger">
+          <a class="system-row" href="./index.html">
+            <span class="system-row-index">01</span>
+            <div class="system-row-main">
+              <h3>Common Page</h3>
+              <p>Shared landing layer for navigation, group identity, and course-level routing.</p>
             </div>
-            <div class="assignment-links">
-              <a class="button button-primary" href="./assignment-1/index.html">Assignment 1 page</a>
-            </div>
-          </article>
+            <span class="system-row-meta">Home / Directory</span>
+          </a>
 
-          <article class="panel assignment-card planned">
-            <p class="card-kicker">Assignment 2</p>
-            <h3 class="card-title">Assignment 2 page</h3>
-            <div class="assignment-meta">
-              <span class="status-pill planned">Planned</span>
-              <span class="chip">Coming soon</span>
+          <a class="system-row" href="./assignment-1/index.html">
+            <span class="system-row-index">02</span>
+            <div class="system-row-main">
+              <h3>Assignment 1 Overview</h3>
+              <p>Assignment entry page that links the brief, deliverables, and all dedicated track pages.</p>
             </div>
-            <div class="assignment-links">
-              <a class="button button-secondary" href="./assignment-2/index.html">Open placeholder</a>
-            </div>
-          </article>
+            <span class="system-row-meta">Overview / Deliverables</span>
+          </a>
 
-          <article class="panel assignment-card planned">
-            <p class="card-kicker">Assignment 3</p>
-            <h3 class="card-title">Assignment 3 page</h3>
-            <div class="assignment-meta">
-              <span class="status-pill planned">Planned</span>
-              <span class="chip">Coming soon</span>
+          <div class="system-row system-row-stack">
+            <span class="system-row-index">03</span>
+            <div class="system-row-main">
+              <h3>Track Pages</h3>
+              <p>Independent report pages for image, text, and multimodal so each member can edit without blocking others.</p>
             </div>
-            <div class="assignment-links">
-              <a class="button button-secondary" href="./assignment-3/index.html">Open placeholder</a>
+            <div class="system-row-links">
+              <a href="./assignment-1/image.html">Image</a>
+              <a href="./assignment-1/text.html">Text</a>
+              <a href="./assignment-1/multimodal.html">Multimodal</a>
             </div>
-          </article>
+          </div>
+
+          <div class="system-row system-row-stack">
+            <span class="system-row-index">04</span>
+            <div class="system-row-main">
+              <h3>Delivery Links</h3>
+              <p>External surfaces for code hosting, the interactive image demo, and the LaTeX report source.</p>
+            </div>
+            <div class="system-row-links">
+              <a href="https://github.com/tanh1c/HAT-Deep_Learning" target="_blank" rel="noreferrer">GitHub Source</a>
+              <a href="https://huggingface.co/spaces/BoChay/DeepLearning" target="_blank" rel="noreferrer">HF Image Demo</a>
+              <a href="./report/main.tex">Report Source</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="proof" class="shell home-proof">
+        <div class="proof-block">
+          <div class="proof-copy">
+            <p class="proof-label">Operational Snapshot</p>
+            <h2>Everything aligned before final submission.</h2>
+            <div class="proof-text">
+              <p>
+                The project is organized so each member can edit a dedicated track page while the common site, report sources,
+                and deployment surfaces stay coherent.
+              </p>
+              <p>
+                GitHub Pages handles the presentation layer, the LaTeX report handles the formal submission layer, and the Hugging Face Space
+                carries the interactive image demo.
+              </p>
+            </div>
+
+            <div class="proof-metrics">
+              <div class="proof-metric">
+                <strong>03</strong>
+                <span>Track owners</span>
+              </div>
+              <div class="proof-metric">
+                <strong>03</strong>
+                <span>Assignment pages</span>
+              </div>
+              <div class="proof-metric">
+                <strong>02</strong>
+                <span>Live surfaces</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="proof-console" aria-label="Project structure snapshot">
+            <div class="proof-console-bar">
+              <span class="proof-dot proof-dot-red"></span>
+              <span class="proof-dot proof-dot-yellow"></span>
+              <span class="proof-dot proof-dot-green"></span>
+            </div>
+            <div class="proof-console-body">
+              <p><span class="proof-comment">// Sync assignment surfaces</span></p>
+              <p><span class="proof-command">git</span> <span class="proof-keyword">push</span> <span class="proof-arg">origin</span> <span class="proof-arg">main</span></p>
+              <p><span class="proof-info">Publishing GitHub Pages...</span> <span class="proof-success">OK</span></p>
+              <p><span class="proof-comment">// Route track pages</span></p>
+              <p><span class="proof-path">/assignment-1/image.html</span> <span class="proof-link">cnn / vit / calibration</span></p>
+              <p><span class="proof-path">/assignment-1/text.html</span> <span class="proof-link">bilstm / transformer</span></p>
+              <p><span class="proof-path">/assignment-1/multimodal.html</span> <span class="proof-link">clip / zero-shot / few-shot</span></p>
+              <p><span class="proof-comment">// Live demo deployment</span></p>
+              <p><span class="proof-command">hf</span> <span class="proof-keyword">space</span> <span class="proof-arg">deploy</span> <span class="proof-link">BoChay/DeepLearning</span></p>
+              <p class="proof-highlight">status: assignment 1 ready for final polish</p>
+            </div>
+          </div>
         </div>
       </section>
 
     </main>
 
-    <footer class="shell footer">
-      <div class="panel footer-card">
-        <p>
-          Common page for HAT.
-        </p>
-        <div class="footer-links">
-          <a href="./index.html">Home</a>
+    <footer class="shell home-footer">
+      <div class="home-footer-grid">
+        <div class="home-footer-brand">
+          <div class="home-footer-mark">
+            <span aria-hidden="true"></span>
+            <strong>HAT Report</strong>
+          </div>
+          <p>
+            A shared reporting system for deep learning coursework, built around assignment pages, notebooks, demos, and formal report delivery.
+          </p>
+        </div>
+
+        <div class="home-footer-column">
+          <h3>Pages</h3>
+          <a href="./index.html">Common Page</a>
           <a href="./assignment-1/index.html">Assignment 1</a>
           <a href="./assignment-2/index.html">Assignment 2</a>
           <a href="./assignment-3/index.html">Assignment 3</a>
         </div>
+
+        <div class="home-footer-column">
+          <h3>Tracks</h3>
+          <a href="./assignment-1/image.html">Image</a>
+          <a href="./assignment-1/text.html">Text</a>
+          <a href="./assignment-1/multimodal.html">Multimodal</a>
+        </div>
+
+        <div class="home-footer-column">
+          <h3>External</h3>
+          <a href="https://github.com/tanh1c/HAT-Deep_Learning" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://huggingface.co/spaces/BoChay/DeepLearning" target="_blank" rel="noreferrer">HF Demo</a>
+          <a href="./report/main.tex">Report Source</a>
+        </div>
+
+        <div class="home-footer-column">
+          <h3>Group</h3>
+          <p>Instructor: Le Thanh Sach</p>
+          <p>Chu Nguyen Tuan Anh</p>
+          <p>Nguyen Quoc Hieu</p>
+          <p>Vu Hai Tuan</p>
+        </div>
+      </div>
+
+      <div class="home-footer-bottom">
+        <span>© 2026 HAT Deep Learning</span>
+        <div class="home-footer-bottom-links">
+          <a href="./assignment-1/index.html">Assignment 1</a>
+          <a href="./report/main.tex">Report</a>
+          <a href="https://github.com/tanh1c/HAT-Deep_Learning" target="_blank" rel="noreferrer">Source</a>
+        </div>
       </div>
     </footer>
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const toggle = document.querySelector("[data-theme-toggle]");
+        const label = document.querySelector("[data-theme-label]");
+        if (!toggle) return;
+
+        function applyTheme(theme) {
+          root.setAttribute("data-home-theme", theme);
+          toggle.setAttribute("aria-pressed", String(theme === "dark"));
+          toggle.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+          if (label) label.textContent = theme === "dark" ? "Dark mode" : "Light mode";
+        }
+
+        applyTheme(root.getAttribute("data-home-theme") || "light");
+
+        toggle.addEventListener("click", function () {
+          const nextTheme = root.getAttribute("data-home-theme") === "dark" ? "light" : "dark";
+          localStorage.setItem("hat-home-theme", nextTheme);
+          applyTheme(nextTheme);
+        });
+      })();
+    </script>
   </body>
 </html>

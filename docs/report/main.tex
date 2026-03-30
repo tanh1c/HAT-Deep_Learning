@@ -1,15 +1,25 @@
-\documentclass[a4paper, 12pt]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{longtable}
-\usepackage{multirow}
-\usepackage{graphicx}
-\usepackage[absolute,overlay]{textpos}
-\usepackage{pgfgantt}
-\usepackage{eso-pic}
-\usepackage{tikz}
+\documentclass[twoside,final]{hcmut-report}
+
+\usepackage{array,longtable,multirow,tabularx}
 \usepackage{enumitem}
+\usepackage{float}
+\usepackage{pgfgantt}
+\usepackage{tikz}
 \usepackage{xcolor}
+
+\coursename{Deep Learning and Its Applications (CO3133)}
+\reporttype{Progress Report}
+\title{Assignment 1 --- Classification}
+\advisor{Le Thanh Sach}
+\stuname{
+  Chu Nguyen Tuan Anh & Student ID 2352022 \emph{(Group HAT)} \\
+  Nguyen Quoc Hieu & Student ID 2352344 \emph{(Group HAT)} \\
+  Vu Hai Tuan & Student ID 2353280 \emph{(Group HAT)} \\
+}
+\reportplace{Ho Chi Minh City}
+\reporttime{March 2026}
+
+\graphicspath{{graphics/}{assets/image/}{assets/text/}{assets/multimodal/}}
 
 \definecolor{barblue}{RGB}{153,204,254}
 \definecolor{groupblue}{RGB}{51,102,254}
@@ -20,114 +30,87 @@
 \setganttlinklabel{f-f}{FF}
 
 \begin{document}
+\coverpage
 
-\AddToShipoutPictureFG*{%
-  \begin{tikzpicture}[remember picture,overlay]
-      \node[anchor=south east]
-            at ([xshift=-1cm,yshift=1cm]current page.south east)
-                  {\includegraphics[width=1cm]{hcmut.png}};
-  \end{tikzpicture}%
-}
+\tableofcontents
+\listoffigures
+\newpage
 
-\begin{center}
-    \textbf{SOCIALIST REPUBLIC OF VIETNAM}\\
-    \textbf{Independence - Freedom - Happiness}\\[2em]
-    \textbf{Vietnam National University, Ho Chi Minh City}\\
-    \textbf{HO CHI MINH CITY UNIVERSITY OF TECHNOLOGY}\\[1em]
-    \textbf{\LARGE PROGRESS REPORT}\\[1em]
-    \textbf{Deep Learning and Its Applications (CO3133)}\\
-    \textbf{Topic: Assignment-1 --- Classification}\\
-    \textbf{CLASS: CLC\_HK252 [CC01]}\\
-    \textbf{GROUP: HAT}\\
-    \vspace{1em}
+\section{Project Overview}
 
-    ------------
-\end{center}
-
-\noindent
-\begin{tabular}{@{}ll@{}}
-\textbf{Project title:} & Assignment-1 Classification \\
+\subsection{General Information}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Project title:} & Assignment 1 --- Classification \\
 \textbf{Course:} & Deep Learning and Its Applications (CO3133) \\
 \textbf{Class:} & CLC\_HK252 [CC01] \\
 \textbf{Current submission:} & Report 1 (due 23:59, 26 March 2026) \\
-\textbf{Final submission planned:} & Final report (due 23:59, 06 April 2026)
-\end{tabular}
+\textbf{Final submission planned:} & Final report (due 23:59, 06 April 2026) \\
+\textbf{Instructor:} & Le Thanh Sach \\
+\textbf{Group:} & HAT \\
+\end{tabularx}
 
-\vspace{0.5em}
-\noindent \textbf{TEAM MEMBERS:}
-
-\subsection*{Chu Nguyen Tuan Anh --- Student ID: 2352022}
+\subsection{Project Shortcut Links}
 \begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Main responsibility:} Image classification track on CIFAR-10.
-    \item \textbf{Completed work:}
-    \begin{itemize}[leftmargin=*, nosep]
-        \item Prepared the CIFAR-10 data pipeline, including resizing, normalization, augmentation, and train/test evaluation workflow.
-        \item Trained and evaluated two pretrained image models: ResNet-18 as the CNN baseline and ViT-B/16 as the Transformer baseline.
-        \item Obtained final reported test accuracy of 96.55\% for ResNet-18 and 98.36\% for ViT-B/16.
-        \item Completed the image-track extensions: web demo integration, interpretability visualization, and calibration analysis with exported reliability-diagram artifacts.
-    \end{itemize}
-    \item \textbf{Ongoing / remaining work:}
-    \begin{itemize}[leftmargin=*, nosep]
-        \item Finalize the selected figures/tables for the final slide deck and presentation video.
-        \item Support final integration of the shared Assignment 1 site and team deliverables.
-    \end{itemize}
+    \item GitHub Pages: \href{https://tanh1c.github.io/HAT-Deep_Learning/}{tanh1c.github.io/HAT-Deep\_Learning/}
+    \item Image demo (Hugging Face Spaces): \href{https://huggingface.co/spaces/BoChay/DeepLearning}{huggingface.co/spaces/BoChay/DeepLearning}
 \end{itemize}
 
-\subsection*{Nguyen Quoc Hieu --- Student ID: 2352344}
+\subsection{Team Members and Ownership}
 \begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Main responsibility:} Text classification track on the 20 Newsgroups dataset.
-    \item \textbf{Completed work:}
-    \begin{itemize}[leftmargin=*, nosep]
-        \item Prepared the text pipeline and report materials for the 20 Newsgroups classification task.
-        \item Implemented and compared recurrent and Transformer-based text models, including a BiLSTM-with-attention baseline and Transformer fine-tuning experiments.
-        \item Consolidated current reported results on the text page, including 69.72\% validation accuracy for the BiLSTM baseline and a best reported Transformer result of 79.86\% validation accuracy / 74.77\% test accuracy.
-        \item Added text-track figures and comparison tables such as confusion matrices, loss curves, and model-efficiency summaries.
-    \end{itemize}
-    \item \textbf{Ongoing / remaining work:}
-    \begin{itemize}[leftmargin=*, nosep]
-        \item Finalize wording, figure selection, and the final presentation-ready summary for the text track.
-        \item Coordinate the final shared deliverables and optional future integration into the common demo workflow if needed.
-    \end{itemize}
+    \item \textbf{Chu Nguyen Tuan Anh} (2352022): image classification track.
+    \item \textbf{Nguyen Quoc Hieu} (2352344): text classification track.
+    \item \textbf{Vu Hai Tuan} (2353280): multimodal image-text classification track.
 \end{itemize}
 
-\subsection*{Vu Hai Tuan --- Student ID: 2353280}
+\section{Progress Summary}
+
+\subsection{Member Progress}
+
+\subsubsection*{Chu Nguyen Tuan Anh --- Image Track}
 \begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Main responsibility:} Multimodal image-text classification track.
-    \item \textbf{Completed work:}
-    \begin{itemize}[leftmargin=*, nosep]
-        \item Prepared the multimodal dataset pipeline using paired image-text samples from the UPMC-Food101 subset used in the report.
-        \item Implemented zero-shot and few-shot multimodal classification experiments with CLIP ViT-B/16 as the main backbone and CLIP RN50 as the extension backbone.
-        \item Reported current multimodal results, including 89.59\% zero-shot accuracy on the main backbone and 92.24\% for the best 10-shot ViT-B/16 setting.
-        \item Added result tables, calibration/error-analysis figures, and augmentation-vs-no-augmentation comparisons for the multimodal track.
-    \end{itemize}
-    \item \textbf{Ongoing / remaining work:}
-    \begin{itemize}[leftmargin=*, nosep]
-        \item Finalize the multimodal write-up and select the most representative tables/figures for the final presentation.
-        \item Sync the shared overview page and final assignment-level deliverables with the completed multimodal results.
-    \end{itemize}
+    \item Prepared the CIFAR-10 data pipeline, including resizing, normalization, augmentation, and train/test evaluation workflow.
+    \item Trained and evaluated two pretrained image models: ResNet-18 as the CNN baseline and ViT-B/16 as the Transformer baseline.
+    \item Obtained final reported test accuracy of 96.55\% for ResNet-18 and 98.36\% for ViT-B/16.
+    \item Completed the image-track extensions: web demo integration, interpretability visualization, and calibration analysis with exported reliability-diagram artifacts.
+    \item Remaining work: finalize figure selection for the final slide deck and help complete shared deliverables.
 \end{itemize}
 
-\subsection*{Overall progress summary}
+\subsubsection*{Nguyen Quoc Hieu --- Text Track}
+\begin{itemize}[leftmargin=*, nosep]
+    \item Prepared the text pipeline and report materials for the 20 Newsgroups classification task.
+    \item Implemented and compared recurrent and Transformer-based text models, including a BiLSTM-with-attention baseline and Transformer fine-tuning experiments.
+    \item Consolidated current reported results on the text page, including 69.72\% validation accuracy for the BiLSTM baseline and a best reported Transformer result of 79.86\% validation accuracy / 74.77\% test accuracy.
+    \item Added text-track figures and comparison tables such as confusion matrices, loss curves, and model-efficiency summaries.
+    \item Remaining work: finalize wording, figure selection, and presentation-ready summarization for the text track.
+\end{itemize}
+
+\subsubsection*{Vu Hai Tuan --- Multimodal Track}
+\begin{itemize}[leftmargin=*, nosep]
+    \item Prepared the multimodal dataset pipeline using paired image-text samples from the UPMC-Food101 subset used in the report.
+    \item Implemented zero-shot and few-shot multimodal classification experiments with CLIP ViT-B/16 as the main backbone and CLIP RN50 as the extension backbone.
+    \item Reported current multimodal results, including 89.59\% zero-shot accuracy on the main backbone and 92.24\% for the best 10-shot ViT-B/16 setting.
+    \item Added result tables, calibration/error-analysis figures, and augmentation-vs-no-augmentation comparisons for the multimodal track.
+    \item Remaining work: polish the multimodal write-up and select the most representative results for the final presentation.
+\end{itemize}
+
+\subsection{Overall Status}
 \begin{itemize}[leftmargin=*, nosep]
     \item The team has completed the core experimentation and reporting work for all three tracks: image, text, and multimodal.
     \item Each member now has a dedicated report page containing dataset description, model setup, quantitative results, and supporting figures.
     \item The image track is fully integrated into the interactive Gradio demo, while the text and multimodal tracks are already documented on the shared GitHub Pages site.
-    \item At the current progress checkpoint, the main remaining tasks are:
-    \begin{itemize}[leftmargin=*, nosep]
-        \item polishing the final report wording and harmonizing status across the shared pages;
-        \item preparing slide presentation and presentation video assets;
-        \item recording the demo video and attaching the final links on the assignment page.
-    \end{itemize}
+    \item The main remaining tasks are polishing the final report wording, preparing presentation assets, recording videos, and attaching final links to the assignment page.
 \end{itemize}
 
-\subsection*{Extension / Additional Implementation}
+\subsection{Extensions}
 \begin{itemize}[leftmargin=*, nosep]
-    \item The group has built a shared GitHub Pages site with a common home page, a dedicated Assignment 1 overview page, and separate report pages for the image, text, and multimodal tracks.
-    \item The interactive Gradio demo is currently implemented for the image track and supports prediction, interpretability, and calibration analysis.
-    \item Additional extension work already present in the project includes text-model fine-tuning strategy comparison and multimodal zero-shot vs few-shot analysis with calibration/error-analysis figures.
+    \item Shared GitHub Pages site with a common home page, an Assignment 1 overview page, and separate report pages for image, text, and multimodal tracks.
+    \item Interactive Gradio demo for the image track with prediction, interpretability, and calibration analysis.
+    \item Additional extension work includes text-model fine-tuning strategy comparison and multimodal zero-shot vs few-shot analysis with calibration/error-analysis figures.
 \end{itemize}
 
-% =================== PROJECT CHART ===================
+\section{Timeline and Workplan}
+
+\subsection{Timeline}
 \noindent \textbf{Timeline (Weeks 11--15; Report 1 due 26 March 2026, Final report due 06 April 2026)}
 
 \begingroup
@@ -158,37 +141,31 @@
 \gantttitle[title label node/.append style={below left=5pt and -2pt}]{WEEKS: }{0}
 \gantttitlelist{11,12,13,14,15}{1} \\
 
-% ===== Week 11 =====
 \ganttgroup{Data}{1}{1} \\
 \ganttbar[name=imgdata]{Image data (Anh)}{1}{1} \\
 \ganttbar[name=textdata]{Text data (Hieu)}{1}{1} \\
 \ganttbar[name=multidata]{Multimodal data (Tuan)}{1}{1} \\[grid]
 
-% ===== Week 12 =====
 \ganttgroup{Models}{2}{2} \\
 \ganttbar[name=imgmodel]{Image model (Anh)}{2}{2} \\
 \ganttbar[name=textmodel]{Text model (Hieu)}{2}{2} \\
 \ganttbar[name=multimodel]{Multimodal model (Tuan)}{2}{2} \\[grid]
 
-% ===== Week 13 =====
 \ganttgroup{Eval + Report}{3}{3} \\
 \ganttbar[name=eval]{Evaluation}{3}{3} \\
 \ganttbar[name=report1]{Progress report}{3}{3} \\
 \ganttmilestone[name=progressms]{Report 1}{3} \\[grid]
 
-% ===== Week 14 =====
 \ganttgroup{Final Prep}{4}{4} \\
 \ganttbar[name=tuning]{Polish report pages}{4}{4} \\
-\ganttbar[name=webdemo]{Sync site + demo}{4}{4} \\
+\ganttbar[name=webdemo]{Finalize pages + links}{4}{4} \\
 \ganttbar[name=slides]{Slides}{4}{4} \\[grid]
 
-% ===== Week 15 =====
 \ganttgroup{Delivery}{5}{5} \\
-\ganttbar[name=video]{Demo video}{5}{5} \\
+\ganttbar[name=video]{Demo + pres. video}{5}{5} \\
 \ganttbar[name=revision]{Final report pack}{5}{5} \\
 \ganttmilestone[name=finalms]{Final}{5}
 
-% ---- Dependencies ----
 \ganttlink[link type=f-s]{imgdata}{imgmodel}
 \ganttlink[link type=f-s]{textdata}{textmodel}
 \ganttlink[link type=f-s]{multidata}{multimodel}
@@ -205,7 +182,7 @@
 \end{ganttchart}
 \endgroup
 
-\subsection*{Detailed weekly progress}
+\subsection{Detailed Weekly Progress}
 \begin{itemize}[leftmargin=*, nosep]
     \item \textbf{Week 11:} Team prepared the three assigned datasets and built the initial preprocessing pipelines for image, text, and multimodal classification.
     \item \textbf{Week 12:} Team implemented the main model families for each track and ran the core experiments: CNN vs ViT for image, RNN/Transformer comparison for text, and zero-shot/few-shot CLIP-based experiments for multimodal.
@@ -214,22 +191,238 @@
     \item \textbf{Week 15:} Team will complete the final submission package, including the final report, presentation assets, and demo showcase.
 \end{itemize}
 
-\subsection*{Notes}
+\section{Detailed Dataset Reports}
+
+\subsection{Image Track --- CIFAR-10, ResNet-18, and ViT-B/16}
+
+\subsubsection{Problem and Dataset Exploration}
+The image task studies supervised classification on the CIFAR-10 dataset and compares two model families:
 \begin{itemize}[leftmargin=*, nosep]
-    \item Up to Report 1, the group has already completed the main experiments and most of the technical/reporting content for all three tracks.
-    \item The current repository already contains the shared report site, image demo application, and the major figures/tables used in the assignment pages.
-    \item The main unfinished deliverables are the final video links, slide deck polishing, and final consistency checks across the shared pages.
-    \item The final submission will include the completed report pages, presentation slides, demo showcase, and video materials required by the assignment brief.
+    \item a CNN baseline based on \textbf{ResNet-18},
+    \item a Transformer-based vision model based on \textbf{ViT-B/16}.
+\end{itemize}
+The dataset contains 10 balanced classes (\textit{airplane, automobile, bird, cat, deer, dog, frog, horse, ship, truck}). It is suitable for the assignment because it is standardized, well understood, and strong enough to reveal performance differences between CNN and ViT transfer learning.
+
+\subsubsection{Dataset, DataLoader, and Augmentation Setup}
+Both image notebooks use the same CIFAR-10 source for a fair comparison. Since both backbones are pretrained on ImageNet, the original $32 \times 32$ images are resized to $224 \times 224$ before training and inference. The common preprocessing pipeline includes tensor conversion and normalization. Augmentation is moderate rather than minimal:
+\begin{itemize}[leftmargin=*, nosep]
+    \item \textbf{ResNet-18:} horizontal flip, random rotation, color jitter, random affine translation, and random erasing.
+    \item \textbf{ViT-B/16:} horizontal flip, random rotation, color jitter, and random erasing.
 \end{itemize}
 
-\noindent
-\begin{tabular}{@{}p{0.9\textwidth}@{}}
-\textbf{GROUP REPRESENTATIVE}\\[0.5em]
-Name\\[1.5em]
-\includegraphics[width=3cm]{signature.png}\\[0.5em]
-\textbf{Nguyen Quoc Hieu}
-\end{tabular}
+\subsubsection{Model Building, Training, Evaluation, and Comparison}
+The CNN baseline uses ImageNet-pretrained ResNet-18 with the classification head replaced for 10 CIFAR-10 classes. The Transformer model uses ImageNet-pretrained ViT-B/16 and a two-phase training schedule: freeze the backbone for 3 epochs and then fine-tune all layers for 15 epochs. Both models are evaluated on the same CIFAR-10 test set using accuracy, macro F1, confusion matrices, classification reports, and calibration metrics.
 
-\vspace*{0.8cm}
+\begin{center}
+\small
+\begin{tabular}{|l|l|c|c|c|}
+\hline
+\textbf{Model} & \textbf{Family} & \textbf{Params} & \textbf{Test Accuracy} & \textbf{ECE} \\
+\hline
+ResNet-18 & CNN & 11.18M & 96.55\% & 0.020006 \\
+\hline
+ViT-B/16 & Transformer & 85.81M & 98.36\% & 0.006917 \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsubsection{Experimental Results, Figures, Analysis, and Discussion}
+The ViT model achieves the strongest final accuracy and the best calibration, while ResNet-18 remains much smaller and cheaper to fine-tune. This means ViT-B/16 is the better absolute performer, but ResNet-18 offers a stronger accuracy-efficiency trade-off for lighter deployment scenarios. The remaining classification errors are concentrated in visually similar classes rather than clearly distinct categories, which is expected on CIFAR-10.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{resnet18_calibration_full.png}
+    \caption*{\small ResNet-18 calibration on the full CIFAR-10 test set (ECE = 0.0200).}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{vit_b16_calibration_full.png}
+    \caption*{\small ViT-B/16 calibration on the full CIFAR-10 test set (ECE = 0.0069).}
+\end{minipage}
+\end{figure}
+
+\subsubsection{Other Extension Reports}
+The image track already includes:
+\begin{itemize}[leftmargin=*, nosep]
+    \item an interactive \textbf{Gradio web demo} for prediction and explanation,
+    \item \textbf{interpretability} via Grad-CAM / attention-based visualization,
+    \item \textbf{calibration analysis} with ECE and exported reliability diagrams.
+\end{itemize}
+
+\clearpage
+\subsection{Text Track --- 20 Newsgroups, BiLSTM + Attention, and Transformer Fine-tuning}
+
+\subsubsection{Problem and Dataset Exploration}
+The text task compares recurrent and Transformer-based text classification models on the \textbf{20 Newsgroups} dataset. The report page studies topic classification across 20 classes and highlights both semantic overlap and vocabulary differences between categories. The dataset contains 18,846 documents and is suitable for comparing sequence-based and self-attention-based architectures.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{wc_freq.png}
+    \caption*{\small Word-frequency visualization from the EDA section.}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{wc_cor.png}
+    \caption*{\small Word-correlation / corpus visualization from the EDA section.}
+\end{minipage}
+\end{figure}
+
+\subsubsection{Dataset, DataLoader, and Setup}
+The text pipeline loads the dataset from \texttt{SetFit/20\_newsgroups}. The preprocessing workflow includes text cleaning, truncation, tokenization, dataset splitting, and weighted loss handling to mitigate imbalance. The recurrent baseline uses a BiLSTM with attention, while the Transformer experiments use DistilBERT and an extended BERT fine-tuning study.
+
+\subsubsection{Model Building, Training, Evaluation, and Comparison}
+The BiLSTM-with-attention model provides the recurrent baseline. Transformer-based experiments use pretrained language models and evaluate multiple fine-tuning strategies, including freeze-backbone, hybrid fine-tuning, and full fine-tuning. Reported metrics include validation accuracy, test accuracy, macro/weighted F1, confusion matrices, and model-efficiency measurements.
+
+\begin{center}
+\small
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\textbf{Model / setting} & \textbf{Val Acc} & \textbf{Test Acc} & \textbf{F1 Macro} & \textbf{Params} \\
+\hline
+BiLSTM + Attention & 69.72\% & 62.90\% & 0.6179 & 15.8M \\
+\hline
+DistilBERT (Hybrid) & 78.89\% & 73.88\% & 72.68\% & 67.0M \\
+\hline
+BERT (Hybrid extension) & 79.86\% & 74.77\% & -- & 109.5M \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsubsection{Experimental Results, Figures, Analysis, and Discussion}
+The text page shows that Transformer-based models clearly outperform the recurrent baseline on this dataset. DistilBERT and BERT produce stronger contextual representations, especially for classes with overlapping vocabulary. The BiLSTM baseline remains faster and lighter, but gives up a noticeable amount of classification quality.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{distilBERT_cfm.png}
+    \caption*{\small DistilBERT confusion matrix.}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{lstm_cfm.png}
+    \caption*{\small BiLSTM + Attention confusion matrix.}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{loss.png}
+    \caption*{\small Training-loss comparison for Transformer fine-tuning strategies.}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{val_acc.png}
+    \caption*{\small Validation-accuracy comparison for Transformer fine-tuning strategies.}
+\end{minipage}
+\end{figure}
+
+\subsubsection{Other Extension Reports}
+The text track already goes beyond a simple LSTM-vs-Transformer comparison by adding:
+\begin{itemize}[leftmargin=*, nosep]
+    \item a \textbf{fine-tuning strategy comparison} across freeze, hybrid, and full fine-tuning,
+    \item a \textbf{model-efficiency analysis} comparing accuracy, training time, inference latency, and parameter count.
+\end{itemize}
+
+\clearpage
+\subsection{Multimodal Track --- UPMC-Food101 Subset, CLIP ViT-B/16, and CLIP RN50}
+
+\subsubsection{Problem and Dataset Exploration}
+The multimodal task uses paired image-text inputs and compares \textbf{zero-shot} and \textbf{few-shot} multimodal classification. The report uses a 10-class subset of UPMC-Food101 and treats CLIP ViT-B/16 as the main backbone, with CLIP RN50 as the extension backbone. The task is well aligned with the assignment because each sample contains a true image-text pair rather than an artificially matched pair.
+
+\subsubsection{Dataset, DataLoader, and Augmentation Setup}
+The report page documents train/validation/test statistics and class-wise few-shot sampling. The custom multimodal dataset returns \texttt{(image, text, label)} tuples, supports augmentation and no-augmentation settings, and keeps the image and text branches aligned through the same label space. The 10 selected classes are: \textit{donuts, french\_fries, hamburger, hot\_dog, ice\_cream, pho, pizza, steak, sushi, tacos}.
+
+\subsubsection{Model Building and Method}
+The core backbone is CLIP, which provides both an image encoder and a text encoder in a shared embedding space. The multimodal report compares:
+\begin{itemize}[leftmargin=*, nosep]
+    \item zero-shot classification with prompt matching,
+    \item few-shot adaptation with a \textbf{Linear classifier},
+    \item few-shot adaptation with a \textbf{Prototype-based classifier},
+    \item augmentation vs no-augmentation across ViT-B/16 and RN50.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{CLIP.png}
+\caption*{\small CLIP backbone used for multimodal image-text learning.}
+\end{figure}
+
+\subsubsection{Experimental Results, Figures, Analysis, and Discussion}
+The main ViT-B/16 backbone already achieves a strong zero-shot result and improves further with few-shot adaptation. The Prototype head is the most stable setting overall. RN50 is still competitive, but it is less consistent than ViT-B/16 and reacts more strongly to the chosen head and augmentation setting.
+
+\begin{center}
+\small
+\begin{tabular}{|l|l|c|c|}
+\hline
+\textbf{Backbone} & \textbf{Setting} & \textbf{Accuracy} & \textbf{F1} \\
+\hline
+ViT-B/16 & Zero-shot & 0.8959 & 0.8769 \\
+\hline
+ViT-B/16 & Best: Prototype + 10-shot + aug & 0.9224 & 0.9231 \\
+\hline
+RN50 & Zero-shot & 0.8680 & 0.8438 \\
+\hline
+RN50 & Best: Prototype + 5-shot + no\_aug & 0.8806 & 0.8825 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{accuracy.png}
+    \caption*{\small ViT-B/16 zero-shot vs few-shot comparison.}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{method.png}
+    \caption*{\small RN50 zero-shot vs few-shot comparison.}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{ECE-vit16.png}
+    \caption*{\small Calibration summary for ViT-B/16 settings.}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{ECE_resnet50.png}
+    \caption*{\small Calibration summary for RN50 settings.}
+\end{minipage}
+\end{figure}
+
+\subsubsection{Other Extension Reports}
+The multimodal page already includes several extensions beyond the core zero-shot baseline:
+\begin{itemize}[leftmargin=*, nosep]
+    \item few-shot adaptation with two different heads,
+    \item augmentation-vs-no-augmentation analysis,
+    \item calibration and reliability analysis,
+    \item confusion-matrix based error analysis.
+\end{itemize}
+
+\section{Remaining Work Before Final Submission}
+\begin{itemize}[leftmargin=*, nosep]
+    \item Finalize the wording and formatting consistency across the shared report pages.
+    \item Finish the presentation slide deck and prepare the presentation video assets.
+    \item Record the demo video and attach final GitHub Pages / Hugging Face links to the Assignment 1 page.
+    \item Complete final checks on the report package before the final deadline.
+\end{itemize}
 
 \end{document}

@@ -1,0 +1,74 @@
+\documentclass[twoside,final]{hcmut-report}
+
+\usepackage{codespace}
+\usepackage{gensymb,textcomp}
+\usepackage{array,longtable,multicol,multirow,siunitx,tabularx}
+\usepackage{enumitem}
+% \usepackage{caption,float}.
+\usepackage[export]{adjustbox}
+\usepackage[nameinlink]{cleveref}
+\usepackage{mwe}
+\usepackage[utf8]{inputenc}
+\usepackage{pdflscape} % preamble
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{float}
+\usepackage{newunicodechar}
+\newunicodechar{≥}{\geq}
+
+% Configurations
+\coursename{Software Engineering (CO3001)}
+\reporttype{Assignment}
+\title{Tutor Support System at \\ Ho Chi Minh City University of Technology – VNU-HCM}
+
+\advisor{Trần Trương Tuấn Phát}
+
+\stuname{
+  Nguyễn Hữu Thiện & Student ID 2353133 \emph{(Group CC04 - Team 10)} \\
+  Nguyễn Quốc Hiệu & Student ID 2353244 \emph{(Group CC05 - Team 10)} \\
+  Chu Nguyễn Tuấn Anh & Student ID 2352022 \emph{(Group CC05 - Team 10)} \\ 
+  Vũ Hải Tuấn & Student ID 2353280 \emph{(Group CC05 - Team 10)} \\ 
+  Trần Anh Khoa & Student ID 2352588 \emph{(Group CC05 - Team 10)} \\
+  Phan Nguyên Tiến Đạt & Student ID 2352241 \emph{(Group CC05 - Team 10)} \\
+}
+% Allow page breaks inside align* environment
+%\allowdisplaybreaks{}
+% Makes a lot of things blue, avoid at all costs
+%\everymath{\color{blue}}
+% Set depth of numbering for counters
+\AtBeginDocument{\counterwithin{lstlisting}{section}}
+% Rename some sections
+%\AtBeginDocument{\renewcommand*{\contentsname}{Contents}}
+%\AtBeginDocument{\renewcommand*{\refname}{References}}
+%\AtBeginDocument{\renewcommand*{\bibname}{References}}
+% Custom commands
+%\newcommand*\mean[1]{\bar{#1}}
+
+\begin{document}
+\coverpage%
+
+\tableofcontents
+\listoffigures
+% \listoftables
+
+\newpage
+
+% Chapter 1
+\include{chapters/chapter1/main}
+
+% Chapter 2
+\include{chapters/chapter2/main}
+
+% Chapter 3
+\include{chapters/chapter3/main}
+
+% Chapter 4
+\include{chapters/chapter4/main}
+
+% Chapter 5
+\include{chapters/chapter5/main}
+
+% \section{Link source}
+\end{document}

@@ -8,6 +8,16 @@
       name="description"
       content="Common landing page for Assignment 1, with shared deliverables and separate report pages for image, text, and multimodal tracks."
     >
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("hat-assignment-theme");
+          document.documentElement.setAttribute("data-assignment-theme", saved || "light");
+        } catch (error) {
+          document.documentElement.setAttribute("data-assignment-theme", "light");
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="../assets/styles.css">
   </head>
   <body class="assignment-overview-page">
@@ -30,6 +40,13 @@
           <a href="./text.html">Text</a>
           <a href="./multimodal.html">Multimodal</a>
         </nav>
+
+        <div class="topbar-actions assignment-theme-actions">
+          <button class="theme-toggle assignment-theme-toggle" type="button" data-assignment-theme-toggle aria-label="Switch color theme">
+            <span class="theme-toggle-indicator" aria-hidden="true"></span>
+            <span data-assignment-theme-label>Light mode</span>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -132,10 +149,6 @@
           <h1>
             Image, text, and <span>multimodal</span> classification.
           </h1>
-          <p class="page-subtitle">
-            This page keeps the assignment-level information in one place, while each dataset
-            track now has its own dedicated report page so teammates can edit independently.
-          </p>
 
           <div class="button-row">
             <a class="button button-primary" href="#tracks">Open dataset pages</a>
@@ -184,10 +197,6 @@
         <div class="section-head">
           <div>
             <h2 class="section-title">Shared Deliverables</h2>
-            <p class="section-copy">
-              Assignment-level items stay here, while the report content is split into three
-              separate pages for easier collaboration.
-            </p>
           </div>
         </div>
 
@@ -195,9 +204,6 @@
           <article class="panel deliverable-card">
             <p class="card-kicker">Demo video</p>
             <h3 class="card-title">Team demo link</h3>
-            <p class="deliverable-note">
-              Add the final Assignment 1 demo video URL here after the team records the full walkthrough.
-            </p>
             <div class="assignment-meta">
               <span class="status-pill planned">Pending final link</span>
             </div>
@@ -206,9 +212,6 @@
           <article class="panel deliverable-card">
             <p class="card-kicker">Presentation video</p>
             <h3 class="card-title">YouTube presentation link</h3>
-            <p class="deliverable-note">
-              Add the final presentation video URL here before submission for remote grading.
-            </p>
             <div class="assignment-meta">
               <span class="status-pill planned">Pending final link</span>
             </div>
@@ -217,20 +220,14 @@
           <article class="panel deliverable-card">
             <p class="card-kicker">Code</p>
             <h3 class="card-title">Main repository</h3>
-            <p class="deliverable-note">
-              The full project code, notebooks, GitHub Pages content, and deployment helpers live in the main course repository.
-            </p>
             <div class="assignment-links">
-              <a class="button button-secondary" href="https://github.com/tanh1c/HAT-Deep_Learning" target="_blank" rel="noreferrer">Open GitHub repository</a>
+              <a class="button button-primary" href="https://github.com/tanh1c/HAT-Deep_Learning" target="_blank" rel="noreferrer">Open GitHub repository</a>
             </div>
           </article>
 
           <article class="panel deliverable-card">
             <p class="card-kicker">Presentation content</p>
             <h3 class="card-title">Separated by dataset type</h3>
-            <p class="deliverable-note">
-              Each dataset track now owns its own report page, with a dedicated header nav and room for independent edits.
-            </p>
             <div class="assignment-meta">
               <span class="status-pill">Ready</span>
               <span class="chip">Image page</span>
@@ -252,9 +249,6 @@
           <article class="panel assignment-card active">
             <p class="card-kicker">Image dataset</p>
             <h3 class="card-title">CNN vs ViT on CIFAR-10</h3>
-            <p class="deliverable-note">
-              Full image report content with EDA, pipeline, model comparison, figures, and extensions
-            </p>
             <div class="assignment-meta">
               <span class="status-pill">Published</span>
               <span class="chip">Chu Nguyen Tuan Anh</span>
@@ -267,9 +261,6 @@
           <article class="panel assignment-card active">
             <p class="card-kicker">Text dataset</p>
             <h3 class="card-title">RNN vs Transformer</h3>
-            <p class="deliverable-note">
-              A Comparison of the Classification Capacity of Two Model Families: RNN and Transformer 
-            </p>
             <div class="assignment-meta">
               <span class="status-pill">In progress</span>
               <span class="chip">Nguyen Quoc Hieu</span>
@@ -281,16 +272,16 @@
 
           <article class="panel assignment-card planned">
             <p class="card-kicker">Text-Image dataset</p>
-            <h3 class="card-title">Zero-shot vs Few-shot Classification</h3>
-            <p class="deliverable-note">
-              A Comparison of the Classification Approach between Zero-shot and Few-shot Classification
-            </p>
-            <div class="assignment-meta">
-              <span class="status-pill planned">In progress</span>
-              <span class="chip">Vu Hai Tuan</span>
+              <h3 class="card-title">Multimodal report workspace</h3>
+              <p class="deliverable-note">
+                A comparison of zero-shot and few-shot multimodal classification strategies.
+              </p>
+              <div class="assignment-meta">
+                <span class="status-pill planned">In progress</span>
+                <span class="chip">Vu Hai Tuan</span>
             </div>
             <div class="assignment-links">
-              <a class="button button-secondary" href="./multimodal.html">Open multimodal report page</a>
+              <a class="button button-primary" href="./multimodal.html">Open multimodal report page</a>
             </div>
           </article>
         </div>
@@ -339,7 +330,7 @@
     <footer class="shell footer">
       <div class="panel footer-card">
         <p>
-          Assignment 1 now uses one shared overview page plus three dataset-specific report pages.
+          Assignment 1.
         </p>
         <div class="footer-links">
           <a href="../index.html">Home</a>
@@ -349,6 +340,36 @@
         </div>
       </div>
     </footer>
+
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const toggle = document.querySelector("[data-assignment-theme-toggle]");
+        const label = document.querySelector("[data-assignment-theme-label]");
+
+        if (!toggle) {
+          return;
+        }
+
+        function applyTheme(theme) {
+          root.setAttribute("data-assignment-theme", theme);
+          toggle.setAttribute("aria-pressed", String(theme === "dark"));
+          toggle.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+
+          if (label) {
+            label.textContent = theme === "dark" ? "Dark mode" : "Light mode";
+          }
+        }
+
+        applyTheme(root.getAttribute("data-assignment-theme") || "light");
+
+        toggle.addEventListener("click", function () {
+          const nextTheme = root.getAttribute("data-assignment-theme") === "dark" ? "light" : "dark";
+          localStorage.setItem("hat-assignment-theme", nextTheme);
+          applyTheme(nextTheme);
+        });
+      })();
+    </script>
 
     <script>
       (function () {
