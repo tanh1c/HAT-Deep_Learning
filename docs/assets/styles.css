@@ -3477,9 +3477,10 @@ html[data-image-theme="light"] .image-report-page {
   --bg-strong: #fffaf6;
   --panel: rgba(255, 255, 255, 0.86);
   --panel-strong: rgba(255, 255, 255, 0.95);
-  --text: #43362e;
+  --text: #352821;
   --text-strong: #19120f;
-  --muted: rgba(56, 42, 34, 0.72);
+  --muted: rgba(45, 33, 27, 0.8);
+  --body-copy: #241915;
   --line: rgba(25, 18, 15, 0.1);
   --line-strong: rgba(25, 18, 15, 0.16);
   --primary: #c15f3c;
@@ -3500,9 +3501,10 @@ html[data-image-theme="dark"] .image-report-page {
   --bg-strong: #141415;
   --panel: rgba(15, 15, 16, 0.9);
   --panel-strong: rgba(12, 12, 13, 0.95);
-  --text: #f4f0eb;
+  --text: #faf6f1;
   --text-strong: #ffffff;
-  --muted: rgba(244, 240, 235, 0.68);
+  --muted: rgba(255, 249, 243, 0.82);
+  --body-copy: rgba(255, 255, 255, 0.9);
   --line: rgba(255, 255, 255, 0.12);
   --line-strong: rgba(255, 255, 255, 0.2);
   --primary: #c15f3c;
@@ -3718,11 +3720,15 @@ html[data-image-theme="dark"] .image-report-page .eyebrow {
 .image-report-page .section-copy,
 .image-report-page .deliverable-note,
 .image-report-page .track-copy,
-.image-report-page .figure-caption,
-.image-report-page .footer-card p,
 .image-report-page .mini-list li,
 .image-report-page .repo-list li,
-.image-report-page .placeholder-list li {
+.image-report-page .placeholder-list li,
+.image-report-page .compare-table td {
+  color: var(--body-copy, var(--muted));
+}
+
+.image-report-page .figure-caption,
+.image-report-page .footer-card p {
   color: var(--muted);
 }
 
@@ -3844,9 +3850,10 @@ html[data-text-theme="light"] .text-report-page {
   --bg-strong: #fbfcff;
   --panel: rgba(255, 255, 255, 0.88);
   --panel-strong: rgba(255, 255, 255, 0.95);
-  --text: #263446;
+  --text: #1f2c3d;
   --text-strong: #111827;
-  --muted: rgba(38, 52, 70, 0.72);
+  --muted: rgba(31, 44, 61, 0.8);
+  --body-copy: #172230;
   --line: rgba(17, 24, 39, 0.1);
   --line-strong: rgba(17, 24, 39, 0.18);
   --primary: #4182eb;
@@ -3868,9 +3875,10 @@ html[data-text-theme="dark"] .text-report-page {
   --bg-strong: #141b24;
   --panel: rgba(15, 20, 29, 0.9);
   --panel-strong: rgba(12, 16, 24, 0.95);
-  --text: #edf4ff;
+  --text: #f5f9ff;
   --text-strong: #ffffff;
-  --muted: rgba(237, 244, 255, 0.68);
+  --muted: rgba(245, 249, 255, 0.84);
+  --body-copy: rgba(255, 255, 255, 0.9);
   --line: rgba(255, 255, 255, 0.12);
   --line-strong: rgba(255, 255, 255, 0.2);
   --primary: #4182eb;
@@ -4111,10 +4119,13 @@ html[data-text-theme="dark"] .text-report-page .eyebrow {
 .text-report-page .section-copy,
 .text-report-page .track-copy,
 .text-report-page .deliverable-note,
+.text-report-page .mini-list li {
+  color: var(--body-copy, var(--muted));
+}
+
 .text-report-page .figure-caption,
 .text-report-page .kpi-note,
-.text-report-page .footer-card p,
-.text-report-page .mini-list li {
+.text-report-page .footer-card p {
   color: var(--muted);
 }
 
@@ -4218,7 +4229,7 @@ html[data-text-theme="dark"] .text-report-page .chip {
 .text-report-page .compare-table td p,
 .text-report-page .compare-table td span,
 .text-report-page .compare-table td strong {
-  color: var(--muted);
+  color: var(--body-copy, var(--muted));
 }
 
 .text-report-page .figure-frame {
@@ -4285,9 +4296,10 @@ html[data-multimodal-theme="light"] .multimodal-report-page {
   --bg-strong: #fffafa;
   --panel: rgba(255, 255, 255, 0.88);
   --panel-strong: rgba(255, 255, 255, 0.95);
-  --text: #493033;
+  --text: #342224;
   --text-strong: #181113;
-  --muted: rgba(73, 48, 51, 0.72);
+  --muted: rgba(38, 24, 27, 0.82);
+  --body-copy: #25181a;
   --line: rgba(24, 17, 19, 0.1);
   --line-strong: rgba(24, 17, 19, 0.18);
   --primary: #d64545;
@@ -4308,9 +4320,10 @@ html[data-multimodal-theme="dark"] .multimodal-report-page {
   --bg-strong: #1a1113;
   --panel: rgba(20, 13, 15, 0.9);
   --panel-strong: rgba(17, 11, 13, 0.95);
-  --text: #f7efef;
+  --text: #faf5f5;
   --text-strong: #ffffff;
-  --muted: rgba(247, 239, 239, 0.68);
+  --muted: rgba(255, 249, 249, 0.84);
+  --body-copy: rgba(255, 255, 255, 0.9);
   --line: rgba(255, 255, 255, 0.12);
   --line-strong: rgba(255, 255, 255, 0.2);
   --primary: #d64545;
@@ -4532,7 +4545,7 @@ html[data-multimodal-theme="dark"] .multimodal-report-page .eyebrow {
 .multimodal-report-page .repo-list li,
 .multimodal-report-page .placeholder-list li,
 .multimodal-report-page .compare-table td {
-  color: var(--muted);
+  color: var(--body-copy, var(--muted));
 }
 
 .multimodal-report-page .compare-table th {
