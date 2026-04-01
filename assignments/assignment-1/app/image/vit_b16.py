@@ -20,6 +20,7 @@ from PIL import Image
 from torchvision.models import vit_b_16
 
 from app.image.data import get_model_comparison_row, load_stanford_dogs_class_labels
+from app.shared.artifact_utils import normalize_history
 from app.shared.model_registry import (
     BaseModelHandler,
     CalibrationResult,
@@ -207,7 +208,7 @@ class StanfordDogsViTHandler(BaseModelHandler):
                 weights_only=True,
             )
             if isinstance(checkpoint, dict):
-                self.history = checkpoint.get("history", {}) or {}
+                self.history = normalize_history(checkpoint.get("history", {}))
                 val_acc = self.history.get("val_acc")
                 if isinstance(val_acc, list) and val_acc:
                     self.best_accuracy = float(max(val_acc))

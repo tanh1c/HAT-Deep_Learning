@@ -125,8 +125,33 @@ def _render_reliability_diagram_from_metrics(metrics: Dict[str, Any]) -> np.ndar
     return diagram
 
 
-def get_best_accuracy_from_history(history: Optional[Dict[str, Any]]) -> Optional[float]:
+def normalize_history(history: Optional[Any]) -> Dict[str, Any]:
+    """
+    Normalize checkpoint history to a dict-of-lists structure.
+
+    Supported formats:
+    - {"val_acc": [...], "train_acc": [...], ...}
+    - [{"epoch": 1, "val_acc": 0.8, ...}, {"epoch": 2, "val_acc": 0.82, ...}]
+    """
+    if not history:
+        return {}
+
+    if isinstance(history, dict):
+        return history
+
+    if isinstance(history, list) and history and all(isinstance(item, dict) for item in history):
+        normalized: Dict[str, Any] = {}
+        for item in history:
+            for key, value in item.items():
+                normalized.setdefault(key, []).append(value)
+        return normalized
+
+    return {}
+
+
+def get_best_accuracy_from_history(history: Optional[Any]) -> Optional[float]:
     """Return the best validation accuracy found in a checkpoint history."""
+    history = normalize_history(history)
     if not history:
         return None
 

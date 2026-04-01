@@ -11,6 +11,8 @@ env/
 # Local tool settings
 .claude/
 .codex/
+.streamlit/secrets.toml
+deploy/streamlit-cloud/.streamlit/secrets.toml
 
 # Large local datasets and archives
 assignments/assignment-1/image/data/
