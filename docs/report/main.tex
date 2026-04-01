@@ -6,10 +6,10 @@
 \usepackage{pgfgantt}
 \usepackage{tikz}
 \usepackage{xcolor}
-
+\usepackage{booktabs} 
 \coursename{Deep Learning and Its Applications (CO3133)}
 \reporttype{Progress Report}
-\title{Assignment 1 --- Classification}
+\title{Assignment 1 -- Classification}
 \advisor{Le Thanh Sach}
 \stuname{
   Chu Nguyen Tuan Anh & Student ID 2352022 \emph{(Group HAT)} \\
@@ -34,6 +34,7 @@
 
 \tableofcontents
 \listoffigures
+\listoftables
 \newpage
 
 \section{Project Overview}
@@ -191,148 +192,196 @@
     \item \textbf{Week 15:} Team will complete the final submission package, including the final report, presentation assets, and demo showcase.
 \end{itemize}
 
-\section{Detailed Dataset Reports}
+\section{Detailed Reports}
 
 \subsection{Image Track --- CIFAR-10, ResNet-18, and ViT-B/16}
 
 \subsubsection{Problem and Dataset Exploration}
-The image task studies supervised classification on the CIFAR-10 dataset and compares two model families:
+The image task is a multi-class image classification problem on the \textbf{CIFAR-10} dataset. The goal is not only to train a classifier, but also to compare two major pretrained model families under the same evaluation protocol:
 \begin{itemize}[leftmargin=*, nosep]
-    \item a CNN baseline based on \textbf{ResNet-18},
-    \item a Transformer-based vision model based on \textbf{ViT-B/16}.
+    \item \textbf{ResNet-18} as the CNN baseline,
+    \item \textbf{ViT-B/16} as the Transformer-based vision model.
 \end{itemize}
-The dataset contains 10 balanced classes (\textit{airplane, automobile, bird, cat, deer, dog, frog, horse, ship, truck}). It is suitable for the assignment because it is standardized, well understood, and strong enough to reveal performance differences between CNN and ViT transfer learning.
+
+CIFAR-10 is a suitable dataset for this assignment because it has \textbf{10 classes}, satisfies the requirement of at least 5 classes, is significantly more meaningful than very simple benchmarks such as MNIST, and is challenging enough to expose differences between CNN and ViT transfer learning.
+
+Basic dataset statistics:
+\begin{itemize}[leftmargin=*, nosep]
+    \item training split: \textbf{50,000} images,
+    \item test split: \textbf{10,000} images,
+    \item balanced test set: \textbf{1,000} images per class,
+    \item original image size: \textbf{$32 \times 32$}.
+\end{itemize}
+
+The 10 classes are: \textit{airplane, automobile, bird, cat, deer, dog, frog, horse, ship, truck}. From the confusion matrices and classification reports in the notebooks, the remaining errors are concentrated mainly in visually similar categories rather than clearly distinct classes. This makes CIFAR-10 a useful benchmark for comparing representation quality, calibration behavior, and qualitative interpretability between CNN and ViT architectures.
+
+Beyond satisfying the assignment requirement, CIFAR-10 is also a good fit for this project because it is:
+\begin{itemize}[leftmargin=*, nosep]
+    \item large enough to demonstrate transfer learning behavior,
+    \item balanced enough to make cross-model comparison straightforward,
+    \item and suitable for follow-up extensions such as interpretability and calibration analysis.
+\end{itemize}
 
 \subsubsection{Dataset, DataLoader, and Augmentation Setup}
-Both image notebooks use the same CIFAR-10 source for a fair comparison. Since both backbones are pretrained on ImageNet, the original $32 \times 32$ images are resized to $224 \times 224$ before training and inference. The common preprocessing pipeline includes tensor conversion and normalization. Augmentation is moderate rather than minimal:
+Both notebooks load CIFAR-10 from \texttt{torchvision.datasets.CIFAR10}. Because both backbones are pretrained on ImageNet, the original $32 \times 32$ images are resized to \textbf{$224 \times 224$} before entering the networks.
+
+Common preprocessing choices:
 \begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{ResNet-18:} horizontal flip, random rotation, color jitter, random affine translation, and random erasing.
-    \item \textbf{ViT-B/16:} horizontal flip, random rotation, color jitter, and random erasing.
+    \item \texttt{Resize((224, 224))},
+    \item conversion to tensor,
+    \item normalization using CIFAR-10 statistics.
 \end{itemize}
 
+Normalization values used in both notebooks:
+\[
+\texttt{mean} = (0.4914, 0.4822, 0.4465), \qquad
+\texttt{std} = (0.2470, 0.2435, 0.2616)
+\]
+
+Common DataLoader configuration:
+\begin{itemize}[leftmargin=*, nosep]
+    \item \texttt{batch\_size = 64},
+    \item \texttt{shuffle = True} for training and \texttt{False} for testing,
+    \item \texttt{num\_workers = 4},
+    \item \texttt{pin\_memory = True},
+    \item \texttt{persistent\_workers = True}.
+\end{itemize}
+
+The augmentation policy is better described as \textbf{moderate} rather than minimal.
+
+For \textbf{ResNet-18}, the training transform includes:
+\begin{itemize}[leftmargin=*, nosep]
+    \item horizontal flip,
+    \item random rotation,
+    \item color jitter,
+    \item random affine translation,
+    \item random erasing.
+\end{itemize}
+
+For \textbf{ViT-B/16}, the training transform includes:
+\begin{itemize}[leftmargin=*, nosep]
+    \item horizontal flip,
+    \item random rotation,
+    \item color jitter,
+    \item random erasing.
+\end{itemize}
+
+For evaluation, both notebooks use the same simpler test transform:
+\begin{itemize}[leftmargin=*, nosep]
+    \item \texttt{Resize((224, 224))},
+    \item \texttt{ToTensor()},
+    \item \texttt{Normalize(mean, std)}.
+\end{itemize}
+
+The resize step is necessary for reuse of ImageNet-pretrained feature extractors. Although upsampling CIFAR-10 images does not create new visual information, it still works well in practice for transfer learning and produces strong performance on both backbones.
+
 \subsubsection{Model Building, Training, Evaluation, and Comparison}
-The CNN baseline uses ImageNet-pretrained ResNet-18 with the classification head replaced for 10 CIFAR-10 classes. The Transformer model uses ImageNet-pretrained ViT-B/16 and a two-phase training schedule: freeze the backbone for 3 epochs and then fine-tune all layers for 15 epochs. Both models are evaluated on the same CIFAR-10 test set using accuracy, macro F1, confusion matrices, classification reports, and calibration metrics.
+The \textbf{ResNet-18} baseline is initialized with ImageNet-pretrained weights and the final classification head is replaced for 10 CIFAR-10 classes. The CNN notebook uses full fine-tuning with the following main setup:
+\begin{itemize}[leftmargin=*, nosep]
+    \item epochs: \textbf{30},
+    \item learning rate: \textbf{$3 \times 10^{-4}$},
+    \item weight decay: \textbf{$10^{-4}$},
+    \item warmup epochs: \textbf{3},
+    \item optimizer: \textbf{AdamW},
+    \item scheduler: \textbf{Linear warmup + CosineAnnealingLR}.
+\end{itemize}
+
+The model has \textbf{11.18M} parameters and reached a final reported test accuracy of \textbf{96.55\%}.
+In the notebook logs, the first validation-style accuracy already reached about \textbf{75.5\%}, and the training time per epoch was roughly \textbf{55--80 seconds}, which makes ResNet-18 a strong and efficient baseline.
+
+The \textbf{ViT-B/16} model is also initialized with ImageNet-pretrained weights and uses a two-phase fine-tuning strategy:
+\begin{itemize}[leftmargin=*, nosep]
+    \item \textbf{Phase 1}: freeze the backbone and train only the classifier head for \textbf{3 epochs} with learning rate \textbf{$10^{-3}$},
+    \item \textbf{Phase 2}: unfreeze and fine-tune the full network for \textbf{15 epochs} with learning rate \textbf{$3 \times 10^{-5}$},
+    \item optimizer: \textbf{AdamW},
+    \item scheduler: \textbf{CosineAnnealingLR},
+    \item weight decay: \textbf{$10^{-4}$}.
+\end{itemize}
+
+The Transformer model has \textbf{85.81M} parameters and reached a final reported test accuracy of \textbf{98.36\%}.
+The first training phase already reached about \textbf{95.32\%}, and the notebook logs show epoch times of roughly \textbf{69--90 seconds}. This confirms that ViT-B/16 quickly benefits from transfer learning and then improves further during full-network fine-tuning.
+
+For fair comparison, both models are evaluated on the same CIFAR-10 test set with:
+\begin{itemize}[leftmargin=*, nosep]
+    \item \textbf{accuracy},
+    \item \textbf{classification report},
+    \item \textbf{confusion matrix},
+    \item and, for the extension part, \textbf{Expected Calibration Error (ECE)} plus reliability diagrams.
+\end{itemize}
 
 \begin{center}
 \small
-\begin{tabular}{|l|l|c|c|c|}
+\begin{tabular}{|l|l|c|l|c|c|c|}
 \hline
-\textbf{Model} & \textbf{Family} & \textbf{Params} & \textbf{Test Accuracy} & \textbf{ECE} \\
+\textbf{Model} & \textbf{Family} & \textbf{Params} & \textbf{Training strategy} & \textbf{Accuracy} & \textbf{Macro F1} & \textbf{ECE} \\
 \hline
-ResNet-18 & CNN & 11.18M & 96.55\% & 0.020006 \\
+ResNet-18 & CNN & 11.18M & Full fine-tuning, 30 epochs & 96.55\% & 0.97 & 0.020006 \\
 \hline
-ViT-B/16 & Transformer & 85.81M & 98.36\% & 0.006917 \\
+ViT-B/16 & Transformer & 85.81M & Freeze 3 + fine-tune 15 epochs & 98.36\% & 0.98 & 0.006917 \\
 \hline
 \end{tabular}
 \end{center}
 
 \subsubsection{Experimental Results, Figures, Analysis, and Discussion}
-The ViT model achieves the strongest final accuracy and the best calibration, while ResNet-18 remains much smaller and cheaper to fine-tune. This means ViT-B/16 is the better absolute performer, but ResNet-18 offers a stronger accuracy-efficiency trade-off for lighter deployment scenarios. The remaining classification errors are concentrated in visually similar classes rather than clearly distinct categories, which is expected on CIFAR-10.
+The final results show that both models are strong, but \textbf{ViT-B/16} is the better overall performer:
+\begin{itemize}[leftmargin=*, nosep]
+    \item ResNet-18 test accuracy: \textbf{96.55\%},
+    \item ViT-B/16 test accuracy: \textbf{98.36\%},
+    \item ResNet-18 ECE: \textbf{0.020006},
+    \item ViT-B/16 ECE: \textbf{0.006917}.
+\end{itemize}
+
+This indicates that ViT-B/16 is not only more accurate, but also better calibrated. In other words, its confidence estimates are more trustworthy on average.
+
+Additional notebook outputs already available for analysis include:
+\begin{itemize}[leftmargin=*, nosep]
+    \item confusion matrix for ResNet-18,
+    \item confusion matrix for ViT-B/16,
+    \item classification reports for both models,
+    \item training curves,
+    \item exported calibration metrics.
+\end{itemize}
+
+From the experimental comparison, several conclusions can be drawn:
+\begin{itemize}[leftmargin=*, nosep]
+    \item \textbf{Accuracy}: ViT-B/16 consistently achieves the strongest final performance.
+    \item \textbf{Efficiency}: ResNet-18 remains much smaller (\textbf{11.18M} vs \textbf{85.81M} parameters) and therefore provides a better accuracy-efficiency trade-off.
+    \item \textbf{Error pattern}: the hardest cases are concentrated in visually similar categories, especially at low image resolution.
+    \item \textbf{Calibration}: ViT-B/16 has significantly lower ECE, so its confidence is better aligned with actual correctness.
+\end{itemize}
+
+Therefore, the experiment supports a clear interpretation: \textbf{ResNet-18} is a strong and efficient CNN baseline, while \textbf{ViT-B/16} is the strongest model in both predictive quality and reliability.
 
 \begin{figure}[H]
 \centering
-\begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{resnet18_calibration_full.png}
-    \caption*{\small ResNet-18 calibration on the full CIFAR-10 test set (ECE = 0.0200).}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{vit_b16_calibration_full.png}
-    \caption*{\small ViT-B/16 calibration on the full CIFAR-10 test set (ECE = 0.0069).}
-\end{minipage}
+\includegraphics[width=0.9\textwidth]{assets/image/resnet18_calibration_full.png}
+\caption{ResNet-18 calibration on the full CIFAR-10 test set (ECE = 0.0200).}
+\label{fig:resnet18_calibration_full}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{assets/image/vit_b16_calibration_full.png}
+\caption{ViT-B/16 calibration on the full CIFAR-10 test set (ECE = 0.0069).}
+\label{fig:vitb16_calibration_full}
 \end{figure}
 
 \subsubsection{Other Extension Reports}
-The image track already includes:
+The image track already includes three completed extensions:
 \begin{itemize}[leftmargin=*, nosep]
-    \item an interactive \textbf{Gradio web demo} for prediction and explanation,
-    \item \textbf{interpretability} via Grad-CAM / attention-based visualization,
-    \item \textbf{calibration analysis} with ECE and exported reliability diagrams.
+    \item \textbf{Application demo}: a Gradio-based web interface in \texttt{assignments/assignment-1/app/main.py} for prediction, model selection, and qualitative inspection.
+    \item \textbf{Interpretability}: \textbf{Grad-CAM} for ResNet-18 and attention-based visualization for ViT-B/16, allowing visual explanation of model focus.
+    \item \textbf{Calibration}: Expected Calibration Error, reliability diagrams, and confidence-distribution outputs integrated into both the notebooks and the demo workflow.
 \end{itemize}
+
+These extensions make the image section more complete and more presentation-ready. The web demo improves demonstration quality, interpretability adds qualitative insight beyond raw metrics, and calibration adds reliability analysis beyond raw accuracy.
+
+More specifically, the Gradio demo supports image upload, model selection between CNN and ViT, prediction display, qualitative explanation, and fast access to saved calibration outputs. The calibration extension covers not only ECE and reliability diagrams, but also confidence-distribution analysis, making the evaluation more complete than a pure accuracy-only comparison.
+
+Overall, the image part is complete not only as a classification experiment, but also as a polished project component that is ready to be presented on GitHub Pages, demonstrated in video form, and integrated into the final presentation slides.
 
 \clearpage
-\subsection{Text Track --- 20 Newsgroups, BiLSTM + Attention, and Transformer Fine-tuning}
-
-\subsubsection{Problem and Dataset Exploration}
-The text task compares recurrent and Transformer-based text classification models on the \textbf{20 Newsgroups} dataset. The report page studies topic classification across 20 classes and highlights both semantic overlap and vocabulary differences between categories. The dataset contains 18,846 documents and is suitable for comparing sequence-based and self-attention-based architectures.
-
-\begin{figure}[H]
-\centering
-\begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{wc_freq.png}
-    \caption*{\small Word-frequency visualization from the EDA section.}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{wc_cor.png}
-    \caption*{\small Word-correlation / corpus visualization from the EDA section.}
-\end{minipage}
-\end{figure}
-
-\subsubsection{Dataset, DataLoader, and Setup}
-The text pipeline loads the dataset from \texttt{SetFit/20\_newsgroups}. The preprocessing workflow includes text cleaning, truncation, tokenization, dataset splitting, and weighted loss handling to mitigate imbalance. The recurrent baseline uses a BiLSTM with attention, while the Transformer experiments use DistilBERT and an extended BERT fine-tuning study.
-
-\subsubsection{Model Building, Training, Evaluation, and Comparison}
-The BiLSTM-with-attention model provides the recurrent baseline. Transformer-based experiments use pretrained language models and evaluate multiple fine-tuning strategies, including freeze-backbone, hybrid fine-tuning, and full fine-tuning. Reported metrics include validation accuracy, test accuracy, macro/weighted F1, confusion matrices, and model-efficiency measurements.
-
-\begin{center}
-\small
-\begin{tabular}{|l|c|c|c|c|}
-\hline
-\textbf{Model / setting} & \textbf{Val Acc} & \textbf{Test Acc} & \textbf{F1 Macro} & \textbf{Params} \\
-\hline
-BiLSTM + Attention & 69.72\% & 62.90\% & 0.6179 & 15.8M \\
-\hline
-DistilBERT (Hybrid) & 78.89\% & 73.88\% & 72.68\% & 67.0M \\
-\hline
-BERT (Hybrid extension) & 79.86\% & 74.77\% & -- & 109.5M \\
-\hline
-\end{tabular}
-\end{center}
-
-\subsubsection{Experimental Results, Figures, Analysis, and Discussion}
-The text page shows that Transformer-based models clearly outperform the recurrent baseline on this dataset. DistilBERT and BERT produce stronger contextual representations, especially for classes with overlapping vocabulary. The BiLSTM baseline remains faster and lighter, but gives up a noticeable amount of classification quality.
-
-\begin{figure}[H]
-\centering
-\begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{distilBERT_cfm.png}
-    \caption*{\small DistilBERT confusion matrix.}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{lstm_cfm.png}
-    \caption*{\small BiLSTM + Attention confusion matrix.}
-\end{minipage}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{loss.png}
-    \caption*{\small Training-loss comparison for Transformer fine-tuning strategies.}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{val_acc.png}
-    \caption*{\small Validation-accuracy comparison for Transformer fine-tuning strategies.}
-\end{minipage}
-\end{figure}
-
-\subsubsection{Other Extension Reports}
-The text track already goes beyond a simple LSTM-vs-Transformer comparison by adding:
-\begin{itemize}[leftmargin=*, nosep]
-    \item a \textbf{fine-tuning strategy comparison} across freeze, hybrid, and full fine-tuning,
-    \item a \textbf{model-efficiency analysis} comparing accuracy, training time, inference latency, and parameter count.
-\end{itemize}
+\input{text.tex}
 
 \clearpage
 \subsection{Multimodal Track --- UPMC-Food101 Subset, CLIP ViT-B/16, and CLIP RN50}
@@ -355,7 +404,8 @@ The core backbone is CLIP, which provides both an image encoder and a text encod
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.72\textwidth]{CLIP.png}
-\caption*{\small CLIP backbone used for multimodal image-text learning.}
+\caption{CLIP backbone used for multimodal image-text learning.}
+\label{fig:clip_backbone}
 \end{figure}
 
 \subsubsection{Experimental Results, Figures, Analysis, and Discussion}
@@ -380,32 +430,30 @@ RN50 & Best: Prototype + 5-shot + no\_aug & 0.8806 & 0.8825 \\
 
 \begin{figure}[H]
 \centering
-\begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{accuracy.png}
-    \caption*{\small ViT-B/16 zero-shot vs few-shot comparison.}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{method.png}
-    \caption*{\small RN50 zero-shot vs few-shot comparison.}
-\end{minipage}
+\includegraphics[width=0.75\textwidth]{accuracy.png}
+\caption{ViT-B/16 zero-shot vs few-shot comparison.}
+\label{fig:vitb16_zero_shot_few_shot}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{ECE-vit16.png}
-    \caption*{\small Calibration summary for ViT-B/16 settings.}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{ECE_resnet50.png}
-    \caption*{\small Calibration summary for RN50 settings.}
-\end{minipage}
+\includegraphics[width=0.75\textwidth]{method.png}
+\caption{RN50 zero-shot vs few-shot comparison.}
+\label{fig:rn50_zero_shot_few_shot}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{ECE-vit16.png}
+\caption{Calibration summary for ViT-B/16 settings.}
+\label{fig:vitb16_calibration_summary}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{ECE_resnet50.png}
+\caption{Calibration summary for RN50 settings.}
+\label{fig:rn50_calibration_summary}
 \end{figure}
 
 \subsubsection{Other Extension Reports}
@@ -424,5 +472,9 @@ The multimodal page already includes several extensions beyond the core zero-sho
     \item Record the demo video and attach final GitHub Pages / Hugging Face links to the Assignment 1 page.
     \item Complete final checks on the report package before the final deadline.
 \end{itemize}
+
+
+\section{Use of AI Assistants}
+In adherence to the Ho Chi Minh City University of Technology - VNU-HCM Ethics Policy, we did not employ AI assistants to generate the initial draft of this paper. We used AI assistants (GPT-5.2) exclusively at the sentence level to enhance writing quality and correct grammatical errors.
 
 \end{document}

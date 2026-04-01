@@ -1,0 +1,256 @@
+\subsection{Text Track --- 20 Newsgroups, BiLSTM + Attention, and Transformer Fine-tuning}
+
+\subsubsection{Problem Statement - Exploratory Data Analysis}
+\noindent \textbf{Problem Statement} There are diversities of papers, newsletter, books... with various genres. We are not, however, able to manually distinguish between them in a short time. Therefore, RNN-based LSTM and Transformer-based DistilBERT are both taken into account to estimate the accuracy of classifying categories of each document based on natural language input.
+
+
+\noindent \textbf{Dataset information} In this classification task, after examining a wide range of datasets, we determined to use the \texttt{20 Newsgroups} dataset as the primary dataset for the NLP-based topic classification task. With exactly 20 classes and over 18,000 documents, this dataset satisfies all the course requirements. The dataset details are as follows:
+
+\begin{table}[H]
+\centering
+\caption{Corpus Statistics}
+\begin{tabular}{lr}
+\toprule
+\textbf{Statistic} & \textbf{Value / Info} \\
+\midrule
+Total words & 3,423,145 \\
+Total characters & 22,043,554 \\
+Min docs/class & 628 (talk.religion.misc) \\
+Max docs/class & 999 (rec.sport.hockey) \\
+Mean docs/class & 942.3 \\
+Std & 97.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Per-document Word Count}
+\begin{tabular}{lr}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Mean & 181.6 \\
+Median & 83.0 \\
+Std & 501.3 \\
+Min & 0 \\
+Max & 11765 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{wc_freq.png}
+\caption{Word-frequency visualization from the EDA section.}
+\label{fig:wc_freq}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{wc_cor.png}
+\caption{Word-correlation / corpus visualization from the EDA section.}
+\label{fig:wc_cor}
+\end{figure}
+
+\subsubsection{Dataset, DataLoader, and Setup}
+\noindent \textbf{Dataset overview} To ensure reliable access to the dataset, we downloaded it from Hugging Face. We then split 60\% of the data into a training set and used the remaining 40\% as the test set. Finally, we observe a moderate class imbalance, with the number of documents per class ranging from 628 to 999. \\ 
+
+\noindent \textbf{Cleaning and Truncation} To obtain clean data prior to training, we applied several preprocessing strategies. After extensive experimentation, we found that the most effective pipeline removes quoted text, email headers, and signatures. In addition, we discard short documents containing fewer than 50 characters and truncate each document to a maximum of 400 words to better fit the BERT input constraint (512 tokens). \\ 
+
+\noindent \textbf{Splitting strategy} The fine-grained data splitting strategy is shown below.
+
+\begin{table}[H]
+\centering
+\caption{Train/Validation/Test Split}
+\begin{tabular}{lrl}
+\toprule
+\textbf{Split} & \textbf{Samples} & \textbf{Note} \\
+\midrule
+Train & 8,584 & Stratified \\
+Validation & 2,146 & Stratified \\
+Test & 7,112 & Stratified \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent \textbf{Tokenizer details} We adopt the \texttt{distilbert-base-uncased} tokenizer in our pipeline. Dynamic padding is applied via \texttt{DataCollatorWithPadding} to avoid unnecessary memory consumption. Approximately 90\% of the documents fit within the 512-token limit. \\ 
+
+\noindent \textbf{Weighted loss} Due to class imbalance, we apply a weighting scheme to mitigate model bias. The loss function is defined as follows:
+
+\begin{equation}
+w_c = \frac{N}{C \cdot n_c}
+\end{equation}
+\begin{equation}
+\mathcal{L} = \text{CrossEntropy}(x, y; w_c)
+\end{equation}
+
+\noindent where $N$ is the total number of samples, $C$ is the number of classes, and $n_c$ is the number of samples in class $c$. The weight $w_c$ is inversely proportional to the class frequency, giving higher importance to underrepresented classes. \\
+
+\noindent \textbf{Batch setup} Due to the high computational cost of training BERT, we use a batch size of 12 for the training set and 36 for both the validation and test sets. As described earlier, token sequences are dynamically padded to match the maximum sequence length within each batch. \\ 
+
+\subsubsection{Model Building, Training, Evaluation, and Comparison}
+\noindent \textbf{BiLSTM with Attention} 
+
+\noindent \textit{Architecture} We employ a Bidirectional Long Short-Term Memory (BiLSTM) model with an attention mechanism for text classification. The input tokens are first mapped to 300-dimensional GloVe embeddings, achieving approximately 43.3\% vocabulary coverage. These embeddings are further weighted using TF-IDF to emphasize informative terms.
+
+\noindent The backbone consists of a two-layer BiLSTM encoder, which captures both forward and backward contextual dependencies in the sequence. On top of the encoder, an attention layer is applied to aggregate token-level representations into a context-aware document representation, allowing the model to focus on the most relevant parts of the input text. The resulting representation is then fed into a fully connected layer for classification. \\ 
+
+
+\noindent \textbf{DistilBERT}
+
+\noindent \textit{Model building} We utilize the pretrained \texttt{distilbert-base-uncased} model as the backbone for our classification task. DistilBERT is a lightweight transformer-based model that retains most of BERT's performance while being more computationally efficient.
+
+\noindent The model is fine-tuned on our dataset by adding a classification head on top of the [CLS] token representation. During training, the entire model is updated end-to-end. This approach enables the model to leverage rich contextual representations learned during pretraining while adapting to the specific downstream classification task.
+
+
+\subsubsection{Experimental Results, Figures, Analysis, and Discussion}
+\noindent \textbf{DistilBERT Performance} After training, the model was evaluated on the held-out test set (7,112 samples) using multiple metrics to provide a comprehensive view of classification performance.
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lc}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Accuracy     & 73.88\% \\
+F1 Macro     & 0.7268 \\
+F1 Weighted  & 0.7400 \\
+Precision    & 0.7299 \\
+Recall       & 0.7258 \\
+Best class   & rec.sport.hockey (F1: 0.93) \\
+Worst class  & talk.religion.misc (F1: 0.32) \\
+\bottomrule
+\end{tabular}
+\caption{Test results on the evaluation set.}
+\label{tab:test_results_bert}
+\end{table}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{distilBERT_cfm.png}
+\caption{DistilBERT confusion matrix.}
+\label{fig:distilbert_confusion_matrix}
+\end{figure}
+
+
+\newpage
+\noindent \textbf{BiLSTM with Attention} The BiLSTM model was evaluated after 20 epochs, reaching its peak validation accuracy of 69.72\% at epoch 18.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lc}
+\toprule
+\textbf{Metric} & \textbf{Score} \\
+\midrule
+Accuracy      & 62.90\% \\
+F1 Macro      & 0.6179 \\
+F1 Weighted   & 0.6311 \\
+Precision     & 0.6251 \\
+Recall        & 0.6155 \\
+Best Class    & rec.sport.hockey (F1: 0.89) \\
+Worst Class   & talk.religion.misc (F1: 0.19) \\
+\bottomrule
+\end{tabular}
+\caption{Test results on the evaluation set.}
+\label{tab:bilstm_results_lstm}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{lstm_cfm.png}
+\caption{BiLSTM + Attention confusion matrix.}
+\label{fig:bilstm_attention_confusion_matrix}
+\end{figure}
+
+\noindent \textbf{Key Insights} Our experiments reveal several important insights. First, a small but consistent gap between validation and test accuracy (e.g., 78.89\% vs.\ 73.88\%) indicates mild overfitting, likely due to the limited training size and class diversity. Second, class imbalance remains a key challenge: while class weighting improves recall for underrepresented categories, classes such as \textit{talk.religion.misc} and \textit{talk.politics.misc} still exhibit low performance. Third, model performance is strongly influenced by semantic separability: categories with clear topical boundaries (e.g., \textit{rec.sport.hockey}, \textit{sci.space}) achieve high F1 scores, whereas semantically overlapping classes lead to frequent confusion. Finally, error analysis shows systematic misclassification patterns driven by lexical overlap (e.g., religion-related classes), topic ambiguity in political discussions, and lack of distinctive keywords in short technical texts, highlighting limitations in contextual understanding across both RNN- and Transformer-based models.\\
+
+
+\noindent \textbf{Systematic Comparison}
+We compare DistilBERT (67M parameters) with an LSTM-based model to evaluate the impact of transformer architectures and self-attention mechanisms on text classification performance.
+For transformer models, we evaluate three fine-tuning strategies: (i) freezing the backbone and training only the classification head, (ii) full fine-tuning, and (iii) a hybrid approach that progressively unfreezes layers. We assess model efficiency using accuracy, F1 score, training time, inference latency, and parameter count to quantify the trade-off between performance and computational cost.\\
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lcccccc}
+\toprule
+Model & Val Acc & Test Acc & F1 Macro & Train (s) & Inf (ms) & Params \\
+\midrule
+DistilBERT (Hybrid) & 78.89 & 73.88 & 72.68 & 735 & 44.1 & 67M \\
+BiLSTM + Attention & 69.72 & 62.90 & 0.6179 & 85 & -- & 15.8M \\
+\bottomrule
+\end{tabular}
+\caption{Comparison between transformer and RNN-based models.}
+\label{tab:comparison}
+\end{table}
+
+\noindent \textbf{Key Findings: Transformer vs RNN}
+The results highlight a clear performance gap of approximately 11\% accuracy between BiLSTM and DistilBERT. This demonstrates the importance of contextualized representations, which static embeddings (e.g., GloVe) fail to capture. While attention improves the BiLSTM baseline, it does not fully compensate for the lack of bidirectional contextual pretraining. However, BiLSTM remains significantly more efficient, training up to 8--10$\times$ faster, making it a viable option in resource-constrained settings.
+
+\subsubsection{Other Extension Reports}
+\noindent \textbf{Fine-tuning Strategy Comparison} We compare three fine-tuning strategies (freeze backbone, hybrid, and full fine-tuning) on DistilBERT and BERT-base. Results show that full fine-tuning generally achieves the best performance, while the hybrid approach remains competitive and in some cases yields the highest test accuracy (e.g., BERT-base). In contrast, freezing the backbone significantly degrades performance, highlighting the importance of adapting pretrained representations. DistilBERT offers a strong efficiency--performance trade-off with fewer parameters and lower training cost, whereas BERT-base attains slightly higher peak accuracy.
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{llcccccc}
+\toprule
+Model & Strategy & Val Acc & Test Acc & F1 Macro & Train (s) & Inf (ms) & Params \\
+\midrule
+DistilBERT & Freeze backbone & 67.38 & 66.15 & -- & 292  & 44.3 & 66.9M \\
+DistilBERT & Hybrid          & 78.89 & 73.88 & 72.68 & 735  & 44.1 & 66.9M \\
+DistilBERT & Full fine-tune  & \textbf{79.33} & 74.06 & \textbf{0.7406} & 644  & 44.4 & 66.9M \\
+\midrule
+BERT-base  & Freeze backbone & 64.80 & 62.93 & -- & 501  & 88.2 & 109.5M \\
+BERT-base  & Hybrid          & 79.86 & \textbf{74.77} & -- & 1337 & 88.3 & 109.5M \\
+BERT-base  & Full fine-tune  & 79.96 & 74.17 & -- & 1168 & 87.9 & 109.5M \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of fine-tuning strategies on DistilBERT and BERT-base.}
+\label{tab:finetune}
+\end{table*}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{loss.png}
+\caption{Training-loss comparison for Transformer fine-tuning strategies.}
+\label{fig:transformer_training_loss_comparison}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{val_acc.png}
+\caption{Validation-accuracy comparison for Transformer fine-tuning strategies.}
+\label{fig:transformer_validation_accuracy_comparison}
+\end{figure}
+
+
+\noindent \textbf{Model Efficiency Comparison}
+We evaluate model efficiency by comparing DistilBERT and BERT-base across key metrics including parameter count, test accuracy, training time, and inference latency. The goal is to analyze the trade-off between computational cost and performance under knowledge distillation. DistilBERT is obtained by compressing BERT-base through a distillation process during pretraining, reducing model depth and size while preserving most of the predictive capability. We report both absolute values and relative ratios to highlight efficiency gains.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metric} & \textbf{DistilBERT} & \textbf{BERT-base} & \textbf{Ratio} \\
+\midrule
+Parameters        & 66.9M   & 109.5M & 1.63$\times$ \\
+Test Accuracy     & 73.88\% & 74.77\% & +0.89\% \\
+F1 Macro          & 72.68   & --      & -- \\
+Training Time     & 735s    & 1337s   & 1.82$\times$ \\
+Inference Time    & 44.1ms  & 88.3ms  & 2.0$\times$ \\
+\midrule
+Encoder Layers    & 6       & 12      & 50\% \\
+Parameter Reduction & 66.9M & 109.5M  & -39\% \\
+Inference Speedup & 44.1ms  & 88.3ms  & 2.0$\times$ faster \\
+Accuracy Drop     & 73.88\% & 74.77\% & -0.89\% \\
+\bottomrule
+\end{tabular}
+\caption{Efficiency comparison between DistilBERT and BERT-base. DistilBERT retains most of BERT-base performance while reducing parameters and latency significantly.}
+\label{tab:efficiency}
+\end{table}
