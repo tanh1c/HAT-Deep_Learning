@@ -1,429 +1,319 @@
-# Assignment 1 - Image Classification Report Content
+# Assignment 1 - Image Presentation Content
 
-This document is written for the `image` part of Assignment 1 and follows the required structure in the assignment specification:
+This file summarizes the final `image` track of Assignment 1 using the
+`Stanford Dogs` dataset and the final comparison between `ResNet-18` and
+`ViT-B/16`.
 
-1. Report on problem and dataset exploration (EDA)
-2. Report on Dataset, DataLoader, and Augmentation setup
-3. Report on model building, training, evaluation, and comparison
-4. Experimental results report: tables; figures; analysis and discussion
-5. Other extension reports (if any)
+Main source notebook:
 
-The work in this section is based on the following completed artifacts:
+- `../notebooks/stanforddogs_resnet18_vit_report_workflow.ipynb`
 
-- Notebook: `../notebooks/cifar10_resnet18_transfer_learning.ipynb`
-- Notebook: `../notebooks/cifar10_vit_transfer_learning.ipynb`
-- Model: `../models/resnet18_cifar10.pth`
-- Model: `../models/vit_b16_cifar10.pth`
-- Calibration artifact: `../artifacts/cnn/resnet18_calibration_full.png`
-- Calibration artifact: `../artifacts/vit/vit_b16_calibration_full.png`
-- Web demo: `../../app/main.py`
+Main exported report draft:
 
----
+- `./stanford_dogs_report_draft.md`
 
-## 1. Report on Problem and Dataset Exploration (EDA)
+Main artifacts:
 
-### 1.1 Problem statement
-
-The image task in this assignment is a multi-class image classification problem. The goal is to classify each input image into one of the predefined semantic categories and to compare two major model families:
-
-- `CNN`
-- `ViT`
-
-For this part, I selected:
-
-- `ResNet-18` as the CNN-based model
-- `ViT-B/16` as the Vision Transformer model
-
-Both models were trained using transfer learning from ImageNet-pretrained weights and then evaluated on the same dataset for a fair comparison.
-
-### 1.2 Dataset selection
-
-The chosen dataset is `CIFAR-10`.
-
-This dataset is appropriate for the assignment because:
-
-- it has `10` classes, which satisfies the requirement of at least `5` classes,
-- it is a standard benchmark for image classification,
-- it is more meaningful than very simple datasets such as MNIST for comparing modern pretrained image models,
-- and it is challenging enough to expose the strengths and weaknesses of both CNNs and Transformers.
-
-### 1.3 Basic dataset statistics
-
-- Dataset: `CIFAR-10`
-- Number of classes: `10`
-- Standard training split: `50,000` images
-- Standard test split: `10,000` images
-- Images per class in the test set: `1,000`
-- Original image size: `32 x 32`
-
-### 1.4 Class labels
-
-The dataset contains the following 10 categories:
-
-- airplane
-- automobile
-- bird
-- cat
-- deer
-- dog
-- frog
-- horse
-- ship
-- truck
-
-### 1.5 EDA observations
-
-Even though CIFAR-10 is relatively small in image resolution, it still provides a useful benchmark because:
-
-- it covers both `vehicle` and `animal` categories,
-- some classes are visually easy to separate, such as `ship` and `truck`,
-- while others are more visually similar and therefore harder, especially among animal classes.
-
-From the confusion matrices and classification reports in the notebooks, the remaining classification errors are concentrated more in visually similar categories than in clearly distinguishable categories. This makes CIFAR-10 a good dataset for comparing representation quality and generalization behavior across CNN and ViT architectures.
-
-### 1.6 Why CIFAR-10 is suitable for this project
-
-For this assignment, the goal is not only to build a classifier but also to compare model families and extend the work with interpretability and calibration. CIFAR-10 supports all of these goals well:
-
-- it is large enough to demonstrate transfer learning behavior,
-- it is balanced enough to make model comparison straightforward,
-- and it allows meaningful visualization and calibration analysis.
+- `../artifacts/stanford_dogs/comparison_overview.png`
+- `../artifacts/stanford_dogs/cnn/resnet18_calibration.png`
+- `../artifacts/stanford_dogs/vit/vit_b16_calibration.png`
+- `../artifacts/stanford_dogs/cnn/resnet18_gradcam_gallery.png`
+- `../artifacts/stanford_dogs/vit/vit_b16_attention_gallery.png`
+- `../artifacts/stanford_dogs/cnn/resnet18_misclassified_gallery.png`
+- `../artifacts/stanford_dogs/vit/vit_b16_misclassified_gallery.png`
 
 ---
 
-## 2. Report on Dataset, DataLoader, and Augmentation Setup
+## 1. Problem and dataset exploration (EDA)
 
-### 2.1 Dataset loading
+### Problem statement
 
-Both notebooks use `torchvision.datasets.CIFAR10` to load the CIFAR-10 dataset.
+The image task is a fine-grained image classification problem:
 
-The current pipeline uses:
+- dataset: `Stanford Dogs`
+- number of classes: `120 dog breeds`
+- compared model families:
+  - `CNN`: `ResNet-18`
+  - `Vision Transformer`: `ViT-B/16`
 
-- the standard CIFAR-10 training split for model optimization,
-- the standard CIFAR-10 test split for evaluation and result reporting.
+The objective is to compare these two pretrained architectures under the same
+data split and evaluation protocol.
 
-### 2.2 Common preprocessing design
+### Why Stanford Dogs is suitable
 
-Because both `ResNet-18` and `ViT-B/16` are ImageNet-pretrained models, the original CIFAR-10 images were resized from `32 x 32` to `224 x 224` before being fed into the networks.
+Stanford Dogs matches the assignment requirements well:
 
-Common preprocessing choices:
+- `120` classes, well above the minimum requirement
+- `12,000` official training images
+- `8,580` official test images
+- fine-grained breed differences make the task meaningfully harder than very
+  simple image benchmarks
 
-- resize input to `224 x 224`
-- convert image to tensor
-- normalize using CIFAR-10 statistics
+### EDA highlights
 
-Normalization values used in both notebooks:
+Key dataset statistics:
 
-- `mean = (0.4914, 0.4822, 0.4465)`
-- `std = (0.2470, 0.2435, 0.2616)`
+- total images: `20,580`
+- classes: `120`
+- min images per class: `148`
+- max images per class: `252`
+- mean images per class: `171.5`
+- average brightness: `0.4522`
+- average contrast std: `0.2261`
+- average saturation: `0.3047`
+- average width: `442.5 px`
+- average height: `385.9 px`
+- average aspect ratio: `1.19`
 
-### 2.3 DataLoader setup
+Main observations:
 
-Both notebooks use PyTorch `DataLoader` with efficient loading settings:
+- the dataset contains noticeable variation in illumination and saturation
+- image resolution and aspect ratio are not uniform
+- some breeds remain visually close, which supports the use of confusion
+  matrices and qualitative analysis later
+- the train/test split is large enough for a fair comparison between CNN and ViT
 
-- `batch_size = 64`
-- `shuffle = True` for training
-- `shuffle = False` for testing
-- `num_workers = 4`
-- `pin_memory = True`
-- `persistent_workers = True`
+Important EDA figures:
 
-This configuration helps maintain stable throughput during training and evaluation, especially when running in GPU environments such as Google Colab.
-
-### 2.4 Augmentation for ResNet-18
-
-Training transform used in the CNN notebook:
-
-- `Resize((224, 224))`
-- `RandomHorizontalFlip(p=0.5)`
-- `RandomRotation(15)`
-- `ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2)`
-- `RandomAffine(degrees=0, translate=(0.1, 0.1))`
-- `ToTensor()`
-- `Normalize(mean, std)`
-- `RandomErasing(p=0.1)`
-
-Test transform used in the CNN notebook:
-
-- `Resize((224, 224))`
-- `ToTensor()`
-- `Normalize(mean, std)`
-
-This augmentation is better described as `moderate` rather than minimal. It combines geometric and appearance-based perturbations with normalization and random erasing, which helps regularize transfer learning on CIFAR-10.
-
-### 2.5 Augmentation for ViT-B/16
-
-Training transform used in the ViT notebook:
-
-- `Resize((224, 224))`
-- `RandomHorizontalFlip()`
-- `RandomRotation(15)`
-- `ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2)`
-- `ToTensor()`
-- `Normalize(mean, std)`
-- `RandomErasing(p=0.1)`
-
-Test transform used in the ViT notebook:
-
-- `Resize((224, 224))`
-- `ToTensor()`
-- `Normalize(mean, std)`
-
-The augmentation policy for ViT-B/16 is also `moderate`. It is strong enough to improve robustness without turning the comparison into an augmentation-heavy benchmark.
-
-### 2.6 Discussion of preprocessing choices
-
-The resize step is important because the pretrained backbones were designed for ImageNet-scale inputs. Although CIFAR-10 images are low-resolution, resizing allows direct reuse of pretrained feature extractors. A limitation of this approach is that upsampling small images does not create new visual information, but in practice it still works well for transfer learning and produces strong classification performance.
+- `../artifacts/stanford_dogs/eda/quality_distributions.png`
+- `../artifacts/stanford_dogs/eda/dataset_distributions.png`
+- `../artifacts/stanford_dogs/eda/image_size_distribution.png`
+- `../artifacts/stanford_dogs/eda/random_class_samples.png`
+- `../artifacts/stanford_dogs/eda/darkest_examples.png`
+- `../artifacts/stanford_dogs/eda/brightest_examples.png`
+- `../artifacts/stanford_dogs/eda/rgb_channel_summary.png`
 
 ---
 
-## 3. Report on Model Building, Training, Evaluation, and Comparison
+## 2. Dataset, DataLoader, and Augmentation setup
 
-### 3.1 CNN model: ResNet-18
+### Split strategy
 
-The CNN baseline is `ResNet-18`, initialized with ImageNet-pretrained weights.
+We preserved the official dataset split and only created validation data from
+the training side:
 
-Key design choices:
+| Split | Images | Classes | Min class count | Max class count |
+|---|---:|---:|---:|---:|
+| Train | 10,200 | 120 | 85 | 85 |
+| Val | 1,800 | 120 | 15 | 15 |
+| Test | 8,580 | 120 | 48 | 152 |
 
-- model family: `CNN`
-- backbone: `ResNet-18`
-- initialization: pretrained on `ImageNet`
-- final classification head replaced for `10` CIFAR-10 classes
-- full fine-tuning enabled
+This gives:
 
-Main training setup:
+- official benchmark-style test evaluation
+- a balanced internal validation split
+- training size still comfortably above the assignment threshold
 
-- `epochs = 30`
-- `learning rate = 3e-4`
-- `weight decay = 1e-4`
-- `warmup epochs = 3`
-- optimizer: `AdamW`
-- scheduler: `LinearLR warmup + CosineAnnealingLR`
+### DataLoader setup
 
-Parameter scale:
+Both models use the same split structure:
 
-- total parameters: `11,181,642`
+- ResNet loaders: `319 / 57 / 269`
+- ViT loaders: `319 / 57 / 269`
 
-Training behavior:
+### Preprocessing design
 
-- first epoch validation-style accuracy already reached `75.5%`
-- best final reported test accuracy reached `96.55%`
-- training time per epoch in the notebook was roughly `55 to 80 seconds`
+Shared choices:
 
-### 3.2 ViT model: ViT-B/16
+- resize to `256`
+- crop to `224`
+- normalize with `ImageNet mean/std`
 
-The Transformer-based model is `ViT-B/16`, also initialized with ImageNet-pretrained weights.
+Reason:
 
-Key design choices:
+- both backbones are initialized from ImageNet-pretrained weights
+- `224 × 224` keeps enough spatial detail for breed-level cues
 
-- model family: `Vision Transformer`
-- backbone: `ViT-B/16`
-- initialization: pretrained on `ImageNet`
-- final classification head replaced for `10` CIFAR-10 classes
+### Augmentation policy
 
-The ViT training procedure uses a two-phase strategy:
+`ResNet-18`:
 
-- Phase 1: freeze the backbone and train only the classifier head
-- Phase 2: unfreeze and fine-tune the full network
+- `RandomResizedCrop`
+- horizontal flip
+- rotation
+- color jitter
+- random erasing
 
-Main training setup:
+`ViT-B/16`:
 
-- `batch_size = 64`
-- `phase 1 epochs = 3`
-- `phase 1 learning rate = 1e-3`
-- `phase 2 epochs = 15`
-- `phase 2 learning rate = 3e-5`
-- `weight decay = 1e-4`
-- optimizer: `AdamW`
-- scheduler: `CosineAnnealingLR` in each phase
+- milder crop
+- horizontal flip
+- color jitter
+- random erasing
 
-Parameter scale:
+Rationale:
 
-- total parameters: `85,806,346`
+- ResNet uses stronger augmentation for robustness
+- ViT keeps augmentation more moderate to preserve subtle breed cues
 
-Training behavior:
+Main figure:
 
-- Phase 1 already reached about `95.32%`
-- Phase 2 improved the model further to `98.36%`
-- training time per epoch in the notebook was roughly `69 to 90 seconds`
-
-### 3.3 Evaluation protocol
-
-To compare the models fairly, both were evaluated on the same CIFAR-10 test set using:
-
-- `accuracy`
-- `classification report`
-- `confusion matrix`
-
-For the extension part, I also evaluated:
-
-- `ECE (Expected Calibration Error)`
-- `reliability diagram`
-
-### 3.4 Comparison summary
-
-| Model | Family | Params | Training Strategy | Final Test Accuracy | Macro F1 | ECE |
-|---|---|---:|---|---:|---:|---:|
-| ResNet-18 | CNN | 11.18M | Full fine-tuning, 30 epochs | `96.55%` | `0.97` | `0.020006` |
-| ViT-B/16 | Transformer | 85.81M | Freeze 3 epochs + full fine-tune 15 epochs | `98.36%` | `0.98` | `0.006917` |
-
-### 3.5 Main comparison takeaway
-
-The comparison shows a clear trade-off:
-
-- `ResNet-18` is much smaller and lighter,
-- but `ViT-B/16` achieves better final accuracy and better calibration.
-
-This makes the CNN model attractive as a more efficient baseline, while the ViT model is the stronger performer in final predictive quality.
+- `../artifacts/stanford_dogs/eda/augmented_batch_preview.png`
 
 ---
 
-## 4. Experimental Results Report: Tables, Figures, Analysis and Discussion
+## 3. Model building, training, evaluation, and comparison
 
-### 4.1 Main quantitative results
+### ResNet-18
 
-The final results indicate:
+- family: `CNN`
+- parameters: `11,238,072`
+- training strategy: `full fine-tuning for 12 epochs`
 
-- `ResNet-18` achieved `96.55%` test accuracy
-- `ViT-B/16` achieved `98.36%` test accuracy
-- `ViT-B/16` also achieved lower calibration error (`ECE = 0.006917`) than `ResNet-18` (`ECE = 0.020006`)
+Final training trend from the exported history:
 
-This suggests that the ViT model is not only more accurate, but also more reliable in terms of confidence estimation.
+| Epoch | Train acc | Val acc | Val macro F1 |
+|---|---:|---:|---:|
+| 8 | 0.8931 | 0.7044 | 0.7018 |
+| 9 | 0.9341 | 0.7289 | 0.7267 |
+| 10 | 0.9515 | 0.7417 | 0.7412 |
+| 11 | 0.9640 | 0.7461 | 0.7466 |
+| 12 | 0.9701 | 0.7489 | 0.7482 |
 
-### 4.2 Available figures in the repository
+Test result:
 
-#### Calibration figure for ResNet-18
+- accuracy: `0.7273`
+- macro F1: `0.7193`
+- weighted F1: `0.7283`
 
-![ResNet-18 Calibration](../artifacts/cnn/resnet18_calibration_full.png)
+### ViT-B/16
 
-#### Calibration figure for ViT-B/16
+- family: `Transformer`
+- parameters: `85,890,936`
+- training strategy: `head-only training for 3 epochs, then full fine-tuning for 8 epochs`
 
-![ViT-B/16 Calibration](../artifacts/vit/vit_b16_calibration_full.png)
+Final fine-tuning trend:
 
-### 4.3 Additional notebook figures used in analysis
+| Epoch | Train acc | Val acc | Val macro F1 |
+|---|---:|---:|---:|
+| 4 | 0.9851 | 0.9239 | 0.9233 |
+| 5 | 0.9914 | 0.9350 | 0.9349 |
+| 6 | 0.9927 | 0.9372 | 0.9368 |
+| 7 | 0.9931 | 0.9372 | 0.9369 |
+| 8 | 0.9943 | 0.9394 | 0.9391 |
 
-The notebooks also contain:
+Test result:
 
-- confusion matrix for `ResNet-18`
-- confusion matrix for `ViT-B/16`
-- full classification report for each model
-- training curves
-
-These figures are currently stored inside the notebooks and can be exported as screenshots or separate images when preparing the final GitHub Pages or slide deck.
-
-### 4.4 Analysis and discussion
-
-#### Accuracy comparison
-
-Both models performed strongly on CIFAR-10, but `ViT-B/16` consistently achieved the best final result. This suggests that the Transformer model was able to learn stronger image-level representations after fine-tuning, despite having far more parameters than the CNN baseline.
-
-#### Efficiency comparison
-
-Although ViT produced the best accuracy, the CNN model remains valuable because:
-
-- it is much smaller (`11.18M` vs `85.81M` parameters),
-- and it trained faster per epoch in the notebook logs.
-
-So, from a deployment perspective, `ResNet-18` offers a better accuracy-efficiency trade-off, while `ViT-B/16` offers the best absolute performance.
-
-#### Error pattern discussion
-
-Based on the confusion matrices and classification reports in the notebooks, the more difficult errors are concentrated in visually similar classes rather than in clearly distinct ones. This is expected for CIFAR-10, where some categories are semantically and visually close at low image resolution.
-
-#### Calibration discussion
-
-Calibration is an important extension because a model can be highly accurate but still poorly calibrated. In this project:
-
-- `ResNet-18` ECE: `0.020006`
-- `ViT-B/16` ECE: `0.006917`
-
-The lower ECE of the ViT model indicates that its confidence estimates are better aligned with actual correctness. In other words, when the ViT model is confident, that confidence is more trustworthy on average.
-
-#### Overall interpretation
-
-The experiment supports the following overall conclusion:
-
-- `ResNet-18` is a strong and efficient CNN baseline for CIFAR-10,
-- `ViT-B/16` is the strongest model in final accuracy and calibration,
-- and the difference is large enough to make the architecture comparison meaningful.
+- accuracy: `0.9378`
+- macro F1: `0.9343`
+- weighted F1: `0.9378`
 
 ---
 
-## 5. Other Extension Reports (if any)
+## 4. Experimental results: tables, figures, analysis, and discussion
 
-For the image part, I implemented three extensions:
+### Final comparison table
 
-- `Application demo`
-- `Interpretability`
-- `Calibration`
+| Model | Family | Params | Training strategy | Test accuracy | Macro F1 | Weighted F1 | ECE | Train time (s) |
+|---|---|---:|---|---:|---:|---:|---:|---:|
+| ResNet-18 | CNN | 11,238,072 | Full fine-tuning for 12 epochs | 0.7273 | 0.7193 | 0.7283 | 0.0394 | 166.10 |
+| ViT-B/16 | Transformer | 85,890,936 | Head 3 + full fine-tune 8 epochs | 0.9378 | 0.9343 | 0.9378 | 0.0161 | 318.85 |
 
-### 5.1 Application demo
+Main figure:
 
-I built a simple web interface for the image models using Gradio.
+- `../artifacts/stanford_dogs/comparison_overview.png`
 
-Main features:
+### Main conclusions
 
-- upload an image,
-- choose between `CNN` and `ViT`,
-- run prediction,
-- view top prediction output,
-- visualize model explanation,
-- inspect calibration output.
+- `ViT-B/16` strongly outperforms `ResNet-18` on Stanford Dogs
+- the gap is visible in both accuracy and macro F1
+- `ViT-B/16` is also better calibrated because it achieves lower `ECE`
+- `ResNet-18` remains much lighter and faster, so it is still a meaningful baseline
 
-Main implementation file:
+### Qualitative evidence
 
-- `../../app/main.py`
+ResNet artifacts:
 
-This extension makes the project easier to demonstrate in a video or presentation because it turns the trained models into an interactive mini-application instead of just notebook outputs.
+- `../artifacts/stanford_dogs/cnn/resnet_18_confusion_matrix_counts.png`
+- `../artifacts/stanford_dogs/cnn/resnet_18_confusion_matrix_normalized.png`
+- `../artifacts/stanford_dogs/cnn/resnet18_calibration.png`
+- `../artifacts/stanford_dogs/cnn/resnet18_gradcam_gallery.png`
+- `../artifacts/stanford_dogs/cnn/resnet18_misclassified_gallery.png`
 
-### 5.2 Interpretability
+ViT artifacts:
 
-I added model explanation support for both architectures:
+- `../artifacts/stanford_dogs/vit/vit_b_16_confusion_matrix_counts.png`
+- `../artifacts/stanford_dogs/vit/vit_b_16_confusion_matrix_normalized.png`
+- `../artifacts/stanford_dogs/vit/vit_b16_calibration.png`
+- `../artifacts/stanford_dogs/vit/vit_b16_attention_gallery.png`
+- `../artifacts/stanford_dogs/vit/vit_b16_misclassified_gallery.png`
+
+Representative class-wise metrics:
+
+ResNet-18:
+
+- Chihuahua: precision/recall/F1 = `0.6538 / 0.6538 / 0.6538`
+- Japanese spaniel: `0.8488 / 0.8588 / 0.8538`
+- Maltese dog: `0.8750 / 0.7829 / 0.8264`
+
+ViT-B/16:
+
+- Chihuahua: precision/recall/F1 = `0.8750 / 0.9423 / 0.9074`
+- Japanese spaniel: `0.9512 / 0.9176 / 0.9341`
+- Maltese dog: `0.9862 / 0.9408 / 0.9630`
+
+---
+
+## 5. Other extension reports
+
+### Interpretability
+
+Completed:
 
 - `Grad-CAM` for `ResNet-18`
-- attention-based visualization for `ViT-B/16`
+- attention-map visualization for `ViT-B/16`
 
-This extension helps answer an important question:
+These outputs show whether each model focuses on the dog body, face, fur region,
+or surrounding context.
 
-- what regions of the image influenced the prediction?
+### Misclassified gallery
 
-Interpretability is especially useful for qualitative comparison because CNNs and Transformers often focus on image evidence differently.
+The misclassified-example galleries show that the remaining mistakes are often
+fine-grained breed confusions:
 
-### 5.3 Calibration
+- visually similar small-breed dogs
+- spaniel-to-spaniel confusions
+- shepherd / terrier / retriever variants with overlapping appearance
 
-I implemented confidence calibration analysis using:
+### Augmentation vs no augmentation
 
-- `ECE`
-- `reliability diagram`
-- confidence distribution
+| Setting | Accuracy | Macro F1 | Weighted F1 | ECE | Train time (s) |
+|---|---:|---:|---:|---:|---:|
+| ResNet-18 with augmentation | 0.7287 | 0.7183 | 0.7288 | 0.0572 | 55.56 |
+| ResNet-18 no augmentation | 0.7335 | 0.7239 | 0.7346 | 0.0477 | 37.31 |
+| ViT-B/16 with augmentation | 0.9127 | 0.9073 | 0.9128 | 0.0733 | 139.15 |
+| ViT-B/16 no augmentation | 0.8990 | 0.8947 | 0.8994 | 0.0633 | 138.39 |
 
-The calibration outputs were exported from the notebooks and are also integrated into the web app. This allows the full-test calibration view to be shown quickly without recomputing the entire dataset every time.
+Interpretation:
 
-### 5.4 Extension summary
+- for this setup, augmentation did not improve ResNet-18
+- augmentation improved ViT-B/16 accuracy and macro F1, but slightly worsened calibration
 
-The extension part for the image section is already complete and meaningfully strengthens the project:
+### Freeze backbone vs full fine-tune
 
-- the `web demo` improves presentation quality,
-- `interpretability` adds qualitative insight,
-- and `calibration` adds reliability analysis beyond raw accuracy.
+| Setting | Accuracy | Macro F1 | Weighted F1 | ECE | Train time (s) | Trainable params |
+|---|---:|---:|---:|---:|---:|---:|
+| ResNet-18 freeze backbone | 0.7416 | 0.7322 | 0.7420 | 0.1480 | 55.88 | 61,560 |
+| ResNet-18 full fine-tune | 0.7359 | 0.7244 | 0.7356 | 0.0643 | 56.19 | 11,238,072 |
+| ViT-B/16 freeze backbone | 0.9457 | 0.9423 | 0.9459 | 0.0074 | 57.29 | 92,280 |
+| ViT-B/16 full fine-tune | 0.9172 | 0.9127 | 0.9174 | 0.0753 | 138.37 | 85,890,936 |
 
-These extensions make the image section more complete and more aligned with the assignment's advanced grading criteria.
+Interpretation:
 
----
+- in this specific experimental setup, freeze-backbone training performed better
+  than full fine-tuning for both models
+- the result is especially strong for `ViT-B/16`, which reached the best
+  ablation performance with far fewer trainable parameters
 
-## Final Conclusion for the Image Section
+### Final extension summary
 
-The image part of Assignment 1 successfully compares two pretrained model families on CIFAR-10:
+The image track goes beyond the minimum assignment requirement by including:
 
-- `ResNet-18` as a CNN baseline
-- `ViT-B/16` as a Transformer-based image model
+- interpretability
+- calibration
+- misclassification analysis
+- augmentation ablation
+- freeze-vs-full fine-tuning ablation
 
-The final results show that:
-
-- both models are strong,
-- `ViT-B/16` performs better overall,
-- and the extension work provides additional depth through demo, interpretability, and calibration.
-
-Therefore, the image section is complete not only as a classification experiment, but also as a polished project component that is ready to be presented on GitHub Pages, in a demo video, and in the final presentation slides.
-
-
+This makes the Stanford Dogs image track ready for GitHub Pages, presentation
+slides, and the final report.

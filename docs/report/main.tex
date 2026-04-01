@@ -69,10 +69,11 @@
 
 \subsubsection*{Chu Nguyen Tuan Anh --- Image Track}
 \begin{itemize}[leftmargin=*, nosep]
-    \item Prepared the CIFAR-10 data pipeline, including resizing, normalization, augmentation, and train/test evaluation workflow.
+    \item Replaced the earlier CIFAR-10 setup with the final \textbf{Stanford Dogs} benchmark for the image track.
+    \item Prepared the Stanford Dogs pipeline, including official train/test usage, internal validation split, preprocessing, augmentation, and exported EDA figures.
     \item Trained and evaluated two pretrained image models: ResNet-18 as the CNN baseline and ViT-B/16 as the Transformer baseline.
-    \item Obtained final reported test accuracy of 96.55\% for ResNet-18 and 98.36\% for ViT-B/16.
-    \item Completed the image-track extensions: web demo integration, interpretability visualization, and calibration analysis with exported reliability-diagram artifacts.
+    \item Obtained final reported test accuracy of 72.73\% for ResNet-18 and 93.78\% for ViT-B/16, with ECE values of 0.0394 and 0.0161 respectively.
+    \item Completed the image-track extensions: Grad-CAM, ViT attention visualization, misclassified-example galleries, calibration analysis, and ablation studies.
     \item Remaining work: finalize figure selection for the final slide deck and help complete shared deliverables.
 \end{itemize}
 
@@ -194,191 +195,98 @@
 
 \section{Detailed Reports}
 
-\subsection{Image Track --- CIFAR-10, ResNet-18, and ViT-B/16}
+\subsection{Image Track --- Stanford Dogs, ResNet-18, and ViT-B/16}
 
 \subsubsection{Problem and Dataset Exploration}
-The image task is a multi-class image classification problem on the \textbf{CIFAR-10} dataset. The goal is not only to train a classifier, but also to compare two major pretrained model families under the same evaluation protocol:
+The final image track uses the \textbf{Stanford Dogs} dataset instead of the earlier CIFAR-10 setup. This benchmark is more suitable for the assignment because it is a \textbf{fine-grained image classification} task with \textbf{120 dog-breed classes}, \textbf{12,000 official training images}, and \textbf{8,580 official test images}. The dataset therefore satisfies the assignment size requirement comfortably while also making the CNN-versus-Transformer comparison more meaningful.
+
+The image task compares:
 \begin{itemize}[leftmargin=*, nosep]
     \item \textbf{ResNet-18} as the CNN baseline,
     \item \textbf{ViT-B/16} as the Transformer-based vision model.
 \end{itemize}
 
-CIFAR-10 is a suitable dataset for this assignment because it has \textbf{10 classes}, satisfies the requirement of at least 5 classes, is significantly more meaningful than very simple benchmarks such as MNIST, and is challenging enough to expose differences between CNN and ViT transfer learning.
-
-Basic dataset statistics:
-\begin{itemize}[leftmargin=*, nosep]
-    \item training split: \textbf{50,000} images,
-    \item test split: \textbf{10,000} images,
-    \item balanced test set: \textbf{1,000} images per class,
-    \item original image size: \textbf{$32 \times 32$}.
-\end{itemize}
-
-The 10 classes are: \textit{airplane, automobile, bird, cat, deer, dog, frog, horse, ship, truck}. From the confusion matrices and classification reports in the notebooks, the remaining errors are concentrated mainly in visually similar categories rather than clearly distinct classes. This makes CIFAR-10 a useful benchmark for comparing representation quality, calibration behavior, and qualitative interpretability between CNN and ViT architectures.
-
-Beyond satisfying the assignment requirement, CIFAR-10 is also a good fit for this project because it is:
-\begin{itemize}[leftmargin=*, nosep]
-    \item large enough to demonstrate transfer learning behavior,
-    \item balanced enough to make cross-model comparison straightforward,
-    \item and suitable for follow-up extensions such as interpretability and calibration analysis.
-\end{itemize}
+Exported EDA results show that Stanford Dogs contains broad variation in brightness, saturation, image size, aspect ratio, and real-world scene composition. The class distribution is only moderately imbalanced, with a minimum of \textbf{148} and a maximum of \textbf{252} images per breed. This makes the dataset suitable for evaluating both representation quality and error patterns on visually similar classes.
 
 \subsubsection{Dataset, DataLoader, and Augmentation Setup}
-Both notebooks load CIFAR-10 from \texttt{torchvision.datasets.CIFAR10}. Because both backbones are pretrained on ImageNet, the original $32 \times 32$ images are resized to \textbf{$224 \times 224$} before entering the networks.
-
-Common preprocessing choices:
+The final workflow preserves the official Stanford Dogs train/test split and creates an internal stratified validation split from the official training set only:
 \begin{itemize}[leftmargin=*, nosep]
-    \item \texttt{Resize((224, 224))},
-    \item conversion to tensor,
-    \item normalization using CIFAR-10 statistics.
+    \item train: \textbf{10,200} images,
+    \item validation: \textbf{1,800} images,
+    \item test: \textbf{8,580} images.
 \end{itemize}
 
-Normalization values used in both notebooks:
-\[
-\texttt{mean} = (0.4914, 0.4822, 0.4465), \qquad
-\texttt{std} = (0.2470, 0.2435, 0.2616)
-\]
+Because both backbones are initialized from ImageNet-pretrained weights, the preprocessing pipeline resizes images to \textbf{256}, crops them to \textbf{224}, converts them to tensors, and normalizes them using \textbf{ImageNet mean/std}. This keeps the prediction path consistent with the pretrained backbone assumptions while preserving enough spatial detail for fine-grained breed recognition.
 
-Common DataLoader configuration:
+The augmentation policy remains moderate:
 \begin{itemize}[leftmargin=*, nosep]
-    \item \texttt{batch\_size = 64},
-    \item \texttt{shuffle = True} for training and \texttt{False} for testing,
-    \item \texttt{num\_workers = 4},
-    \item \texttt{pin\_memory = True},
-    \item \texttt{persistent\_workers = True}.
+    \item \textbf{ResNet-18}: random resized crop, horizontal flip, rotation, color jitter, and random erasing,
+    \item \textbf{ViT-B/16}: milder crop, horizontal flip, color jitter, and random erasing.
 \end{itemize}
 
-The augmentation policy is better described as \textbf{moderate} rather than minimal.
-
-For \textbf{ResNet-18}, the training transform includes:
-\begin{itemize}[leftmargin=*, nosep]
-    \item horizontal flip,
-    \item random rotation,
-    \item color jitter,
-    \item random affine translation,
-    \item random erasing.
-\end{itemize}
-
-For \textbf{ViT-B/16}, the training transform includes:
-\begin{itemize}[leftmargin=*, nosep]
-    \item horizontal flip,
-    \item random rotation,
-    \item color jitter,
-    \item random erasing.
-\end{itemize}
-
-For evaluation, both notebooks use the same simpler test transform:
-\begin{itemize}[leftmargin=*, nosep]
-    \item \texttt{Resize((224, 224))},
-    \item \texttt{ToTensor()},
-    \item \texttt{Normalize(mean, std)}.
-\end{itemize}
-
-The resize step is necessary for reuse of ImageNet-pretrained feature extractors. Although upsampling CIFAR-10 images does not create new visual information, it still works well in practice for transfer learning and produces strong performance on both backbones.
+This design aims to improve robustness to pose, illumination, and framing changes without destroying subtle breed cues.
 
 \subsubsection{Model Building, Training, Evaluation, and Comparison}
-The \textbf{ResNet-18} baseline is initialized with ImageNet-pretrained weights and the final classification head is replaced for 10 CIFAR-10 classes. The CNN notebook uses full fine-tuning with the following main setup:
-\begin{itemize}[leftmargin=*, nosep]
-    \item epochs: \textbf{30},
-    \item learning rate: \textbf{$3 \times 10^{-4}$},
-    \item weight decay: \textbf{$10^{-4}$},
-    \item warmup epochs: \textbf{3},
-    \item optimizer: \textbf{AdamW},
-    \item scheduler: \textbf{Linear warmup + CosineAnnealingLR}.
-\end{itemize}
+The \textbf{ResNet-18} baseline uses full fine-tuning for \textbf{12 epochs}. The model contains \textbf{11,238,072} parameters and reaches a final test accuracy of \textbf{72.73\%}, macro F1 of \textbf{0.7193}, weighted F1 of \textbf{0.7283}, and ECE of \textbf{0.0394}. The total recorded training time is approximately \textbf{166.10 seconds}.
 
-The model has \textbf{11.18M} parameters and reached a final reported test accuracy of \textbf{96.55\%}.
-In the notebook logs, the first validation-style accuracy already reached about \textbf{75.5\%}, and the training time per epoch was roughly \textbf{55--80 seconds}, which makes ResNet-18 a strong and efficient baseline.
-
-The \textbf{ViT-B/16} model is also initialized with ImageNet-pretrained weights and uses a two-phase fine-tuning strategy:
-\begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Phase 1}: freeze the backbone and train only the classifier head for \textbf{3 epochs} with learning rate \textbf{$10^{-3}$},
-    \item \textbf{Phase 2}: unfreeze and fine-tune the full network for \textbf{15 epochs} with learning rate \textbf{$3 \times 10^{-5}$},
-    \item optimizer: \textbf{AdamW},
-    \item scheduler: \textbf{CosineAnnealingLR},
-    \item weight decay: \textbf{$10^{-4}$}.
-\end{itemize}
-
-The Transformer model has \textbf{85.81M} parameters and reached a final reported test accuracy of \textbf{98.36\%}.
-The first training phase already reached about \textbf{95.32\%}, and the notebook logs show epoch times of roughly \textbf{69--90 seconds}. This confirms that ViT-B/16 quickly benefits from transfer learning and then improves further during full-network fine-tuning.
-
-For fair comparison, both models are evaluated on the same CIFAR-10 test set with:
-\begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{accuracy},
-    \item \textbf{classification report},
-    \item \textbf{confusion matrix},
-    \item and, for the extension part, \textbf{Expected Calibration Error (ECE)} plus reliability diagrams.
-\end{itemize}
+The \textbf{ViT-B/16} model uses a two-stage strategy: \textbf{3 epochs} of head-only training followed by \textbf{8 epochs} of full fine-tuning. The model contains \textbf{85,890,936} parameters and reaches a final test accuracy of \textbf{93.78\%}, macro F1 of \textbf{0.9343}, weighted F1 of \textbf{0.9378}, and ECE of \textbf{0.0161}. The total recorded training time is approximately \textbf{318.85 seconds}.
 
 \begin{center}
 \small
-\begin{tabular}{|l|l|c|l|c|c|c|}
+\begin{tabular}{|l|l|c|l|c|c|c|c|}
 \hline
-\textbf{Model} & \textbf{Family} & \textbf{Params} & \textbf{Training strategy} & \textbf{Accuracy} & \textbf{Macro F1} & \textbf{ECE} \\
+\textbf{Model} & \textbf{Family} & \textbf{Params} & \textbf{Training strategy} & \textbf{Accuracy} & \textbf{Macro F1} & \textbf{ECE} & \textbf{Train time (s)} \\
 \hline
-ResNet-18 & CNN & 11.18M & Full fine-tuning, 30 epochs & 96.55\% & 0.97 & 0.020006 \\
+ResNet-18 & CNN & 11.24M & Full fine-tuning for 12 epochs & 72.73\% & 0.7193 & 0.0394 & 166.10 \\
 \hline
-ViT-B/16 & Transformer & 85.81M & Freeze 3 + fine-tune 15 epochs & 98.36\% & 0.98 & 0.006917 \\
+ViT-B/16 & Transformer & 85.89M & Head 3 + full fine-tune 8 epochs & 93.78\% & 0.9343 & 0.0161 & 318.85 \\
 \hline
 \end{tabular}
 \end{center}
 
 \subsubsection{Experimental Results, Figures, Analysis, and Discussion}
-The final results show that both models are strong, but \textbf{ViT-B/16} is the better overall performer:
-\begin{itemize}[leftmargin=*, nosep]
-    \item ResNet-18 test accuracy: \textbf{96.55\%},
-    \item ViT-B/16 test accuracy: \textbf{98.36\%},
-    \item ResNet-18 ECE: \textbf{0.020006},
-    \item ViT-B/16 ECE: \textbf{0.006917}.
-\end{itemize}
+The final comparison shows a large performance gap in favor of \textbf{ViT-B/16}. On Stanford Dogs, the Transformer model performs much better than the smaller CNN baseline in both predictive quality and calibration quality. This is expected because Stanford Dogs is a fine-grained benchmark where small inter-class differences benefit from stronger representation capacity.
 
-This indicates that ViT-B/16 is not only more accurate, but also better calibrated. In other words, its confidence estimates are more trustworthy on average.
-
-Additional notebook outputs already available for analysis include:
-\begin{itemize}[leftmargin=*, nosep]
-    \item confusion matrix for ResNet-18,
-    \item confusion matrix for ViT-B/16,
-    \item classification reports for both models,
-    \item training curves,
-    \item exported calibration metrics.
-\end{itemize}
-
-From the experimental comparison, several conclusions can be drawn:
-\begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Accuracy}: ViT-B/16 consistently achieves the strongest final performance.
-    \item \textbf{Efficiency}: ResNet-18 remains much smaller (\textbf{11.18M} vs \textbf{85.81M} parameters) and therefore provides a better accuracy-efficiency trade-off.
-    \item \textbf{Error pattern}: the hardest cases are concentrated in visually similar categories, especially at low image resolution.
-    \item \textbf{Calibration}: ViT-B/16 has significantly lower ECE, so its confidence is better aligned with actual correctness.
-\end{itemize}
-
-Therefore, the experiment supports a clear interpretation: \textbf{ResNet-18} is a strong and efficient CNN baseline, while \textbf{ViT-B/16} is the strongest model in both predictive quality and reliability.
+At the same time, \textbf{ResNet-18} remains meaningful as a lighter and faster baseline. Even though it is substantially weaker than ViT-B/16 on this dataset, it still provides a useful CNN reference point for the assignment-level CNN-versus-ViT comparison.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{assets/image/resnet18_calibration_full.png}
-\caption{ResNet-18 calibration on the full CIFAR-10 test set (ECE = 0.0200).}
-\label{fig:resnet18_calibration_full}
+\includegraphics[width=0.9\textwidth]{assets/image/comparison_overview.png}
+\caption{Final Stanford Dogs comparison between ResNet-18 and ViT-B/16 across test accuracy, macro F1, and calibration error.}
+\label{fig:stanforddogs_comparison}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{assets/image/vit_b16_calibration_full.png}
-\caption{ViT-B/16 calibration on the full CIFAR-10 test set (ECE = 0.0069).}
-\label{fig:vitb16_calibration_full}
+\includegraphics[width=0.9\textwidth]{assets/image/resnet18_calibration.png}
+\caption{ResNet-18 calibration on the official Stanford Dogs test set (ECE = 0.0394).}
+\label{fig:stanforddogs_resnet_calibration}
 \end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{assets/image/vit_b16_calibration.png}
+\caption{ViT-B/16 calibration on the official Stanford Dogs test set (ECE = 0.0161).}
+\label{fig:stanforddogs_vit_calibration}
+\end{figure}
+
+The qualitative outputs also support this interpretation:
+\begin{itemize}[leftmargin=*, nosep]
+    \item confusion matrices show much cleaner diagonals for ViT-B/16 than for ResNet-18,
+    \item misclassified galleries show that the remaining errors are mostly fine-grained breed confusions,
+    \item calibration figures show that ViT-B/16 confidence is more aligned with its actual correctness.
+\end{itemize}
 
 \subsubsection{Other Extension Reports}
-The image track already includes three completed extensions:
+The image track now includes the following completed extensions:
 \begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Application demo}: a Gradio-based web interface in \texttt{assignments/assignment-1/app/main.py} for prediction, model selection, and qualitative inspection.
-    \item \textbf{Interpretability}: \textbf{Grad-CAM} for ResNet-18 and attention-based visualization for ViT-B/16, allowing visual explanation of model focus.
-    \item \textbf{Calibration}: Expected Calibration Error, reliability diagrams, and confidence-distribution outputs integrated into both the notebooks and the demo workflow.
+    \item \textbf{Interpretability}: Grad-CAM for ResNet-18 and attention visualization for ViT-B/16.
+    \item \textbf{Calibration}: exported reliability diagrams and ECE analysis for both final models.
+    \item \textbf{Error analysis}: confusion matrices and misclassified-example galleries.
+    \item \textbf{Ablation studies}: augmentation vs.\ no augmentation and freeze-backbone vs.\ full fine-tuning comparisons.
 \end{itemize}
 
-These extensions make the image section more complete and more presentation-ready. The web demo improves demonstration quality, interpretability adds qualitative insight beyond raw metrics, and calibration adds reliability analysis beyond raw accuracy.
-
-More specifically, the Gradio demo supports image upload, model selection between CNN and ViT, prediction display, qualitative explanation, and fast access to saved calibration outputs. The calibration extension covers not only ECE and reliability diagrams, but also confidence-distribution analysis, making the evaluation more complete than a pure accuracy-only comparison.
-
-Overall, the image part is complete not only as a classification experiment, but also as a polished project component that is ready to be presented on GitHub Pages, demonstrated in video form, and integrated into the final presentation slides.
+The ablation results show that augmentation is more helpful for ViT-B/16 than for ResNet-18 under the current setup, and that freeze-backbone training can outperform full fine-tuning in this specific Stanford Dogs workflow. Together, these extensions make the image track more complete and more defensible in the final report, because they go beyond raw accuracy and provide interpretability, reliability, and experimental-setup analysis.
 
 \clearpage
 \input{text.tex}

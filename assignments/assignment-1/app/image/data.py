@@ -1,74 +1,68 @@
 """
-Utilities for loading the CIFAR-10 test split from local project assets.
+Utilities for Stanford Dogs metadata used by the Assignment 1 image demo.
 
-The workspace keeps the archive at ``image/data/cifar-10-python.tar.gz``.
-Reading the test batch directly from that archive avoids permission issues
-with extracted files while keeping calibration fully offline.
+The demo only needs lightweight metadata from exported notebook artifacts:
+- the ordered class-label list for prediction display
+- summary metrics for the final comparison/calibration panel
 """
 
-import os
-import pickle
-import tarfile
-from functools import lru_cache
-from typing import Tuple
+from __future__ import annotations
 
-import numpy as np
-from PIL import Image
-from torch.utils.data import Dataset
+import csv
+import os
+from functools import lru_cache
+from typing import Dict, List, Optional
 
 
 ASSIGNMENT_ROOT = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 )
-DEFAULT_DATA_DIR = os.path.join(ASSIGNMENT_ROOT, "image", "data")
-DEFAULT_ARCHIVE_PATH = os.path.join(DEFAULT_DATA_DIR, "cifar-10-python.tar.gz")
+ARTIFACT_ROOT = os.path.join(ASSIGNMENT_ROOT, "image", "artifacts", "stanford_dogs")
+EDA_METADATA_CSV = os.path.join(ARTIFACT_ROOT, "eda", "split_metadata.csv")
+MODEL_COMPARISON_CSV = os.path.join(ARTIFACT_ROOT, "model_comparison.csv")
 
 
 @lru_cache(maxsize=1)
-def load_cifar10_test_arrays(
-    archive_path: str = DEFAULT_ARCHIVE_PATH,
-) -> Tuple[np.ndarray, np.ndarray]:
-    """Load CIFAR-10 test images and labels from the local archive."""
-    if not os.path.exists(archive_path):
+def load_stanford_dogs_class_labels(
+    metadata_csv_path: str = EDA_METADATA_CSV,
+) -> List[str]:
+    """Return Stanford Dogs class names ordered by integer label."""
+    if not os.path.exists(metadata_csv_path):
         raise FileNotFoundError(
-            f"CIFAR-10 archive not found at {archive_path}. "
-            "Expected image/data/cifar-10-python.tar.gz to exist."
+            f"Stanford Dogs metadata CSV not found at {metadata_csv_path}."
         )
 
-    with tarfile.open(archive_path, "r:gz") as tar:
-        member = tar.extractfile("cifar-10-batches-py/test_batch")
-        if member is None:
-            raise FileNotFoundError(
-                "Could not find cifar-10-batches-py/test_batch inside the archive."
-            )
+    label_to_name: Dict[int, str] = {}
+    with open(metadata_csv_path, "r", encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            label = int(row["label"])
+            class_name = row["class_name"].strip()
+            label_to_name.setdefault(label, class_name)
 
-        batch = pickle.load(member, encoding="bytes")
+    if not label_to_name:
+        raise ValueError("No Stanford Dogs label metadata could be loaded.")
 
-    images = batch[b"data"].reshape(-1, 3, 32, 32).transpose(0, 2, 3, 1)
-    labels = np.asarray(batch[b"labels"], dtype=np.int64)
-    return images, labels
-
-
-class LocalCIFAR10TestDataset(Dataset):
-    """Dataset wrapper that serves the CIFAR-10 test split from local files."""
-
-    def __init__(self, transform=None, archive_path: str = DEFAULT_ARCHIVE_PATH):
-        self.transform = transform
-        self.images, self.labels = load_cifar10_test_arrays(archive_path)
-
-    def __len__(self) -> int:
-        return len(self.labels)
-
-    def __getitem__(self, idx: int):
-        image = Image.fromarray(self.images[idx])
-        label = int(self.labels[idx])
-
-        if self.transform is not None:
-            image = self.transform(image)
-
-        return image, label
+    max_label = max(label_to_name)
+    return [label_to_name[idx] for idx in range(max_label + 1)]
 
 
-def create_cifar10_test_dataset(transform=None) -> LocalCIFAR10TestDataset:
-    """Create the CIFAR-10 test dataset used by the calibration tab."""
-    return LocalCIFAR10TestDataset(transform=transform)
+@lru_cache(maxsize=1)
+def load_model_comparison_rows(
+    csv_path: str = MODEL_COMPARISON_CSV,
+) -> Dict[str, Dict[str, str]]:
+    """Load the final exported model comparison table by model name."""
+    if not os.path.exists(csv_path):
+        return {}
+
+    rows: Dict[str, Dict[str, str]] = {}
+    with open(csv_path, "r", encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            rows[row["Model"].strip()] = row
+    return rows
+
+
+def get_model_comparison_row(model_name: str) -> Optional[Dict[str, str]]:
+    """Return the exported comparison row for a given model if available."""
+    return load_model_comparison_rows().get(model_name)

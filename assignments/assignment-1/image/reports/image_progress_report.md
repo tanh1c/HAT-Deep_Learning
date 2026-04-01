@@ -1,346 +1,185 @@
-# Assignment 1 - Image Section Progress Report
+# Assignment 1 - Image Track Progress Report
 
 ## Scope
 
-This document summarizes the current progress of the `image classification` part of Assignment 1.
+This document summarizes the final progress of the `image classification` part
+of Assignment 1 after replacing the old `CIFAR-10` setup with the final
+`Stanford Dogs` benchmark.
 
-Assumption for team roles:
+The image track now includes:
 
-- I am responsible for the `image` section.
-- My teammates are responsible for the `text` and `multimodal` sections.
+- a fine-grained image dataset with `120` classes
+- two compared model families:
+  - `CNN`: `ResNet-18`
+  - `ViT`: `ViT-B/16`
+- exported figures and tables for the web report
+- interpretability, calibration, and ablation extensions
 
-This report focuses on:
+---
 
-- what has already been completed for the image part,
-- the current experimental results,
-- extension work that has been finished,
-- and the remaining tasks needed for report, GitHub Pages, video, and slide submission.
+## 1. Requirement Mapping
 
-## 1. Assignment Requirement Mapping
-
-According to the assignment specification, the image section must:
-
-- use an image classification dataset,
-- compare two model families:
-  - `CNN`
-  - `ViT`
-- train/fine-tune pretrained models,
-- evaluate and compare the results fairly,
-- optionally include extensions such as:
-  - `Application demo`
-  - `Interpretability`
-  - `Calibration`
-
-Current status:
+The image track already satisfies the core assignment requirements:
 
 - `Image dataset`: completed
 - `CNN model`: completed
 - `ViT model`: completed
-- `Evaluation and comparison`: completed at experiment level
-- `Application demo`: completed
+- `Evaluation and comparison`: completed
+- `Tables and figures for report`: completed
 - `Interpretability`: completed
 - `Calibration`: completed
-- `Report packaging / presentation packaging`: not finished yet
+- `Ablation / extension work`: completed
+- `GitHub Pages integration`: completed
 
-## 2. Dataset Used
+---
 
-### Image dataset
+## 2. Final dataset used
 
-- Dataset: `CIFAR-10`
-- Task: image classification
-- Number of classes: `10`
-- Test set size used in evaluation/calibration: `10,000` samples
+### Dataset
 
-### Why this dataset is valid for the assignment
+- Dataset: `Stanford Dogs`
+- Total images: `20,580`
+- Official train images: `12,000`
+- Official test images: `8,580`
+- Number of classes: `120`
 
-- It satisfies the requirement of having at least `5` classes.
-- It is a standard benchmark for image classification.
-- It is more suitable than very simple datasets such as MNIST for comparing `CNN` and `ViT`.
-- It supports both model comparison and extension analysis such as confusion matrix, interpretability, and calibration.
+### Why this dataset is valid
 
-## 3. Completed Work
+Stanford Dogs is more appropriate than the earlier CIFAR-10 setup because:
 
-### 3.1 CNN model
+- it remains comfortably above the assignment threshold for training size
+- it contains many more classes
+- it is a fine-grained benchmark, so CNN-vs-ViT comparison is more meaningful
+- it supports stronger qualitative analysis through confusion matrices and
+  breed-level error inspection
 
-Notebook:
+---
 
-- `../notebooks/cifar10_resnet18_transfer_learning.ipynb`
+## 3. Completed experiments
 
-Model:
+### 3.1 ResNet-18 baseline
 
-- `../models/resnet18_cifar10.pth`
+Checkpoint:
 
-Main setup:
-
-- Backbone: `ResNet-18`
-- Initialization: pretrained on `ImageNet`
-- Input size: `224 x 224`
-- Batch size: `64`
-- Epochs: `30`
-- Fine-tuning mode: `full fine-tuning` (`FREEZE_BACKBONE = False`)
-- Optimizer: `AdamW`
-- Scheduler: `Linear warmup + CosineAnnealingLR`
-
-Data preprocessing / augmentation observed in the notebook:
-
-- `Resize((224, 224))`
-- `RandomHorizontalFlip(p=0.5)`
-- `RandomRotation(15)`
-- `ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2)`
-- `RandomAffine(degrees=0, translate=(0.1, 0.1))`
-- `Normalize`
-- `RandomErasing(p=0.1)`
-
-Result:
-
-- Final test accuracy: `96.55%`
-
-### 3.2 ViT model
-
-Notebook:
-
-- `../notebooks/cifar10_vit_transfer_learning.ipynb`
-
-Model:
-
-- `../models/vit_b16_cifar10.pth`
+- `../models/stanforddogs_resnet18.pth`
 
 Main setup:
 
-- Backbone: `ViT-B/16`
-- Initialization: pretrained on `ImageNet`
-- Input size: `224 x 224`
-- Training strategy:
-  - Phase 1: freeze backbone for `3` epochs with `lr = 0.001`
-  - Phase 2: fine-tune the full model for `15` epochs with `lr = 3e-05`
-- Optimizer: `AdamW`
-- Scheduler: `CosineAnnealingLR`
+- backbone: `ResNet-18`
+- initialization: `ImageNet-pretrained`
+- input size: `224 × 224`
+- strategy: `full fine-tuning for 12 epochs`
 
-Data preprocessing / augmentation observed in the notebook:
+Final result:
 
-- `Resize((224, 224))`
-- `RandomHorizontalFlip()`
-- `RandomRotation(15)`
-- `ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2)`
-- `Normalize`
-- `RandomErasing(p=0.1)`
+- test accuracy: `0.7273`
+- macro F1: `0.7193`
+- weighted F1: `0.7283`
+- ECE: `0.0394`
 
-Result:
+### 3.2 ViT-B/16 baseline
 
-- Final test accuracy: `98.36%`
+Checkpoint:
 
-### 3.3 Saved experiment outputs
+- `../models/stanforddogs_vit_b16.pth`
 
-The project already contains trained models and exported calibration artifacts:
+Main setup:
 
-- `../models/resnet18_cifar10.pth`
-- `../models/vit_b16_cifar10.pth`
-- `../artifacts/cnn/resnet18_calibration_full.png`
-- `../artifacts/cnn/resnet18_calibration_metrics_full.json`
-- `../artifacts/vit/vit_b16_calibration_full.png`
-- `../artifacts/vit/vit_b16_calibration_metrics_full.json`
+- backbone: `ViT-B/16`
+- initialization: `ImageNet-pretrained`
+- input size: `224 × 224`
+- strategy:
+  - head-only training for `3` epochs
+  - full fine-tuning for `8` epochs
 
-## 4. Evaluation Summary
+Final result:
 
-### Main comparison
+- test accuracy: `0.9378`
+- macro F1: `0.9343`
+- weighted F1: `0.9378`
+- ECE: `0.0161`
 
-| Model | Family | Final Test Accuracy | Notes |
-|---|---|---:|---|
-| ResNet-18 | CNN | `96.55%` | Transfer learning from ImageNet, full fine-tuning |
-| ViT-B/16 | Vision Transformer | `98.36%` | Two-phase training: freeze then full fine-tune |
+### 3.3 Final comparison
 
-### Current conclusion
+| Model | Family | Test accuracy | Macro F1 | Weighted F1 | ECE | Train time (s) |
+|---|---|---:|---:|---:|---:|---:|
+| ResNet-18 | CNN | 0.7273 | 0.7193 | 0.7283 | 0.0394 | 166.10 |
+| ViT-B/16 | Transformer | 0.9378 | 0.9343 | 0.9378 | 0.0161 | 318.85 |
 
-- Both models achieved strong performance on CIFAR-10.
-- `ViT-B/16` achieved higher final test accuracy than `ResNet-18`.
-- The image section already satisfies the core comparison requirement for `CNN vs ViT`.
+Current conclusion:
 
-## 5. Completed Extension Work
+- `ViT-B/16` is the stronger final model on Stanford Dogs
+- `ResNet-18` remains useful as a smaller and faster CNN baseline
+- the final dataset/model pair is now more aligned with the assignment brief
 
-I selected and completed three extension directions for the image part:
+---
 
-- `Application demo`
-- `Interpretability`
-- `Calibration`
+## 4. Completed extension work
 
-### 5.1 Application demo
+### 4.1 Interpretability
 
-Implementation:
+Implemented:
 
-- `../../app/main.py`
-- `../../app/image/resnet18.py`
-- `../../app/image/vit_b16.py`
+- `Grad-CAM` for `ResNet-18`
+- attention visualization for `ViT-B/16`
 
-What the demo currently supports:
+Available exported figures:
 
-- image upload,
-- prediction with `CNN` or `ViT`,
-- interpretability visualization,
-- calibration analysis.
+- `../artifacts/stanford_dogs/cnn/resnet18_gradcam_gallery.png`
+- `../artifacts/stanford_dogs/vit/vit_b16_attention_gallery.png`
 
-### 5.2 Interpretability
+### 4.2 Calibration
 
-Implemented methods:
+Implemented:
 
-- `Grad-CAM` for the CNN model
-- attention-based visualization for the ViT model
+- `ECE`
+- reliability diagram
+- confidence histogram
 
-Purpose:
+Exported figures:
 
-- to show which image regions influenced the classification decision,
-- to support qualitative comparison between the two model families.
+- `../artifacts/stanford_dogs/cnn/resnet18_calibration.png`
+- `../artifacts/stanford_dogs/vit/vit_b16_calibration.png`
 
-### 5.3 Calibration
+### 4.3 Misclassified gallery
 
-Metrics and outputs:
+Available exported figures:
 
-- `ECE (Expected Calibration Error)`
-- `Reliability Diagram`
-- `Confidence Distribution`
+- `../artifacts/stanford_dogs/cnn/resnet18_misclassified_gallery.png`
+- `../artifacts/stanford_dogs/vit/vit_b16_misclassified_gallery.png`
 
-Full-test calibration results from exported notebook artifacts:
+These galleries show that the remaining errors are mostly fine-grained breed
+confusions rather than completely unrelated predictions.
 
-| Model | ECE | Evaluated Samples |
-|---|---:|---:|
-| ResNet-18 | `0.020006` | `10,000` |
-| ViT-B/16 | `0.006917` | `10,000` |
+### 4.4 Ablation studies
 
-Current interpretation:
+Completed:
 
-- Lower ECE is better.
-- The current exported results indicate that `ViT-B/16` is better calibrated than `ResNet-18` on the CIFAR-10 test set.
+- `augmentation vs no augmentation`
+- `freeze backbone vs full fine-tune`
 
-### 5.4 Extension conclusion
+Main findings:
 
-The image extension part is already complete and covers:
+- `ViT-B/16` benefited more clearly from augmentation than `ResNet-18`
+- in the current setup, `freeze-backbone` ablations produced stronger metrics
+  than full fine-tuning for both models
 
-- a usable web demo,
-- model interpretability,
-- confidence calibration.
+---
 
-This is a strong extension package for the image section.
+## 5. Current repository status
 
-## 6. What Has Been Finished vs What Is Still Missing
+The image section now has:
 
-### Finished
+- final Stanford Dogs notebook
+- updated Stanford Dogs report draft
+- updated GitHub Pages image report page
+- exported figures for EDA, calibration, confusion, interpretability, and
+  ablations
+- updated Stanford Dogs checkpoints
 
-- Selected a valid image dataset: `CIFAR-10`
-- Built and trained a `CNN` model
-- Built and trained a `ViT` model
-- Saved trained model checkpoints
-- Produced evaluation outputs in notebooks
-- Produced calibration artifacts
-- Built a Gradio-based image demo
-- Added interpretability support
-- Added calibration support
+This means the image track is now ready for:
 
-### Not finished yet
-
-- convert the completed work into polished report content,
-- prepare final tables and figures for GitHub Pages / slides,
-- prepare short written discussion and conclusion,
-- prepare demo video assets,
-- integrate the image section into the full team deliverable page,
-- coordinate with teammates so the final Assignment 1 page includes `image + text + multimodal`.
-
-## 7. Remaining Tasks
-
-### 7.1 Tasks for the image report
-
-I still need to write a clean report section for the image part, including:
-
-1. problem statement and dataset choice,
-2. dataset exploration and justification,
-3. preprocessing, DataLoader, and augmentation setup,
-4. CNN model design and training setup,
-5. ViT model design and training setup,
-6. evaluation protocol and fair comparison,
-7. result analysis,
-8. extension analysis:
-   - demo,
-   - interpretability,
-   - calibration,
-9. final conclusion for the image section.
-
-### 7.2 Figures and tables I should prepare next
-
-Recommended assets for the final report / GitHub Pages / slides:
-
-- one comparison table for `CNN vs ViT`,
-- confusion matrix for `ResNet-18`,
-- confusion matrix for `ViT-B/16`,
-- calibration figure for `ResNet-18`,
-- calibration figure for `ViT-B/16`,
-- 2 to 4 interpretability examples,
-- screenshots of the web demo,
-- optional training curves from the notebooks.
-
-### 7.3 Suggested discussion points
-
-For the final written analysis, I should explain:
-
-- why transfer learning was used,
-- why CIFAR-10 is suitable for this assignment,
-- why ViT achieved better accuracy,
-- how the calibration results differ between CNN and ViT,
-- whether the interpretability outputs support the prediction behavior,
-- the trade-off between model performance and model complexity.
-
-### 7.4 Group-level tasks still needed
-
-Even if the image extension is done, the team still needs to complete:
-
-- the GitHub Pages `home page`,
-- the dedicated `Assignment 1` page,
-- the `demo video` link,
-- the `presentation video` link,
-- the code link,
-- the presentation/report content required by the assignment,
-- the slide deck for LMS submission.
-
-Important note:
-
-- `GitHub Pages` is static, so it is suitable for presenting results, screenshots, figures, markdown content, and links.
-- The live Gradio app itself is better shown through screenshots, video, or an external deployment link if needed.
-
-## 8. Recommended Immediate Next Steps
-
-My suggested order of work from now:
-
-1. Write the final `image report` text.
-2. Export or collect all final figures and screenshots.
-3. Create one clean `CNN vs ViT` summary table.
-4. Record a short image-demo video script.
-5. Hand off the image section content to the teammate preparing GitHub Pages.
-6. Merge the image section into the group presentation slides.
-
-## 9. Deadline Reminder
-
-- `Report 1`: due before `23:59, 26 March 2026`
-- `Final report`: due before `23:59, 06 April 2026`
-
-## 10. Final Status
-
-### Current status of the image section
-
-The `image` part of Assignment 1 is already complete at the implementation level:
-
-- core model comparison is done,
-- trained models are saved,
-- extension work is done,
-- and the demo app is working.
-
-### What remains
-
-The remaining work is mainly:
-
-- documentation,
-- packaging,
-- presentation,
-- and integration into the final team deliverables.
-
-In short:
-
-`The technical work for the image section is mostly finished. The next phase is report-writing and presentation packaging.`
-
-
+- GitHub Pages presentation
+- final report integration
+- slide preparation
+- push to the main repository after the remaining repo-wide cleanup is complete

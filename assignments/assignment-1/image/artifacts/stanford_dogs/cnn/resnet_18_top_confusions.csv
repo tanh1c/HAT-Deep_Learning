@@ -1,0 +1,21 @@
+true_class,pred_class,count,row_normalized
+Siberian husky,Eskimo dog,34,0.3695652173913043
+EntleBucher,Appenzeller,26,0.2549019607843137
+toy poodle,miniature poodle,20,0.39215686274509803
+miniature schnauzer,standard schnauzer,19,0.35185185185185186
+Yorkshire terrier,silky terrier,19,0.296875
+Shih-Tzu,Lhasa,18,0.15789473684210525
+Irish wolfhound,Scottish deerhound,18,0.15254237288135594
+Eskimo dog,Siberian husky,17,0.34
+Italian greyhound,whippet,17,0.2073170731707317
+Rhodesian ridgeback,redbone,15,0.20833333333333334
+Samoyed,Great Pyrenees,15,0.1271186440677966
+English foxhound,Walker hound,14,0.24561403508771928
+silky terrier,Yorkshire terrier,14,0.1686746987951807
+Lhasa,Shih-Tzu,14,0.16279069767441862
+Scottish deerhound,Irish wolfhound,14,0.10606060606060606
+collie,Border collie,13,0.24528301886792453
+malamute,Siberian husky,13,0.16666666666666666
+American Staffordshire terrier,Staffordshire bullterrier,12,0.1875
+malamute,Eskimo dog,12,0.15384615384615385
+whippet,Italian greyhound,12,0.13793103448275862

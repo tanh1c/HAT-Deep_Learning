@@ -29,8 +29,8 @@ from app.shared.model_registry import (
     get_models_by_type,
     BaseModelHandler,
 )
-from app.image.resnet18 import Cifar10ResNet18Handler
-from app.image.vit_b16 import Cifar10ViTHandler
+from app.image.resnet18 import StanfordDogsResNet18Handler
+from app.image.vit_b16 import StanfordDogsViTHandler
 
 
 # ============================================================================
@@ -101,27 +101,27 @@ def init_models():
     """Initialize and register all available models."""
     model_dir = os.path.join(ASSIGNMENT_ROOT, "image", "models")
 
-    # CIFAR-10 ResNet-18
-    resnet18_path = os.path.join(model_dir, "resnet18_cifar10.pth")
+    # Stanford Dogs ResNet-18
+    resnet18_path = os.path.join(model_dir, "stanforddogs_resnet18.pth")
     if os.path.exists(resnet18_path):
         try:
-            handler = Cifar10ResNet18Handler(resnet18_path)
-            register_model("cifar10_resnet18", handler)
-            print(f"✅ Loaded: CIFAR-10 ResNet-18 from {resnet18_path}")
+            handler = StanfordDogsResNet18Handler(resnet18_path)
+            register_model("stanforddogs_resnet18", handler)
+            print(f"✅ Loaded: Stanford Dogs ResNet-18 from {resnet18_path}")
         except Exception as e:
-            print(f"❌ Failed to load CIFAR-10 ResNet-18: {e}")
+            print(f"❌ Failed to load Stanford Dogs ResNet-18: {e}")
     else:
         print(f"⚠️ Model file not found: {resnet18_path}")
 
-    # CIFAR-10 ViT-B/16
-    vit_path = os.path.join(model_dir, "vit_b16_cifar10.pth")
+    # Stanford Dogs ViT-B/16
+    vit_path = os.path.join(model_dir, "stanforddogs_vit_b16.pth")
     if os.path.exists(vit_path):
         try:
-            handler = Cifar10ViTHandler(vit_path)
-            register_model("cifar10_vit", handler)
-            print(f"✅ Loaded: CIFAR-10 ViT-B/16 from {vit_path}")
+            handler = StanfordDogsViTHandler(vit_path)
+            register_model("stanforddogs_vit", handler)
+            print(f"✅ Loaded: Stanford Dogs ViT-B/16 from {vit_path}")
         except Exception as e:
-            print(f"❌ Failed to load CIFAR-10 ViT-B/16: {e}")
+            print(f"❌ Failed to load Stanford Dogs ViT-B/16: {e}")
     else:
         print(f"⚠️ Model file not found: {vit_path}")
 
@@ -210,16 +210,14 @@ def build_calibration_tab(model_key: str, handler: BaseModelHandler):
 
     - **ECE (Expected Calibration Error)**: Lower is better (0 = perfect calibration)
     - **Reliability Diagram**: Compares predicted confidence vs actual accuracy per bin
-    - **Quick Preview**: Uses a very small subset for fast CPU demos
-    - **Full Test Set**: Uses notebook artifacts instantly when available
+    - **Notebook Artifact**: Uses the exported official-test calibration figure from the final notebook
     """)
 
     calibration_mode = gr.Radio(
         choices=[
-            "Quick Preview (64 samples)",
-            "Full Test Set (10,000 samples)",
+            "Notebook Artifact (official test set)",
         ],
-        value="Quick Preview (64 samples)",
+        value="Notebook Artifact (official test set)",
         label="Calibration Mode",
     )
 
@@ -239,16 +237,11 @@ def build_calibration_tab(model_key: str, handler: BaseModelHandler):
 
     def compute_calibration(mode):
         try:
-            max_samples = 64 if mode.startswith("Quick Preview") else None
-            result = handler.get_calibration_data(max_samples=max_samples)
+            result = handler.get_calibration_data(max_samples=None)
             if result is None:
                 raise gr.Error("Could not compute calibration data")
 
-            sample_note = (
-                "Approximate preview on 64 evenly spaced test images"
-                if max_samples is not None
-                else "Full CIFAR-10 test set"
-            )
+            sample_note = f"Official {handler.get_dataset_name()} test set artifact"
             source_note = result.source or "Live computation"
             ece_md = f"""
 ### Calibration Metrics

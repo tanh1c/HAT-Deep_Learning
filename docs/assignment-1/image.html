@@ -6,7 +6,7 @@
     <title>Assignment 1 | Image Report</title>
     <meta
       name="description"
-      content="Image report page for Assignment 1, covering CIFAR-10 with ResNet-18 and ViT-B/16."
+      content="Image report page for Assignment 1, covering Stanford Dogs with ResNet-18 and ViT-B/16."
     >
     <script>
       (function () {
@@ -31,7 +31,7 @@
           </span>
           <span class="brand-copy">
             <p class="brand-label">Assignment 1 · Image</p>
-            <p class="brand-note">Dedicated image report page for the CIFAR-10 comparison</p>
+            <p class="brand-note">Dedicated image report page for the Stanford Dogs comparison</p>
           </span>
         </a>
 
@@ -191,7 +191,7 @@
         <article class="panel hero-card">
           <p class="eyebrow">Image track</p>
           <h1>
-            CNN vs ViT on <span>CIFAR-10</span>.
+            CNN vs ViT on <span>Stanford Dogs</span>.
           </h1>
           <p class="page-subtitle">
             This page contains the full image report for Assignment 1, including the required
@@ -210,7 +210,7 @@
             </div>
             <div class="meta-item">
               <p class="meta-label">Dataset</p>
-              <p class="meta-value">CIFAR-10</p>
+              <p class="meta-value">Stanford Dogs</p>
             </div>
             <div class="meta-item">
               <p class="meta-label">Models</p>
@@ -218,7 +218,7 @@
             </div>
             <div class="meta-item">
               <p class="meta-label">Extensions</p>
-              <p class="meta-value">Web, Interpretability, Calibration</p>
+              <p class="meta-value">Interpretability, Calibration, Ablations</p>
             </div>
           </div>
         </article>
@@ -248,7 +248,7 @@
           <div>
             <h2 class="section-title">Image Report Content</h2>
             <p class="section-copy">
-              This page follows the required structure for the image dataset component.
+              This page follows the required structure for the image dataset component using the final Stanford Dogs experiments.
             </p>
           </div>
         </div>
@@ -264,25 +264,25 @@
         <div class="kpi-grid">
           <article class="panel kpi-card">
             <p class="kpi-label">Dataset</p>
-            <p class="kpi-value">CIFAR-10</p>
-            <p class="kpi-note">10 classes, 50k train, 10k test, resized to 224x224</p>
+            <p class="kpi-value">Stanford Dogs</p>
+            <p class="kpi-note">120 classes, 12,000 train, 8,580 test, fine-grained dog-breed classification</p>
           </article>
 
           <article class="panel kpi-card">
             <p class="kpi-label">CNN result</p>
-            <p class="kpi-value">96.55%</p>
+            <p class="kpi-value">72.73%</p>
             <p class="kpi-note">ResNet-18 test accuracy</p>
           </article>
 
           <article class="panel kpi-card">
             <p class="kpi-label">ViT result</p>
-            <p class="kpi-value">98.36%</p>
+            <p class="kpi-value">93.78%</p>
             <p class="kpi-note">ViT-B/16 test accuracy</p>
           </article>
 
           <article class="panel kpi-card">
             <p class="kpi-label">Calibration</p>
-            <p class="kpi-value">0.0200 / 0.0069</p>
+            <p class="kpi-value">0.0394 / 0.0161</p>
             <p class="kpi-note">ECE for ResNet-18 and ViT-B/16</p>
           </article>
         </div>
@@ -293,7 +293,7 @@
           <div>
             <h2 class="section-title">1. Problem and dataset exploration (EDA)</h2>
             <p class="section-copy">
-              The image task is a multi-class classification problem comparing a CNN baseline and a Vision Transformer.
+              The image task is a fine-grained multi-class classification problem comparing a CNN baseline and a Vision Transformer on Stanford Dogs.
             </p>
           </div>
         </div>
@@ -302,9 +302,9 @@
           <div class="story-grid">
             <section class="story-block">
               <p class="card-kicker">Problem statement</p>
-              <h3 class="card-title">CNN vs ViT on CIFAR-10</h3>
+              <h3 class="card-title">CNN vs ViT on Stanford Dogs</h3>
               <p class="track-copy">
-                The goal is to classify each image into one of ten semantic categories and compare two
+                The goal is to classify each image into one of 120 dog breeds and compare two
                 major model families under the same dataset and evaluation protocol.
               </p>
               <ul class="mini-list">
@@ -316,16 +316,16 @@
 
             <section class="story-block">
               <p class="card-kicker">Dataset summary</p>
-              <h3 class="card-title">Why CIFAR-10 fits this assignment</h3>
+              <h3 class="card-title">Why Stanford Dogs fits this assignment</h3>
               <ul class="mono-list">
-                <li>10 classes</li>
-                <li>50,000 training images</li>
-                <li>10,000 test images</li>
-                <li>Original size: 32 x 32</li>
+                <li>120 classes</li>
+                <li>20,580 total images</li>
+                <li>12,000 official train images</li>
+                <li>8,580 official test images</li>
               </ul>
               <p class="deliverable-note">
-                CIFAR-10 is balanced, standard, and strong enough to reveal meaningful differences
-                between CNN and Transformer representations.
+                Stanford Dogs is a fine-grained benchmark with enough classes and enough training samples
+                to make the CNN-versus-Transformer comparison meaningful and non-trivial.
               </p>
             </section>
           </div>
@@ -333,20 +333,95 @@
           <div class="soft-divider"></div>
 
           <section class="story-block">
-            <p class="card-kicker">Class labels</p>
-            <h3 class="card-title">CIFAR-10 categories used in the image task</h3>
-            <div class="chip-cloud">
-              <span class="chip">airplane</span>
-              <span class="chip">automobile</span>
-              <span class="chip">bird</span>
-              <span class="chip">cat</span>
-              <span class="chip">deer</span>
-              <span class="chip">dog</span>
-              <span class="chip">frog</span>
-              <span class="chip">horse</span>
-              <span class="chip">ship</span>
-              <span class="chip">truck</span>
+            <p class="card-kicker">EDA highlights</p>
+            <h3 class="card-title">Quality variation, split structure, and random breed samples</h3>
+            <p class="track-copy">
+              The EDA shows that Stanford Dogs is visually diverse in brightness, contrast, saturation,
+              image size, aspect ratio, and scene composition. The official split remains large enough
+              for training and evaluation, while the breed distribution stays only moderately imbalanced.
+            </p>
+            <ul class="mini-list">
+              <li>Brightness mean: 0.4522, contrast std mean: 0.2261, saturation mean: 0.3047</li>
+              <li>Average width: 442.5 px, average height: 385.9 px, average aspect ratio: 1.19</li>
+              <li>Minimum images per breed: 148, maximum: 252, mean: 171.5</li>
+            </ul>
+            <div class="figure-stack">
+              <section class="figure-stack-item">
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/stanford_dogs/eda/quality_distributions.png" alt="Stanford Dogs quality distributions">
+                </div>
+                <p class="figure-caption">
+                  Brightness, contrast, and saturation distributions confirm a broad range of lighting and color conditions.
+                </p>
+              </section>
+              <section class="figure-stack-item">
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/stanford_dogs/eda/dataset_distributions.png" alt="Stanford Dogs split and breed distributions">
+                </div>
+                <p class="figure-caption">
+                  The official train/test split is large, and the top-20 breeds remain relatively balanced.
+                </p>
+              </section>
+              <section class="figure-stack-item">
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/stanford_dogs/eda/size_aspect_distributions.png" alt="Stanford Dogs image size and aspect ratio distributions">
+                </div>
+                <p class="figure-caption">
+                  Width, height, and aspect-ratio distributions show that the dataset contains varied image geometries before resizing to the common model input size.
+                </p>
+              </section>
+              <section class="figure-stack-item">
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/stanford_dogs/eda/random_class_samples.png" alt="Stanford Dogs random breed samples">
+                </div>
+                <p class="figure-caption">
+                  Random breed samples illustrate variation in pose, background, scale, and real-world capture conditions.
+                </p>
+              </section>
             </div>
+
+            <div class="soft-divider"></div>
+
+            <section class="story-block">
+              <p class="card-kicker">Extreme brightness examples</p>
+              <h3 class="card-title">Darkest and brightest samples in the dataset</h3>
+              <p class="track-copy">
+                To complement the summary statistics, we also inspected the darkest and brightest
+                images in the dataset. This helps verify that the measured brightness range corresponds
+                to meaningful visual variation rather than only small numerical differences.
+              </p>
+              <p class="track-copy">
+                The darkest examples are mostly low-light indoor images, shadow-heavy scenes, or photos
+                with strong exposure limitations. In several cases, the dog occupies only part of the
+                frame or blends into a dark background, which makes recognition harder even for humans.
+                These samples motivate brightness-robust preprocessing and moderate augmentation.
+              </p>
+              <div class="figure-stack figure-stack-two">
+                <section class="figure-stack-item">
+                  <div class="figure-frame">
+                    <img src="../assets/assignment-1/stanford_dogs/eda/darkest_examples.png" alt="Darkest Stanford Dogs examples">
+                  </div>
+                  <p class="figure-caption">
+                    The darkest images in Stanford Dogs illustrate low-light scenes, dark backgrounds,
+                    and reduced visibility of breed-specific features.
+                  </p>
+                </section>
+                <section class="figure-stack-item">
+                  <div class="figure-frame">
+                    <img src="../assets/assignment-1/stanford_dogs/eda/brightest_examples.png" alt="Brightest Stanford Dogs examples">
+                  </div>
+                  <p class="figure-caption">
+                    The brightest images often contain white backgrounds or bright fur, showing the
+                    opposite end of the illumination range.
+                  </p>
+                </section>
+              </div>
+              <p class="track-copy">
+                Together, these two galleries confirm that Stanford Dogs includes substantial illumination
+                diversity. This reinforces the need for normalization and moderate augmentation so that
+                both CNN and ViT models learn breed features that remain stable under different lighting conditions.
+              </p>
+            </section>
           </section>
         </article>
       </section>
@@ -356,7 +431,7 @@
           <div>
             <h2 class="section-title">2. Dataset, DataLoader, and augmentation setup</h2>
             <p class="section-copy">
-              Both notebooks use the same CIFAR-10 source and a consistent preprocessing strategy for fair comparison.
+              Both notebooks use the same Stanford Dogs split and a consistent preprocessing strategy for fair comparison.
             </p>
           </div>
         </div>
@@ -367,15 +442,16 @@
               <p class="card-kicker">Shared pipeline</p>
               <h3 class="card-title">Data loading and preprocessing</h3>
               <ul class="mono-list">
-                <li>torchvision.datasets.CIFAR10</li>
-                <li>Resize to 224 x 224</li>
-                <li>Batch size: 64</li>
+                <li>Official Stanford Dogs train/test split</li>
+                <li>Internal stratified validation split from train only</li>
+                <li>Resize to 256 then crop to 224</li>
+                <li>Batch size: 32</li>
                 <li>num_workers: 4</li>
                 <li>pin_memory: True</li>
                 <li>persistent_workers: True</li>
               </ul>
               <p class="deliverable-note">
-                Both models are ImageNet-pretrained, so CIFAR-10 images are resized before inference and training.
+                Both models are ImageNet-pretrained, so the original dog images are resized and normalized to match the backbone input requirements.
               </p>
             </section>
 
@@ -383,12 +459,12 @@
               <p class="card-kicker">CNN transform</p>
               <h3 class="card-title">ResNet-18 augmentation</h3>
               <ul class="mini-list">
-                <li>Train: Resize, RandomHorizontalFlip, RandomRotation</li>
-                <li>Train: ColorJitter, RandomAffine, Normalize, RandomErasing</li>
-                <li>Test: Resize, ToTensor, Normalize</li>
+                <li>Train: RandomResizedCrop, horizontal flip, rotation</li>
+                <li>Train: ColorJitter, Normalize, RandomErasing</li>
+                <li>Val/Test: Resize, CenterCrop, ToTensor, Normalize</li>
               </ul>
               <p class="deliverable-note">
-                The CNN notebook uses moderate augmentation to regularize transfer learning on CIFAR-10.
+                The CNN notebook uses moderate augmentation to improve robustness to pose, scale, illumination, and partial occlusion in dog photos.
               </p>
             </section>
 
@@ -396,15 +472,68 @@
               <p class="card-kicker">Transformer transform</p>
               <h3 class="card-title">ViT-B/16 augmentation</h3>
               <ul class="mini-list">
-                <li>Train: Resize, RandomHorizontalFlip, RandomRotation</li>
-                <li>Train: ColorJitter, Normalize, RandomErasing</li>
-                <li>Test: Resize, ToTensor, Normalize</li>
+                <li>Train: Milder crop, horizontal flip, color jitter</li>
+                <li>Train: Normalize, RandomErasing</li>
+                <li>Val/Test: Resize, CenterCrop, ToTensor, Normalize</li>
               </ul>
               <p class="deliverable-note">
-                The ViT notebook also uses moderate augmentation, keeping the comparison fair without relying on heavy tricks.
+                The ViT notebook keeps augmentation lighter so that fine-grained breed cues are preserved while still improving generalization.
               </p>
             </section>
           </div>
+
+          <div class="soft-divider"></div>
+
+          <section class="story-block">
+            <p class="card-kicker">Split and batch summary</p>
+            <h3 class="card-title">Balanced train/val split with matching loaders</h3>
+            <div class="compare-table-wrap">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Split</th>
+                    <th>Images</th>
+                    <th>Classes</th>
+                    <th>Min class count</th>
+                    <th>Max class count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Train</td>
+                    <td>10,200</td>
+                    <td>120</td>
+                    <td>85</td>
+                    <td>85</td>
+                  </tr>
+                  <tr>
+                    <td>Val</td>
+                    <td>1,800</td>
+                    <td>120</td>
+                    <td>15</td>
+                    <td>15</td>
+                  </tr>
+                  <tr>
+                    <td>Test</td>
+                    <td>8,580</td>
+                    <td>120</td>
+                    <td>48</td>
+                    <td>152</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul class="mini-list">
+              <li>ResNet loaders: 319 train, 57 val, 269 test</li>
+              <li>ViT loaders: 319 train, 57 val, 269 test</li>
+            </ul>
+            <div class="figure-frame">
+              <img src="../assets/assignment-1/stanford_dogs/eda/augmented_batch_preview.png" alt="Augmented Stanford Dogs batch preview">
+            </div>
+            <p class="figure-caption">
+              The augmented batch preview shows realistic crop, rotation, flip, color, and erasing effects while preserving the main breed identity.
+            </p>
+          </section>
         </article>
       </section>
 
@@ -413,7 +542,7 @@
           <div>
             <h2 class="section-title">3. Model building, training, evaluation, and comparison</h2>
             <p class="section-copy">
-              The image section compares a lighter CNN baseline with a larger Transformer model.
+              The image section compares a lightweight CNN baseline with a larger Transformer model on fine-grained dog-breed classification.
             </p>
           </div>
         </div>
@@ -425,11 +554,11 @@
               <h3 class="card-title">ResNet-18</h3>
               <ul class="mini-list">
                 <li>Backbone: ResNet-18 pretrained on ImageNet</li>
-                <li>Final head replaced for 10 classes</li>
-                <li>Full fine-tuning for 30 epochs</li>
-                <li>Optimizer: AdamW, LR: 3e-4, weight decay: 1e-4</li>
-                <li>Warmup + cosine schedule</li>
-                <li>Total params: 11.18M</li>
+                <li>Final head replaced for 120 Stanford Dogs classes</li>
+                <li>Full fine-tuning for 12 epochs</li>
+                <li>Loaded best saved checkpoint for evaluation</li>
+                <li>Total params: 11,238,072</li>
+                <li>Final val acc: 74.89%, val macro F1: 0.7482</li>
               </ul>
             </section>
 
@@ -438,11 +567,11 @@
               <h3 class="card-title">ViT-B/16</h3>
               <ul class="mini-list">
                 <li>Backbone: ViT-B/16 pretrained on ImageNet</li>
-                <li>Final head replaced for 10 classes</li>
-                <li>2-phase training: freeze backbone for 3 epochs, then fine-tune all for 15 epochs</li>
-                <li>Optimizer: AdamW, phase-1 LR: 1e-3, phase-2 LR: 3e-5, weight decay: 1e-4</li>
-                <li>CosineAnnealingLR schedule in both phases</li>
-                <li>Total params: 85.81M</li>
+                <li>Final head replaced for 120 Stanford Dogs classes</li>
+                <li>2-stage training: 3 head-only epochs + 8 full fine-tune epochs</li>
+                <li>Loaded best saved checkpoint for evaluation</li>
+                <li>Total params: 85,890,936</li>
+                <li>Final val acc: 93.94%, val macro F1: 0.9391</li>
               </ul>
             </section>
           </div>
@@ -462,31 +591,40 @@
                     <th>Training strategy</th>
                     <th>Test accuracy</th>
                     <th>Macro F1</th>
+                    <th>Weighted F1</th>
                     <th>ECE</th>
+                    <th>Train time (s)</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>ResNet-18</td>
                     <td>CNN</td>
-                    <td>11.18M</td>
-                    <td>Full fine-tuning, 30 epochs</td>
-                    <td>96.55%</td>
-                    <td>0.97</td>
-                    <td>0.0200</td>
+                    <td>11.24M</td>
+                    <td>Full fine-tuning for 12 epochs</td>
+                    <td>72.73%</td>
+                    <td>0.7193</td>
+                    <td>0.7283</td>
+                    <td>0.0394</td>
+                    <td>166.10</td>
                   </tr>
                   <tr>
                     <td>ViT-B/16</td>
                     <td>Transformer</td>
-                    <td>85.81M</td>
-                    <td>Freeze 3 epochs + fine-tune 15 epochs</td>
-                    <td>98.36%</td>
-                    <td>0.98</td>
-                    <td>0.0069</td>
+                    <td>85.89M</td>
+                    <td>Head 3 + full fine-tune 8 epochs</td>
+                    <td>93.78%</td>
+                    <td>0.9343</td>
+                    <td>0.9378</td>
+                    <td>0.0161</td>
+                    <td>318.85</td>
                   </tr>
                 </tbody>
               </table>
             </div>
+            <p class="deliverable-note">
+              ViT-B/16 is much stronger on Stanford Dogs, while ResNet-18 remains the lighter and faster baseline.
+            </p>
           </section>
         </article>
       </section>
@@ -496,30 +634,30 @@
           <div>
             <h2 class="section-title">4. Experimental results, figures, analysis, and discussion</h2>
             <p class="section-copy">
-              The ViT model achieves the best final accuracy and the best confidence calibration on the CIFAR-10 test set.
+              The ViT model achieves the best final accuracy, macro F1, and confidence calibration on the Stanford Dogs test set.
             </p>
           </div>
         </div>
 
         <article class="panel report-card content-card">
-          <p class="card-kicker">Calibration figures</p>
-          <h3 class="card-title">Reliability diagrams exported from the notebooks</h3>
+          <p class="card-kicker">Comparison figures</p>
+          <h3 class="card-title">Final metrics exported from the Stanford Dogs notebooks</h3>
           <div class="figure-stack">
             <section class="figure-stack-item">
               <div class="figure-frame">
-                <img src="../assets/assignment-1/resnet18_calibration_full.png" alt="ResNet-18 calibration plot">
+                <img src="../assets/assignment-1/stanford_dogs/comparison_overview.png" alt="Stanford Dogs model comparison overview">
               </div>
               <p class="figure-caption">
-                ResNet-18 on the full 10,000-image CIFAR-10 test set. ECE = 0.0200.
+                Side-by-side comparison of test accuracy, macro F1, and ECE. ViT-B/16 is clearly stronger overall.
               </p>
             </section>
 
             <section class="figure-stack-item">
               <div class="figure-frame">
-                <img src="../assets/assignment-1/vit_b16_calibration_full.png" alt="ViT-B/16 calibration plot">
+                <img src="../assets/assignment-1/stanford_dogs/vit/vit_b16_calibration.png" alt="ViT-B/16 calibration plot on Stanford Dogs">
               </div>
               <p class="figure-caption">
-                ViT-B/16 on the full 10,000-image CIFAR-10 test set. ECE = 0.0069.
+                ViT-B/16 reliability diagram and confidence histogram. ECE = 0.0161.
               </p>
             </section>
           </div>
@@ -531,9 +669,9 @@
               <p class="card-kicker">Main takeaways</p>
               <h3 class="card-title">Accuracy and efficiency trade-off</h3>
               <ul class="mini-list">
-                <li>ViT-B/16 achieves the strongest final accuracy and lower ECE.</li>
-                <li>ResNet-18 is much smaller and cheaper to train.</li>
-                <li>Both models are strong enough to make the architecture comparison meaningful.</li>
+                <li>ViT-B/16 reaches 93.78% test accuracy and 0.9343 macro F1.</li>
+                <li>ResNet-18 reaches 72.73% test accuracy and 0.7193 macro F1.</li>
+                <li>ResNet-18 is faster and much smaller, but ViT-B/16 wins decisively on fine-grained recognition.</li>
               </ul>
             </section>
 
@@ -541,23 +679,64 @@
               <p class="card-kicker">Discussion</p>
               <h3 class="card-title">What the comparison shows</h3>
               <ul class="mini-list">
-                <li>Residual errors are concentrated more in visually similar classes.</li>
-                <li>The ViT model produces more trustworthy confidence estimates.</li>
-                <li>The CNN model remains valuable as a compact, efficient baseline.</li>
+                <li>Stanford Dogs exposes the limits of a small CNN on subtle breed differences.</li>
+                <li>The Transformer model keeps a much cleaner confusion-matrix diagonal and better per-class recall.</li>
+                <li>ViT-B/16 also produces more trustworthy confidence scores with lower ECE.</li>
               </ul>
             </section>
 
             <section class="story-block">
               <p class="card-kicker">Additional notebook outputs</p>
-              <h3 class="card-title">Figures and reports already available</h3>
+              <h3 class="card-title">Artifacts already exported</h3>
               <ul class="mini-list">
-                <li>Confusion matrix for ResNet-18 in the CNN notebook</li>
-                <li>Confusion matrix for ViT-B/16 in the ViT notebook</li>
-                <li>Classification reports with macro F1 = 0.97 and 0.98</li>
-                <li>Training curves and full calibration metrics exported from the notebooks</li>
+                <li>Count-based and row-normalized confusion matrices for both models</li>
+                <li>Classification reports with class-wise precision, recall, and F1</li>
+                <li>Calibration plots, Grad-CAM, attention maps, and misclassified galleries</li>
+                <li>Comparison tables plus augmentation and freeze-vs-full ablations</li>
               </ul>
             </section>
           </div>
+
+          <div class="soft-divider"></div>
+
+          <section class="story-block">
+            <p class="card-kicker">Qualitative evidence</p>
+            <h3 class="card-title">Confusion, calibration, and failure cases</h3>
+            <div class="figure-stack">
+              <section class="figure-stack-item">
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/stanford_dogs/cnn/resnet_18_confusion_matrix_counts.png" alt="ResNet-18 confusion matrix counts on Stanford Dogs">
+                </div>
+                <p class="figure-caption">
+                  The ResNet confusion matrix shows substantially more off-diagonal errors, especially for visually similar breeds.
+                </p>
+              </section>
+              <section class="figure-stack-item">
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/stanford_dogs/cnn/resnet18_misclassified_gallery.png" alt="ResNet-18 misclassified examples on Stanford Dogs">
+                </div>
+                <p class="figure-caption">
+                  ResNet-18 mistakes are often concentrated on hard fine-grained pairs, showing the limits of the smaller CNN baseline.
+                </p>
+              </section>
+              <section class="figure-stack-item">
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/stanford_dogs/vit/vit_b_16_confusion_matrix_counts.png" alt="ViT-B/16 confusion matrix counts on Stanford Dogs">
+                </div>
+                <p class="figure-caption">
+                  The ViT confusion matrix is strongly diagonal, showing broad per-class improvement rather than gains on only a few easy breeds.
+                </p>
+              </section>
+              <section class="figure-stack-item">
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/stanford_dogs/vit/vit_b16_misclassified_gallery.png" alt="ViT-B/16 misclassified examples on Stanford Dogs">
+                </div>
+                <p class="figure-caption">
+                  Remaining ViT errors are still visually plausible breed confusions, which reflects the fine-grained nature of the benchmark.
+                </p>
+              </section>
+            </div>
+          </section>
         </article>
       </section>
 
@@ -566,7 +745,7 @@
           <div>
             <h2 class="section-title">5. Other extension reports</h2>
             <p class="section-copy">
-              The image track already includes three completed extensions beyond raw classification.
+              Beyond the main benchmark comparison, the image track also includes interpretability and two quantitative ablation studies.
             </p>
           </div>
         </div>
@@ -574,40 +753,38 @@
         <article class="panel deliverable-card content-card">
           <div class="extension-stack">
             <section class="extension-item">
-              <p class="card-kicker">Application demo</p>
-              <h3 class="card-title">Interactive Gradio app</h3>
-              <p class="deliverable-note">
-                The local app in <code>assignments/assignment-1/app/main.py</code> loads both image models, runs prediction,
-                calibration mode, and model explanation directly from the reorganized structure.
-              </p>
-              <div class="assignment-meta">
-                <span class="status-pill">Implemented</span>
-                <span class="chip">Web demo</span>
-              </div>
-            </section>
-
-            <section class="extension-item">
               <p class="card-kicker">Interpretability</p>
               <h3 class="card-title">Grad-CAM and attention visualization</h3>
               <p class="deliverable-note">
-                ResNet-18 uses Grad-CAM, while ViT-B/16 uses attention-based visualization so the
-                project can show where each model focuses during prediction.
+                ResNet-18 uses Grad-CAM while ViT-B/16 uses attention visualization. Together, they show that the models usually focus on the dog body, face, and fur region, while harder cases may still involve background context.
               </p>
               <div class="assignment-meta">
                 <span class="status-pill">Implemented</span>
-                <span class="chip">Qualitative analysis</span>
+                <span class="chip">Model explanation</span>
               </div>
             </section>
 
             <section class="extension-item">
-              <p class="card-kicker">Calibration</p>
-              <h3 class="card-title">ECE and reliability diagrams</h3>
+              <p class="card-kicker">Ablation study</p>
+              <h3 class="card-title">Augmentation vs no augmentation</h3>
               <p class="deliverable-note">
-                Both models were evaluated with full-test calibration analysis and exported notebook artifacts for fast web display.
+                Augmentation helps ViT-B/16 more clearly than ResNet-18 in this setup. The ViT no-augmentation run drops from 91.27% to 89.90% accuracy, while ResNet-18 changes only slightly.
               </p>
               <div class="assignment-meta">
                 <span class="status-pill">Implemented</span>
-                <span class="chip">Notebook artifacts</span>
+                <span class="chip">Generalization study</span>
+              </div>
+            </section>
+
+            <section class="extension-item">
+              <p class="card-kicker">Ablation study</p>
+              <h3 class="card-title">Freeze backbone vs full fine-tune</h3>
+              <p class="deliverable-note">
+                In this experiment, freezing the pretrained backbone performs surprisingly well and even outperforms full fine-tuning for both models, especially for ViT-B/16.
+              </p>
+              <div class="assignment-meta">
+                <span class="status-pill">Implemented</span>
+                <span class="chip">Transfer-learning strategy</span>
               </div>
             </section>
 
@@ -615,25 +792,156 @@
               <p class="card-kicker">Section status</p>
               <h3 class="card-title">Ready for GitHub Pages and presentation</h3>
               <p class="deliverable-note">
-                The image component already has notebooks, trained weights, exported figures, a web demo,
-                and integrated report content for the assignment page.
+                The image component now has Stanford Dogs notebooks, trained checkpoints, exported figures, ablation outputs, and integrated report content for the assignment page.
               </p>
               <div class="assignment-meta">
                 <span class="status-pill">Ready</span>
-                <span class="chip">Report + demo</span>
+                <span class="chip">Report + artifacts</span>
               </div>
             </section>
           </div>
+
+          <div class="soft-divider"></div>
+
+          <section class="story-block">
+            <p class="card-kicker">Extension tables</p>
+            <h3 class="card-title">Ablation summary from the notebook</h3>
+            <div class="compare-table-wrap">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Setting</th>
+                    <th>Accuracy</th>
+                    <th>Macro F1</th>
+                    <th>ECE</th>
+                    <th>Train time (s)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>ResNet-18 with augmentation</td>
+                    <td>0.7287</td>
+                    <td>0.7183</td>
+                    <td>0.0572</td>
+                    <td>55.56</td>
+                  </tr>
+                  <tr>
+                    <td>ResNet-18 no augmentation</td>
+                    <td>0.7335</td>
+                    <td>0.7239</td>
+                    <td>0.0477</td>
+                    <td>37.31</td>
+                  </tr>
+                  <tr>
+                    <td>ViT-B/16 with augmentation</td>
+                    <td>0.9127</td>
+                    <td>0.9073</td>
+                    <td>0.0733</td>
+                    <td>139.15</td>
+                  </tr>
+                  <tr>
+                    <td>ViT-B/16 no augmentation</td>
+                    <td>0.8990</td>
+                    <td>0.8947</td>
+                    <td>0.0633</td>
+                    <td>138.39</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="compare-table-wrap">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Setting</th>
+                    <th>Accuracy</th>
+                    <th>Macro F1</th>
+                    <th>ECE</th>
+                    <th>Trainable params</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>ResNet-18 freeze backbone</td>
+                    <td>0.7416</td>
+                    <td>0.7322</td>
+                    <td>0.1480</td>
+                    <td>61,560</td>
+                  </tr>
+                  <tr>
+                    <td>ResNet-18 full fine-tune</td>
+                    <td>0.7359</td>
+                    <td>0.7244</td>
+                    <td>0.0643</td>
+                    <td>11,238,072</td>
+                  </tr>
+                  <tr>
+                    <td>ViT-B/16 freeze backbone</td>
+                    <td>0.9457</td>
+                    <td>0.9423</td>
+                    <td>0.0074</td>
+                    <td>92,280</td>
+                  </tr>
+                  <tr>
+                    <td>ViT-B/16 full fine-tune</td>
+                    <td>0.9172</td>
+                    <td>0.9127</td>
+                    <td>0.0753</td>
+                    <td>85,890,936</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="soft-divider"></div>
+
+            <div class="figure-stack">
+              <section class="figure-stack-item">
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/stanford_dogs/cnn/resnet18_gradcam_gallery.png" alt="ResNet-18 Grad-CAM gallery on Stanford Dogs">
+                </div>
+                <p class="figure-caption">
+                  Grad-CAM shows that the CNN usually attends to the dog face and body, but harder cases may still include background influence.
+                </p>
+              </section>
+              <section class="figure-stack-item">
+                <div class="figure-frame">
+                  <img src="../assets/assignment-1/stanford_dogs/vit/vit_b16_attention_gallery.png" alt="ViT-B/16 attention gallery on Stanford Dogs">
+                </div>
+                <p class="figure-caption">
+                  ViT attention maps focus strongly on breed-relevant structure, which helps explain the much stronger fine-grained performance.
+                </p>
+              </section>
+            </div>
+          </section>
         </article>
       </section>
         </div>
       </div>
     </main>
 
+    <div class="image-lightbox" data-image-lightbox hidden>
+      <div class="image-lightbox-backdrop" data-image-lightbox-close></div>
+      <div class="image-lightbox-shell" role="dialog" aria-modal="true" aria-label="Expanded image viewer">
+        <div class="image-lightbox-toolbar">
+          <button class="image-lightbox-button" type="button" data-lightbox-zoom-out aria-label="Zoom out">−</button>
+          <button class="image-lightbox-button" type="button" data-lightbox-zoom-in aria-label="Zoom in">+</button>
+          <button class="image-lightbox-button" type="button" data-lightbox-reset aria-label="Reset zoom">Reset</button>
+          <a class="image-lightbox-button" data-lightbox-open-original href="#" target="_blank" rel="noreferrer">Open original</a>
+          <button class="image-lightbox-button" type="button" data-image-lightbox-close aria-label="Close image viewer">Close</button>
+        </div>
+        <div class="image-lightbox-stage" data-image-lightbox-stage>
+          <img class="image-lightbox-image" data-image-lightbox-image src="" alt="">
+        </div>
+        <p class="image-lightbox-caption" data-image-lightbox-caption></p>
+      </div>
+    </div>
+
     <footer class="shell footer">
       <div class="panel footer-card">
         <p>
-          Image report page for Assignment 1. Use the shared overview page for assignment-level links and the other pages for the remaining modalities.
+          Image report page for Assignment 1, now updated to the Stanford Dogs benchmark. Use the shared overview page for assignment-level links and the other pages for the remaining modalities.
         </p>
         <div class="footer-links">
           <a href="./index.html">Assignment 1 overview</a>
@@ -735,6 +1043,248 @@
         }, { passive: true });
 
         window.addEventListener("resize", updateDockedState);
+      })();
+    </script>
+
+    <script>
+      (function () {
+        const body = document.body;
+        const lightbox = document.querySelector("[data-image-lightbox]");
+        const stage = document.querySelector("[data-image-lightbox-stage]");
+        const viewerImage = document.querySelector("[data-image-lightbox-image]");
+        const caption = document.querySelector("[data-image-lightbox-caption]");
+        const openableImages = Array.from(document.querySelectorAll(".figure-frame img"));
+
+        if (!lightbox || !stage || !viewerImage || !openableImages.length) {
+          return;
+        }
+
+        const zoomInButton = document.querySelector("[data-lightbox-zoom-in]");
+        const zoomOutButton = document.querySelector("[data-lightbox-zoom-out]");
+        const resetButton = document.querySelector("[data-lightbox-reset]");
+        const openOriginalLink = document.querySelector("[data-lightbox-open-original]");
+        const closeButtons = Array.from(document.querySelectorAll("[data-image-lightbox-close]"));
+
+        let baseScale = 1;
+        let zoomLevel = 1;
+        let minZoomLevel = 1;
+        let maxZoomLevel = 6;
+        let translateX = 0;
+        let translateY = 0;
+        let isOpen = false;
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let startTranslateX = 0;
+        let startTranslateY = 0;
+
+        const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+        const getRenderedMetrics = () => {
+          const naturalWidth = viewerImage.naturalWidth || viewerImage.width || 1;
+          const naturalHeight = viewerImage.naturalHeight || viewerImage.height || 1;
+          const totalScale = baseScale * zoomLevel;
+
+          return {
+            naturalWidth,
+            naturalHeight,
+            renderedWidth: naturalWidth * totalScale,
+            renderedHeight: naturalHeight * totalScale,
+            totalScale,
+          };
+        };
+
+        const clampPan = () => {
+          if (!stage.clientWidth || !stage.clientHeight) {
+            return;
+          }
+
+          const metrics = getRenderedMetrics();
+          const slackX = Math.max(0, (metrics.renderedWidth - stage.clientWidth) / 2);
+          const slackY = Math.max(0, (metrics.renderedHeight - stage.clientHeight) / 2);
+          const paddingX = metrics.renderedWidth > stage.clientWidth ? 36 : 0;
+          const paddingY = metrics.renderedHeight > stage.clientHeight ? 36 : 0;
+
+          translateX = clamp(translateX, -(slackX + paddingX), slackX + paddingX);
+          translateY = clamp(translateY, -(slackY + paddingY), slackY + paddingY);
+        };
+
+        const syncImageScaleToStage = () => {
+          const naturalWidth = viewerImage.naturalWidth || 1;
+          const naturalHeight = viewerImage.naturalHeight || 1;
+          const stageWidth = Math.max(stage.clientWidth - 24, 1);
+          const stageHeight = Math.max(stage.clientHeight - 24, 1);
+
+          viewerImage.style.width = naturalWidth + "px";
+          viewerImage.style.height = naturalHeight + "px";
+
+          baseScale = Math.min(stageWidth / naturalWidth, stageHeight / naturalHeight, 1);
+          minZoomLevel = 1;
+          maxZoomLevel = Math.max(6, Number((1.8 / Math.max(baseScale, 0.01)).toFixed(2)));
+        };
+
+        const updateTransform = () => {
+          clampPan();
+          viewerImage.style.transform =
+            "translate(calc(-50% + " + translateX + "px), calc(-50% + " + translateY + "px)) scale(" + (baseScale * zoomLevel) + ")";
+        };
+
+        const resetView = () => {
+          syncImageScaleToStage();
+          zoomLevel = minZoomLevel;
+          translateX = 0;
+          translateY = 0;
+          updateTransform();
+        };
+
+        const applyZoom = (delta) => {
+          const nextZoomLevel = clamp(Number((zoomLevel + delta).toFixed(2)), minZoomLevel, maxZoomLevel);
+
+          if (nextZoomLevel === minZoomLevel) {
+            translateX = 0;
+            translateY = 0;
+          }
+
+          zoomLevel = nextZoomLevel;
+          updateTransform();
+        };
+
+        const closeLightbox = () => {
+          lightbox.hidden = true;
+          body.classList.remove("lightbox-open");
+          stage.classList.remove("is-dragging");
+          isOpen = false;
+          isDragging = false;
+          resetView();
+        };
+
+        const openLightbox = (img) => {
+          viewerImage.src = img.currentSrc || img.src;
+          viewerImage.alt = img.alt || "";
+
+          if (openOriginalLink) {
+            openOriginalLink.href = img.currentSrc || img.src;
+          }
+
+          const figure = img.closest(".figure-stack-item, .story-block, .content-card, .report-card");
+          const figureCaption = figure ? figure.querySelector(".figure-caption") : null;
+          caption.textContent = figureCaption ? figureCaption.textContent.trim() : (img.alt || "Expanded figure");
+
+          lightbox.hidden = false;
+          body.classList.add("lightbox-open");
+          isOpen = true;
+
+          if (viewerImage.complete) {
+            requestAnimationFrame(resetView);
+          }
+        };
+
+        viewerImage.addEventListener("load", () => {
+          if (isOpen) {
+            resetView();
+          }
+        });
+
+        openableImages.forEach((img) => {
+          img.tabIndex = 0;
+          img.setAttribute("role", "button");
+          img.setAttribute("aria-label", (img.alt || "Figure") + ". Click to enlarge.");
+
+          img.addEventListener("click", () => openLightbox(img));
+          img.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              openLightbox(img);
+            }
+          });
+        });
+
+        closeButtons.forEach((button) => {
+          button.addEventListener("click", closeLightbox);
+        });
+
+        zoomInButton.addEventListener("click", () => applyZoom(0.2));
+        zoomOutButton.addEventListener("click", () => applyZoom(-0.2));
+        resetButton.addEventListener("click", resetView);
+
+        document.addEventListener("keydown", (event) => {
+          if (!isOpen) {
+            return;
+          }
+
+          if (event.key === "Escape") {
+            closeLightbox();
+          } else if (event.key === "+" || event.key === "=") {
+            applyZoom(0.2);
+          } else if (event.key === "-" || event.key === "_") {
+            applyZoom(-0.2);
+          } else if (event.key.toLowerCase() === "0") {
+            resetView();
+          }
+        });
+
+        stage.addEventListener("wheel", (event) => {
+          if (!isOpen) {
+            return;
+          }
+
+          event.preventDefault();
+          applyZoom(event.deltaY < 0 ? 0.16 : -0.16);
+        }, { passive: false });
+
+        stage.addEventListener("dblclick", () => {
+          if (zoomLevel > minZoomLevel + 0.2) {
+            resetView();
+          } else {
+            applyZoom(Math.max(1.5, Number((1 / Math.max(baseScale, 0.01) * 0.28).toFixed(2))));
+          }
+        });
+
+        stage.addEventListener("pointerdown", (event) => {
+          if (zoomLevel <= minZoomLevel + 0.01) {
+            return;
+          }
+
+          isDragging = true;
+          dragStartX = event.clientX;
+          dragStartY = event.clientY;
+          startTranslateX = translateX;
+          startTranslateY = translateY;
+          stage.classList.add("is-dragging");
+          stage.setPointerCapture(event.pointerId);
+        });
+
+        stage.addEventListener("pointermove", (event) => {
+          if (!isDragging) {
+            return;
+          }
+
+          translateX = startTranslateX + (event.clientX - dragStartX);
+          translateY = startTranslateY + (event.clientY - dragStartY);
+          updateTransform();
+        });
+
+        const stopDragging = (event) => {
+          if (!isDragging) {
+            return;
+          }
+
+          isDragging = false;
+          stage.classList.remove("is-dragging");
+
+          if (event && event.pointerId !== undefined && stage.hasPointerCapture(event.pointerId)) {
+            stage.releasePointerCapture(event.pointerId);
+          }
+        };
+
+        stage.addEventListener("pointerup", stopDragging);
+        stage.addEventListener("pointercancel", stopDragging);
+        stage.addEventListener("pointerleave", stopDragging);
+        window.addEventListener("resize", () => {
+          if (isOpen) {
+            resetView();
+          }
+        });
       })();
     </script>
   </body>

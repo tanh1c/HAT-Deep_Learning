@@ -3811,6 +3811,167 @@ html[data-image-theme="dark"] .image-report-page .chip {
   color: var(--text-strong);
 }
 
+.image-report-page .figure-frame {
+  position: relative;
+}
+
+.image-report-page .figure-frame img {
+  display: block;
+  cursor: zoom-in;
+  transition: transform 260ms ease, filter 260ms ease;
+  transform-origin: center center;
+}
+
+.image-report-page .figure-frame:hover img,
+.image-report-page .figure-frame:focus-within img {
+  transform: scale(1.035);
+  filter: saturate(1.02) contrast(1.01);
+}
+
+.image-report-page.lightbox-open {
+  overflow: hidden;
+}
+
+.image-lightbox[hidden] {
+  display: none;
+}
+
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.image-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 10, 12, 0.82);
+  backdrop-filter: blur(10px);
+}
+
+.image-lightbox-shell {
+  position: relative;
+  z-index: 1;
+  width: min(92vw, 1480px);
+  height: min(90vh, 960px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 0.9rem;
+  padding: 1rem;
+  border-radius: 1.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(17, 17, 18, 0.88);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
+}
+
+.image-lightbox-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+.image-lightbox-button {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f7f4ef;
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  min-width: 3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.image-lightbox-button:hover,
+.image-lightbox-button:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.24);
+  transform: translateY(-1px);
+}
+
+.image-lightbox-stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.04), transparent 48%),
+    rgba(11, 11, 12, 0.96);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.image-lightbox-stage.is-dragging {
+  cursor: grabbing;
+}
+
+.image-lightbox-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  transform: translate(-50%, -50%) scale(1);
+  transform-origin: center center;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-drag: none;
+  image-rendering: auto;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.26);
+}
+
+.image-lightbox-caption {
+  margin: 0;
+  color: rgba(247, 244, 239, 0.88);
+  font-size: 0.96rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+html[data-image-theme="light"] .image-lightbox-shell {
+  border-color: rgba(38, 24, 16, 0.14);
+  background: rgba(255, 252, 247, 0.9);
+}
+
+html[data-image-theme="light"] .image-lightbox-backdrop {
+  background: rgba(14, 12, 10, 0.54);
+}
+
+html[data-image-theme="light"] .image-lightbox-button {
+  border-color: rgba(30, 22, 16, 0.14);
+  background: rgba(255, 255, 255, 0.78);
+  color: #261c14;
+}
+
+html[data-image-theme="light"] .image-lightbox-button:hover,
+html[data-image-theme="light"] .image-lightbox-button:focus-visible {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(30, 22, 16, 0.24);
+}
+
+html[data-image-theme="light"] .image-lightbox-stage {
+  border-color: rgba(30, 22, 16, 0.08);
+  background:
+    radial-gradient(circle at center, rgba(30, 22, 16, 0.03), transparent 48%),
+    rgba(244, 239, 233, 0.96);
+}
+
+html[data-image-theme="light"] .image-lightbox-caption {
+  color: rgba(38, 28, 20, 0.9);
+}
+
 @media (max-width: 980px) {
   .image-report-page .topbar-inner {
     gap: 0.9rem;
@@ -3837,6 +3998,21 @@ html[data-image-theme="dark"] .image-report-page .chip {
 
   .image-report-page .side-rail-nav {
     display: none;
+  }
+
+  .image-lightbox {
+    padding: 0.8rem;
+  }
+
+  .image-lightbox-shell {
+    width: min(96vw, 1480px);
+    height: min(92vh, 960px);
+    padding: 0.75rem;
+  }
+
+  .image-lightbox-toolbar {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
 

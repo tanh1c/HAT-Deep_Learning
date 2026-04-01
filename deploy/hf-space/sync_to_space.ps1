@@ -48,12 +48,6 @@ Copy-Tree `
     -Source (Join-Path $repoRoot "assignments\\assignment-1\\image\\models") `
     -Destination (Join-Path $assignmentTarget "image")
 
-New-Item -ItemType Directory -Force -Path (Join-Path $assignmentTarget "image\\data") | Out-Null
-Copy-Item `
-    (Join-Path $repoRoot "assignments\\assignment-1\\image\\data\\cifar-10-python.tar.gz") `
-    (Join-Path $assignmentTarget "image\\data\\cifar-10-python.tar.gz") `
-    -Force
-
 Get-ChildItem $targetRoot -Recurse -Directory -Filter "__pycache__" | Remove-Item -Recurse -Force
 
 Write-Host "Done."

@@ -22,11 +22,10 @@ The sync script copies only the files needed by the Space:
 - `assignments/assignment-1/app/`
 - `assignments/assignment-1/image/artifacts/`
 - `assignments/assignment-1/image/models/`
-- `assignments/assignment-1/image/data/cifar-10-python.tar.gz`
 
-The sync step removes calibration `.png` files in the Space repo. The app can
-rebuild those plots from the exported JSON metrics, which avoids binary-file
-push issues on Hugging Face Spaces.
+The current image demo is aligned with the final `Stanford Dogs` experiment.
+It relies on exported notebook artifacts and trained checkpoints, so the sync
+step does not need to copy any old CIFAR-10 archive.
 
 ## Recommended workflow
 

@@ -40,6 +40,11 @@ assignments/
 
   assignment-2/
   assignment-3/
+
+setup-vm/
+  FPT_GPU_VM_SETUP.md
+  setup_fpt_vm.sh
+  start_jupyter_vm.sh
 ```
 
 ## Why this layout is better
@@ -58,10 +63,7 @@ assignments/
 ### Move image notebooks and reports
 
 ```text
-cifar10_resnet18_transfer_learning.ipynb
--> assignments/assignment-1/image/notebooks/
-
-cifar10_vit_transfer_learning.ipynb
+stanforddogs_resnet18_vit_report_workflow.ipynb
 -> assignments/assignment-1/image/notebooks/
 
 image_progress_report.md
@@ -83,7 +85,7 @@ models/*
 ```
 
 Note:
-- `models/vit_b16_cifar10.pth` is too large for a normal GitHub push.
+- `models/stanforddogs_vit_b16.pth` is too large for a normal GitHub push.
 - For checkpoints, prefer one of these:
   - Git LFS
   - Google Drive link
@@ -101,13 +103,13 @@ app/artifact_utils.py
 app/model_registry.py
 -> assignments/assignment-1/app/shared/model_registry.py
 
-app/cifar10_data.py
+app/image metadata + loaders
 -> assignments/assignment-1/app/image/data.py
 
-app/cifar10_resnet18.py
+app/image resnet handler
 -> assignments/assignment-1/app/image/resnet18.py
 
-app/cifar10_vit.py
+app/image vit handler
 -> assignments/assignment-1/app/image/vit_b16.py
 
 app/style.css
@@ -173,6 +175,7 @@ Keep only high-level folders at the root:
 
 - `docs/`
 - `assignments/`
+- `setup-vm/`
 - `.gitignore`
 - `README.md`
 
