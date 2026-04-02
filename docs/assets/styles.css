@@ -4124,6 +4124,211 @@ html[data-image-theme="dark"] .image-report-page .chip {
   color: inherit;
 }
 
+.image-report-page .transfer-map-card {
+  overflow: visible;
+}
+
+.image-report-page .transfer-formula {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.2rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(193, 95, 60, 0.12);
+  background: linear-gradient(135deg, rgba(193, 95, 60, 0.08), rgba(193, 95, 60, 0.03));
+  font-family: "Space Grotesk", "SFMono-Regular", Consolas, Menlo, monospace;
+  font-size: 0.96rem;
+  color: var(--text-strong);
+}
+
+.image-report-page .transfer-formula span[aria-hidden="true"] {
+  color: var(--primary-deep);
+}
+
+.image-report-page .transfer-explorer {
+  display: grid;
+  gap: 1.1rem;
+  margin-top: 1.35rem;
+}
+
+.image-report-page .transfer-step-rail {
+  display: flex;
+  align-items: stretch;
+  gap: 0.6rem;
+  overflow-x: visible;
+  padding-bottom: 0.2rem;
+  scrollbar-width: thin;
+}
+
+.image-report-page .transfer-step-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.image-report-page .transfer-step {
+  position: relative;
+  display: grid;
+  gap: 0.42rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 9.2rem;
+  padding: 0.82rem 0.82rem 0.88rem;
+  border: 1px solid rgba(193, 95, 60, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.02)),
+    linear-gradient(135deg, rgba(193, 95, 60, 0.12), rgba(193, 95, 60, 0.04));
+  text-align: left;
+  color: var(--text-strong);
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.image-report-page .transfer-step:hover,
+.image-report-page .transfer-step:focus-visible {
+  outline: none;
+  border-color: rgba(193, 95, 60, 0.26);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 16px 30px rgba(18, 14, 12, 0.08);
+}
+
+.image-report-page .transfer-step.is-active {
+  border-color: rgba(193, 95, 60, 0.36);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.04)),
+    linear-gradient(135deg, rgba(193, 95, 60, 0.18), rgba(193, 95, 60, 0.07));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 18px 34px rgba(18, 14, 12, 0.1);
+}
+
+.image-report-page .transfer-step-index {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.image-report-page .transfer-step-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(193, 95, 60, 0.24);
+  background: rgba(193, 95, 60, 0.12);
+  color: var(--primary-deep);
+  font-family: "Space Grotesk", "SFMono-Regular", Consolas, Menlo, monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.image-report-page .transfer-step-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text-strong);
+}
+
+.image-report-page .transfer-step-meta {
+  margin-top: auto;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1.38;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.image-report-page .transfer-step-connector {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1rem;
+  flex: 0 0 1rem;
+}
+
+.image-report-page .transfer-step-arrow {
+  color: var(--primary-deep);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.image-report-page .transfer-detail-shell {
+  position: relative;
+  border: 1px solid rgba(193, 95, 60, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.02)),
+    linear-gradient(135deg, rgba(193, 95, 60, 0.08), rgba(193, 95, 60, 0.03));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.image-report-page .transfer-detail-panel {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1rem 1.05rem 1.1rem;
+}
+
+.image-report-page .transfer-detail-panel[hidden] {
+  display: none;
+}
+
+.image-report-page .transfer-detail-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.image-report-page .transfer-detail-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3rem;
+  height: 2rem;
+  padding: 0 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(193, 95, 60, 0.24);
+  background: rgba(193, 95, 60, 0.12);
+  color: var(--primary-deep);
+  font-family: "Space Grotesk", "SFMono-Regular", Consolas, Menlo, monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.image-report-page .transfer-detail-title {
+  margin: 0;
+  font-size: 1.18rem;
+  font-weight: 800;
+  line-height: 1.28;
+  color: var(--text-strong);
+}
+
+.image-report-page .transfer-detail-panel p {
+  margin: 0;
+  font-size: 0.96rem;
+  line-height: 1.74;
+  color: var(--body-copy, var(--muted));
+}
+
+.image-report-page .transfer-detail-panel code {
+  display: inline-block;
+  padding: 0.08rem 0.38rem;
+  border: 1px solid rgba(193, 95, 60, 0.18);
+  background: rgba(193, 95, 60, 0.08);
+  color: var(--text-strong);
+}
+
 .image-report-page .footer-card {
   background: var(--panel-strong);
   color: var(--text);
@@ -4316,6 +4521,21 @@ html[data-image-theme="light"] .image-lightbox-caption {
   .image-report-page .image-theme-toggle {
     width: 100%;
     justify-content: center;
+  }
+
+  .image-report-page .transfer-step {
+    width: min(15rem, 74vw);
+    min-height: 9.8rem;
+  }
+
+  .image-report-page .transfer-step-rail {
+    gap: 0.75rem;
+    overflow-x: auto;
+  }
+
+  .image-report-page .transfer-step-wrap {
+    gap: 0.75rem;
+    flex: 0 0 auto;
   }
 
   .image-report-page .code-sample-bar {

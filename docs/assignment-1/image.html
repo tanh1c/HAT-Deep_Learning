@@ -948,6 +948,325 @@ def build_loaders(train_transform):
           </div>
         </div>
 
+        <article class="panel report-card content-card transfer-map-card">
+          <section class="story-block">
+            <p class="card-kicker">Transfer learning diagram</p>
+            <h3 class="card-title">How one Stanford Dogs image becomes a 120-breed prediction</h3>
+            <p class="track-copy">
+              The notebook follows one shared transfer-learning pipeline for both <strong>ResNet-18</strong> and <strong>ViT-B/16</strong>.
+              The main idea is simple: convert the raw dog photo into a standardized tensor, pass it through a pretrained
+              visual backbone, replace the original ImageNet classifier with a new breed-specific head, then turn the final logits
+              into probabilities and evaluation artifacts. Each node below can be opened to see what that stage means in practice.
+            </p>
+            <p class="deliverable-note">
+              <strong>x</strong> = input image tensor, <strong>T(x)</strong> = preprocessing transform, <strong>z</strong> = backbone feature representation,
+              <strong>g(z)</strong> = classifier head logits, <strong>ŷ</strong> = predicted breed probabilities.
+            </p>
+
+            <div class="transfer-formula" aria-label="Transfer learning notation">
+              <span>x</span>
+              <span aria-hidden="true">→</span>
+              <span>T(x)</span>
+              <span aria-hidden="true">→</span>
+              <span>z</span>
+              <span aria-hidden="true">→</span>
+              <span>g(z)</span>
+              <span aria-hidden="true">→</span>
+              <span>ŷ</span>
+            </div>
+
+            <div class="transfer-explorer" data-transfer-explorer>
+              <div class="transfer-step-rail" role="tablist" aria-label="Interactive transfer learning pipeline">
+                <div class="transfer-step-wrap">
+                  <button
+                    class="transfer-step is-active"
+                    type="button"
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="transfer-panel-input"
+                    id="transfer-tab-input"
+                    tabindex="0"
+                    data-transfer-step="transfer-panel-input">
+                    <span class="transfer-step-index">01</span>
+                    <span class="transfer-step-symbol">x</span>
+                    <span class="transfer-step-title">Input image</span>
+                    <span class="transfer-step-meta">RGB dog photo</span>
+                  </button>
+                  <span class="transfer-step-connector" aria-hidden="true">
+                    <span class="transfer-step-arrow">→</span>
+                  </span>
+                </div>
+
+                <div class="transfer-step-wrap">
+                  <button
+                    class="transfer-step"
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="transfer-panel-preprocess"
+                    id="transfer-tab-preprocess"
+                    tabindex="-1"
+                    data-transfer-step="transfer-panel-preprocess">
+                    <span class="transfer-step-index">02</span>
+                    <span class="transfer-step-symbol">T(x)</span>
+                    <span class="transfer-step-title">Preprocessing</span>
+                    <span class="transfer-step-meta">Resize, crop, normalize</span>
+                  </button>
+                  <span class="transfer-step-connector" aria-hidden="true">
+                    <span class="transfer-step-arrow">→</span>
+                  </span>
+                </div>
+
+                <div class="transfer-step-wrap">
+                  <button
+                    class="transfer-step"
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="transfer-panel-backbone"
+                    id="transfer-tab-backbone"
+                    tabindex="-1"
+                    data-transfer-step="transfer-panel-backbone">
+                    <span class="transfer-step-index">03</span>
+                    <span class="transfer-step-symbol">z</span>
+                    <span class="transfer-step-title">Pretrained backbone</span>
+                    <span class="transfer-step-meta">ResNet-18 or ViT-B/16</span>
+                  </button>
+                  <span class="transfer-step-connector" aria-hidden="true">
+                    <span class="transfer-step-arrow">→</span>
+                  </span>
+                </div>
+
+                <div class="transfer-step-wrap">
+                  <button
+                    class="transfer-step"
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="transfer-panel-head"
+                    id="transfer-tab-head"
+                    tabindex="-1"
+                    data-transfer-step="transfer-panel-head">
+                    <span class="transfer-step-index">04</span>
+                    <span class="transfer-step-symbol">g(z)</span>
+                    <span class="transfer-step-title">Classifier head</span>
+                    <span class="transfer-step-meta">Adapted to 120 breeds</span>
+                  </button>
+                  <span class="transfer-step-connector" aria-hidden="true">
+                    <span class="transfer-step-arrow">→</span>
+                  </span>
+                </div>
+
+                <div class="transfer-step-wrap">
+                  <button
+                    class="transfer-step"
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="transfer-panel-output"
+                    id="transfer-tab-output"
+                    tabindex="-1"
+                    data-transfer-step="transfer-panel-output">
+                    <span class="transfer-step-index">05</span>
+                    <span class="transfer-step-symbol">ŷ</span>
+                    <span class="transfer-step-title">Output + evaluation</span>
+                    <span class="transfer-step-meta">Softmax, prediction, metrics</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="transfer-detail-shell">
+                <article class="transfer-detail-panel is-active" id="transfer-panel-input" role="tabpanel" aria-labelledby="transfer-tab-input">
+                  <div class="transfer-detail-kicker">
+                    <span class="transfer-detail-badge">x</span>
+                    <span>Stage 01</span>
+                  </div>
+                  <h4 class="transfer-detail-title">Input image: one raw Stanford Dogs sample enters the pipeline</h4>
+                  <p>
+                    The pipeline starts from one raw Stanford Dogs photograph. Before entering the neural network, that image is still
+                    a variable-size file on disk, so it is not yet ready for matrix operations on GPU. This stage simply means:
+                    load one sample, read its breed label, and treat that image as the input variable <code>x</code>.
+                  </p>
+                  <div class="code-sample">
+                    <div class="code-sample-bar">
+                      <div class="code-sample-dots" aria-hidden="true">
+                        <span class="code-sample-dot code-sample-dot-red"></span>
+                        <span class="code-sample-dot code-sample-dot-yellow"></span>
+                        <span class="code-sample-dot code-sample-dot-green"></span>
+                      </div>
+                      <span class="code-sample-label">python</span>
+                      <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+                    </div>
+<pre class="language-python"><code class="language-python">class StanfordDogsFrameDataset(Dataset):
+    def __init__(self, frame: pd.DataFrame, transform=None):
+        self.frame = frame.reset_index(drop=True).copy()
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.frame)
+
+    def __getitem__(self, index):
+        row = self.frame.iloc[index]
+        image = Image.open(row["image_path"]).convert("RGB")
+        if self.transform is not None:
+            image = self.transform(image)
+        return image, int(row["label"])</code></pre>
+                  </div>
+                </article>
+
+                <article class="transfer-detail-panel" id="transfer-panel-preprocess" role="tabpanel" aria-labelledby="transfer-tab-preprocess" hidden>
+                  <div class="transfer-detail-kicker">
+                    <span class="transfer-detail-badge">T(x)</span>
+                    <span>Stage 02</span>
+                  </div>
+                  <h4 class="transfer-detail-title">Preprocessing: convert the raw file into a backbone-ready tensor</h4>
+                  <p>
+                    The transform block converts the raw image into a standardized tensor. In this notebook, that means resizing,
+                    cropping to <code>224 × 224</code>, converting to tensor format, and normalizing with ImageNet mean/std.
+                    During training, augmentation is also applied here. This is why the preprocessing stage is written as
+                    <code>T(x)</code>: it transforms the original image into a backbone-ready representation.
+                  </p>
+                  <div class="code-sample">
+                    <div class="code-sample-bar">
+                      <div class="code-sample-dots" aria-hidden="true">
+                        <span class="code-sample-dot code-sample-dot-red"></span>
+                        <span class="code-sample-dot code-sample-dot-yellow"></span>
+                        <span class="code-sample-dot code-sample-dot-green"></span>
+                      </div>
+                      <span class="code-sample-label">python</span>
+                      <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+                    </div>
+<pre class="language-python"><code class="language-python">common_eval_transform = transforms.Compose([
+    transforms.Resize((256, 256)),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
+])
+
+resnet_train_transform = transforms.Compose([
+    transforms.Resize((256, 256)),
+    transforms.RandomResizedCrop(224, scale=(0.72, 1.0)),
+    transforms.RandomHorizontalFlip(0.5),
+    transforms.RandomRotation(15),
+    transforms.ColorJitter(brightness=0.15, contrast=0.15, saturation=0.15),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
+])</code></pre>
+                  </div>
+                </article>
+
+                <article class="transfer-detail-panel" id="transfer-panel-backbone" role="tabpanel" aria-labelledby="transfer-tab-backbone" hidden>
+                  <div class="transfer-detail-kicker">
+                    <span class="transfer-detail-badge">z</span>
+                    <span>Stage 03</span>
+                  </div>
+                  <h4 class="transfer-detail-title">Pretrained backbone: extract transferable visual features</h4>
+                  <p>
+                    The backbone is the main feature extractor. It receives the transformed tensor and turns it into a compact
+                    learned representation <code>z</code>. For ResNet-18, this representation comes from convolutional feature maps
+                    followed by global pooling; for ViT-B/16, it comes from the Transformer encoder and the CLS token embedding.
+                    In transfer learning, most of the useful visual knowledge already lives here because both backbones were
+                    pretrained on ImageNet before being adapted to Stanford Dogs.
+                  </p>
+                  <div class="code-sample">
+                    <div class="code-sample-bar">
+                      <div class="code-sample-dots" aria-hidden="true">
+                        <span class="code-sample-dot code-sample-dot-red"></span>
+                        <span class="code-sample-dot code-sample-dot-yellow"></span>
+                        <span class="code-sample-dot code-sample-dot-green"></span>
+                      </div>
+                      <span class="code-sample-label">python</span>
+                      <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+                    </div>
+<pre class="language-python"><code class="language-python">resnet_backbone = torchvision.models.resnet18(
+    weights=torchvision.models.ResNet18_Weights.IMAGENET1K_V1
+)
+
+vit_backbone = torchvision.models.vit_b_16(
+    weights=torchvision.models.ViT_B_16_Weights.IMAGENET1K_V1
+)</code></pre>
+                  </div>
+                </article>
+
+                <article class="transfer-detail-panel" id="transfer-panel-head" role="tabpanel" aria-labelledby="transfer-tab-head" hidden>
+                  <div class="transfer-detail-kicker">
+                    <span class="transfer-detail-badge">g(z)</span>
+                    <span>Stage 04</span>
+                  </div>
+                  <h4 class="transfer-detail-title">Classifier head: replace ImageNet outputs with breed-specific logits</h4>
+                  <p>
+                    The original ImageNet classifier head is removed and replaced with a new linear layer that outputs
+                    <code>120</code> logits, one for each Stanford Dogs breed. This is the task-specific part of the model.
+                    In notation form, the head applies a small function <code>g(z)</code> to the backbone representation and
+                    produces breed scores that can be optimized with cross-entropy loss.
+                  </p>
+                  <div class="code-sample">
+                    <div class="code-sample-bar">
+                      <div class="code-sample-dots" aria-hidden="true">
+                        <span class="code-sample-dot code-sample-dot-red"></span>
+                        <span class="code-sample-dot code-sample-dot-yellow"></span>
+                        <span class="code-sample-dot code-sample-dot-green"></span>
+                      </div>
+                      <span class="code-sample-label">python</span>
+                      <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+                    </div>
+<pre class="language-python"><code class="language-python">def create_resnet18(num_classes: int) -&gt; nn.Module:
+    model = torchvision.models.resnet18(weights=torchvision.models.ResNet18_Weights.IMAGENET1K_V1)
+    model.fc = nn.Linear(model.fc.in_features, num_classes)
+    return model
+
+
+def create_vit_b16(num_classes: int) -&gt; nn.Module:
+    model = torchvision.models.vit_b_16(weights=torchvision.models.ViT_B_16_Weights.IMAGENET1K_V1)
+    model.heads.head = nn.Linear(model.heads.head.in_features, num_classes)
+    return model</code></pre>
+                  </div>
+                </article>
+
+                <article class="transfer-detail-panel" id="transfer-panel-output" role="tabpanel" aria-labelledby="transfer-tab-output" hidden>
+                  <div class="transfer-detail-kicker">
+                    <span class="transfer-detail-badge">ŷ</span>
+                    <span>Stage 05</span>
+                  </div>
+                  <h4 class="transfer-detail-title">Output + evaluation: turn logits into predictions and report artifacts</h4>
+                  <p>
+                    The logits are converted into probabilities with softmax, and the top probability gives the predicted breed
+                    <code>ŷ</code>. These outputs are then reused for all report artifacts: test accuracy, macro F1, confusion
+                    matrices, calibration curves, misclassified galleries, and interpretability visualizations. In other words,
+                    the same prediction vector drives both model comparison and qualitative analysis.
+                  </p>
+                  <div class="code-sample">
+                    <div class="code-sample-bar">
+                      <div class="code-sample-dots" aria-hidden="true">
+                        <span class="code-sample-dot code-sample-dot-red"></span>
+                        <span class="code-sample-dot code-sample-dot-yellow"></span>
+                        <span class="code-sample-dot code-sample-dot-green"></span>
+                      </div>
+                      <span class="code-sample-label">python</span>
+                      <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+                    </div>
+<pre class="language-python"><code class="language-python">def predict_model(model, loader):
+    model.eval()
+    all_targets, all_preds, all_probs = [], [], []
+
+    with torch.no_grad():
+        for images, targets in loader:
+            images = images.to(DEVICE, non_blocking=True)
+            outputs = model(images)
+            probs = torch.softmax(outputs, dim=1)
+            preds = probs.argmax(dim=1)
+            all_targets.extend(targets.numpy())
+            all_preds.extend(preds.cpu().numpy())
+            all_probs.extend(probs.cpu().numpy())
+
+    return np.array(all_targets), np.array(all_preds), np.array(all_probs)</code></pre>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </section>
+        </article>
+
         <article class="panel report-card content-card">
           <section class="story-block">
             <p class="card-kicker">Shared training logic</p>
@@ -2244,6 +2563,71 @@ plot_misclassified_gallery(..., "ViT-B/16 misclassified examples", VIT_ARTIFACT_
           if (isOpen) {
             resetView();
           }
+        });
+      })();
+    </script>
+
+    <script>
+      (function () {
+        const explorers = Array.from(document.querySelectorAll("[data-transfer-explorer]"));
+
+        if (!explorers.length) {
+          return;
+        }
+
+        explorers.forEach(function (explorer) {
+          const tabs = Array.from(explorer.querySelectorAll(".transfer-step[role='tab']"));
+          const panels = Array.from(explorer.querySelectorAll(".transfer-detail-panel[role='tabpanel']"));
+
+          if (!tabs.length || !panels.length) {
+            return;
+          }
+
+          const activate = function (panelId, shouldFocus) {
+            tabs.forEach(function (tab) {
+              const isActive = tab.getAttribute("aria-controls") === panelId;
+              tab.classList.toggle("is-active", isActive);
+              tab.setAttribute("aria-selected", isActive ? "true" : "false");
+              tab.tabIndex = isActive ? 0 : -1;
+              if (isActive && shouldFocus) {
+                tab.focus();
+              }
+            });
+
+            panels.forEach(function (panel) {
+              const isActive = panel.id === panelId;
+              panel.classList.toggle("is-active", isActive);
+              panel.hidden = !isActive;
+            });
+          };
+
+          tabs.forEach(function (tab, index) {
+            tab.addEventListener("click", function () {
+              activate(tab.getAttribute("aria-controls"), false);
+            });
+
+            tab.addEventListener("keydown", function (event) {
+              if (event.key !== "ArrowRight" && event.key !== "ArrowLeft" && event.key !== "Home" && event.key !== "End") {
+                return;
+              }
+
+              event.preventDefault();
+
+              let nextIndex = index;
+
+              if (event.key === "ArrowRight") {
+                nextIndex = (index + 1) % tabs.length;
+              } else if (event.key === "ArrowLeft") {
+                nextIndex = (index - 1 + tabs.length) % tabs.length;
+              } else if (event.key === "Home") {
+                nextIndex = 0;
+              } else if (event.key === "End") {
+                nextIndex = tabs.length - 1;
+              }
+
+              activate(tabs[nextIndex].getAttribute("aria-controls"), true);
+            });
+          });
         });
       })();
     </script>
