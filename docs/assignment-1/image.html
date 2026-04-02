@@ -19,6 +19,7 @@
       })();
     </script>
     <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
   </head>
   <body class="image-report-page">
     <a class="skip-link" href="#main-content">Skip to content</a>
@@ -441,28 +442,162 @@
             <section class="story-block">
               <p class="card-kicker">Shared pipeline</p>
               <h3 class="card-title">Data loading and preprocessing</h3>
-              <ul class="mono-list">
-                <li>Official Stanford Dogs train/test split</li>
-                <li>Internal stratified validation split from train only</li>
-                <li>Resize to 256 then crop to 224</li>
-                <li>Batch size: 32</li>
-                <li>num_workers: 4</li>
-                <li>pin_memory: True</li>
-                <li>persistent_workers: True</li>
-              </ul>
+              <div class="mono-list mono-list-disclosure">
+                <details class="mono-disclosure" open>
+                  <summary>Official Stanford Dogs train/test split</summary>
+                  <div class="mono-disclosure-body">
+                    <p>
+                      We keep the official test split untouched so the final evaluation remains comparable to the original benchmark setup.
+                      This is important because the test set should represent genuinely unseen data, not images that were indirectly used to
+                      tune the model.
+                    </p>
+                    <p>
+                      In simple terms: the test set is the final exam. If we mix it into training or validation, the reported result becomes
+                      less trustworthy.
+                    </p>
+                  </div>
+                </details>
+
+                <details class="mono-disclosure">
+                  <summary>Internal stratified validation split from train only</summary>
+                  <div class="mono-disclosure-body">
+                    <p>
+                      The validation set is created only from the official training split, and we use a <code>stratified</code> split so each
+                      dog breed remains represented in both train and val. This matters because Stanford Dogs has 120 breeds, and a naive random
+                      split could leave some classes underrepresented.
+                    </p>
+                    <p>
+                      The validation set is used during development to monitor generalization, choose checkpoints, and compare training choices
+                      without touching the benchmark test set.
+                    </p>
+                  </div>
+                </details>
+
+                <details class="mono-disclosure">
+                  <summary>Resize to 256 then crop to 224</summary>
+                  <div class="mono-disclosure-body">
+                    <p>
+                      The original images have different sizes and aspect ratios, but pretrained <code>ResNet-18</code> and <code>ViT-B/16</code>
+                      expect a fixed input size. Resizing to <code>256 × 256</code> standardizes the image first, then cropping to
+                      <code>224 × 224</code> produces the final tensor size used by both backbones.
+                    </p>
+                    <p>
+                      This two-step design is common because it avoids feeding wildly different spatial sizes into the network and still preserves
+                      the central dog region more reliably than resizing directly to a very small square in one step.
+                    </p>
+                  </div>
+                </details>
+
+                <details class="mono-disclosure">
+                  <summary>Batch size: 32</summary>
+                  <div class="mono-disclosure-body">
+                    <p>
+                      A batch is the number of images processed before the model updates its weights once. Using <code>32</code> images per batch
+                      is a practical compromise: it is large enough for stable gradient estimates, but still small enough to fit comfortably in GPU
+                      memory for both the CNN and the much larger ViT model.
+                    </p>
+                    <p>
+                      If the batch is too small, training can become noisy. If it is too large, the GPU may run out of memory or training may become
+                      less flexible when comparing different backbones.
+                    </p>
+                  </div>
+                </details>
+
+                <details class="mono-disclosure">
+                  <summary>num_workers: 4</summary>
+                  <div class="mono-disclosure-body">
+                    <p>
+                      <code>num_workers</code> controls how many background worker processes prepare images in parallel while the GPU is training.
+                      Using <code>4</code> workers helps overlap data loading with computation so the GPU spends less time waiting for the next batch.
+                    </p>
+                    <p>
+                      In the notebook, this is also made platform-aware: Windows uses <code>0</code> workers for compatibility, while Linux-based
+                      training environments use <code>4</code> workers for better throughput.
+                    </p>
+                  </div>
+                </details>
+
+                <details class="mono-disclosure">
+                  <summary>pin_memory: True</summary>
+                  <div class="mono-disclosure-body">
+                    <p>
+                      When training on GPU, <code>pin_memory=True</code> can speed up the transfer of batches from CPU RAM to GPU memory.
+                      It does not change the model itself, but it helps the input pipeline become more efficient.
+                    </p>
+                    <p>
+                      In the notebook, this setting is enabled only when CUDA is available. That means it is used as a performance optimization on
+                      GPU machines rather than as a mandatory requirement.
+                    </p>
+                  </div>
+                </details>
+
+                <details class="mono-disclosure">
+                  <summary>persistent_workers: True</summary>
+                  <div class="mono-disclosure-body">
+                    <p>
+                      If worker processes are recreated again and again, data loading has extra overhead. With
+                      <code>persistent_workers=True</code>, the DataLoader keeps workers alive across epochs so batch preparation becomes smoother.
+                    </p>
+                    <p>
+                      This setting is useful only when multiple workers are active, which is why the notebook ties it to the
+                      <code>num_workers &gt; 0</code> condition.
+                    </p>
+                  </div>
+                </details>
+              </div>
               <p class="deliverable-note">
                 Both models are ImageNet-pretrained, so the original dog images are resized and normalized to match the backbone input requirements.
+              </p>
+              <p class="deliverable-note">
+                Open any item in the list above to see why that choice was made and what it does inside the notebook pipeline.
               </p>
             </section>
 
             <section class="story-block">
               <p class="card-kicker">CNN transform</p>
               <h3 class="card-title">ResNet-18 augmentation</h3>
-              <ul class="mini-list">
-                <li>Train: RandomResizedCrop, horizontal flip, rotation</li>
-                <li>Train: ColorJitter, Normalize, RandomErasing</li>
-                <li>Val/Test: Resize, CenterCrop, ToTensor, Normalize</li>
-              </ul>
+              <div class="mini-list mini-list-disclosure">
+                <details class="mini-disclosure" open>
+                  <summary>Train: RandomResizedCrop, horizontal flip, rotation</summary>
+                  <div class="mini-disclosure-body">
+                    <p>
+                      These three operations make the CNN see the same breed under slightly different framing and orientation.
+                      <code>RandomResizedCrop(scale=(0.72, 1.0))</code> changes how tightly the dog is framed, horizontal flip adds
+                      left-right variation, and <code>RandomRotation(15)</code> makes the model less sensitive to small camera tilt.
+                    </p>
+                    <p>
+                      This is especially useful for dog photos because pose, camera angle, and subject placement vary a lot in the dataset.
+                    </p>
+                  </div>
+                </details>
+
+                <details class="mini-disclosure">
+                  <summary>Train: ColorJitter, Normalize, RandomErasing</summary>
+                  <div class="mini-disclosure-body">
+                    <p>
+                      <code>ColorJitter(brightness=0.15, contrast=0.15, saturation=0.15)</code> simulates lighting variation, while
+                      <code>Normalize(IMAGENET_MEAN, IMAGENET_STD)</code> aligns the input distribution with ImageNet-pretrained weights.
+                    </p>
+                    <p>
+                      <code>RandomErasing(p=0.10)</code> acts like a mild occlusion simulation: part of the image is masked so the model
+                      learns not to depend on only one local patch such as one ear, one eye, or a small fur texture region.
+                    </p>
+                  </div>
+                </details>
+
+                <details class="mini-disclosure">
+                  <summary>Val/Test: Resize, CenterCrop, ToTensor, Normalize</summary>
+                  <div class="mini-disclosure-body">
+                    <p>
+                      Validation and test preprocessing is deterministic. We do not use random augmentation there because evaluation should measure
+                      the model itself, not randomness from the input pipeline.
+                    </p>
+                    <p>
+                      <code>Resize + CenterCrop + ToTensor + Normalize</code> creates a stable and repeatable input path for every evaluation run.
+                    </p>
+                  </div>
+                </details>
+              </div>
               <p class="deliverable-note">
                 The CNN notebook uses moderate augmentation to improve robustness to pose, scale, illumination, and partial occlusion in dog photos.
               </p>
@@ -471,11 +606,50 @@
             <section class="story-block">
               <p class="card-kicker">Transformer transform</p>
               <h3 class="card-title">ViT-B/16 augmentation</h3>
-              <ul class="mini-list">
-                <li>Train: Milder crop, horizontal flip, color jitter</li>
-                <li>Train: Normalize, RandomErasing</li>
-                <li>Val/Test: Resize, CenterCrop, ToTensor, Normalize</li>
-              </ul>
+              <div class="mini-list mini-list-disclosure">
+                <details class="mini-disclosure" open>
+                  <summary>Train: Milder crop, horizontal flip, color jitter</summary>
+                  <div class="mini-disclosure-body">
+                    <p>
+                      The ViT training pipeline still uses crop and flip, but the crop range is narrower:
+                      <code>RandomResizedCrop(scale=(0.78, 1.0))</code>. This means the model sees less aggressive spatial distortion than
+                      the ResNet setup.
+                    </p>
+                    <p>
+                      The reason is practical: Stanford Dogs is a fine-grained task, so overly strong augmentation can destroy subtle breed cues
+                      such as ear shape, muzzle geometry, or fur structure that the Transformer needs to separate similar classes.
+                    </p>
+                  </div>
+                </details>
+
+                <details class="mini-disclosure">
+                  <summary>Train: Normalize, RandomErasing</summary>
+                  <div class="mini-disclosure-body">
+                    <p>
+                      Just like ResNet, ViT uses ImageNet normalization so the pretrained backbone receives inputs in a familiar scale.
+                      The erasing step is also milder at <code>p=0.08</code>, because the augmentation policy is intentionally less aggressive overall.
+                    </p>
+                    <p>
+                      In other words, the ViT pipeline still regularizes training, but it does so with more restraint to avoid hurting
+                      fine-grained recognition.
+                    </p>
+                  </div>
+                </details>
+
+                <details class="mini-disclosure">
+                  <summary>Val/Test: Resize, CenterCrop, ToTensor, Normalize</summary>
+                  <div class="mini-disclosure-body">
+                    <p>
+                      The evaluation transform is shared with the CNN setup. This is important because model comparison is more meaningful when
+                      both backbones are tested under the same deterministic input pipeline.
+                    </p>
+                    <p>
+                      Using the same validation/test preprocessing ensures that any performance gap is mainly due to the model family and training
+                      strategy, not different evaluation transforms.
+                    </p>
+                  </div>
+                </details>
+              </div>
               <p class="deliverable-note">
                 The ViT notebook keeps augmentation lighter so that fine-grained breed cues are preserved while still improving generalization.
               </p>
@@ -485,8 +659,203 @@
           <div class="soft-divider"></div>
 
           <section class="story-block">
+            <p class="card-kicker">Implementation detail</p>
+            <h3 class="card-title">The web page follows the exact split and transform logic used in the notebook</h3>
+            <p class="track-copy">
+              In the notebook, we keep the official Stanford Dogs benchmark test split untouched, then create
+              the validation set only from the official training split using a stratified shuffle split. This
+              means the label distribution is preserved across train and validation while the final test set
+              remains a clean benchmark for reporting.
+            </p>
+            <div class="story-grid">
+              <section class="story-block">
+                <p class="card-kicker">Split logic</p>
+                <h3 class="card-title">Fixed benchmark test set + internal validation split</h3>
+                <ul class="mini-list">
+                  <li>The official Stanford Dogs test split is never mixed back into training.</li>
+                  <li>The official training split is divided into train and val only.</li>
+                  <li>The validation ratio is 15% of the official training split.</li>
+                  <li>We use a stratified split so every breed remains represented in both train and val.</li>
+                  <li>This keeps the training pool above the assignment threshold while preserving fair evaluation.</li>
+                </ul>
+              </section>
+
+              <section class="story-block">
+                <p class="card-kicker">Code example</p>
+                <h3 class="card-title">How the split is created in the notebook</h3>
+                <div class="code-sample">
+                  <div class="code-sample-bar">
+                    <div class="code-sample-dots" aria-hidden="true">
+                      <span class="code-sample-dot code-sample-dot-red"></span>
+                      <span class="code-sample-dot code-sample-dot-yellow"></span>
+                      <span class="code-sample-dot code-sample-dot-green"></span>
+                    </div>
+                    <span class="code-sample-label">python</span>
+                    <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+                  </div>
+<pre class="language-python"><code class="language-python">splitter = StratifiedShuffleSplit(
+    n_splits=1,
+    test_size=0.15,
+    random_state=SEED,
+)
+train_idx, val_idx = next(
+    splitter.split(train_meta_full, train_meta_full["label"])
+)
+
+train_meta = train_meta_full.iloc[train_idx].reset_index(drop=True)
+val_meta = train_meta_full.iloc[val_idx].reset_index(drop=True)
+test_meta = test_meta.reset_index(drop=True)</code></pre>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <div class="soft-divider"></div>
+
+          <section class="story-block">
+            <p class="card-kicker">Exact transforms</p>
+            <h3 class="card-title">ResNet and ViT share the same evaluation transform but differ in train augmentation strength</h3>
+            <div class="story-grid">
+              <section class="story-block">
+                <p class="card-kicker">Shared evaluation transform</p>
+                <h3 class="card-title">Validation and test preprocessing</h3>
+                <ul class="mini-list">
+                  <li><code>Resize((256, 256))</code></li>
+                  <li><code>CenterCrop(224)</code></li>
+                  <li><code>ToTensor()</code></li>
+                  <li><code>Normalize(IMAGENET_MEAN, IMAGENET_STD)</code></li>
+                  <li>The same eval transform is reused for both models to keep comparison fair.</li>
+                </ul>
+              </section>
+
+              <section class="story-block">
+                <p class="card-kicker">ResNet-18 train transform</p>
+                <h3 class="card-title">Moderate augmentation for CNN robustness</h3>
+                <ul class="mini-list">
+                  <li><code>Resize((256, 256))</code></li>
+                  <li><code>RandomResizedCrop(224, scale=(0.72, 1.0))</code></li>
+                  <li><code>RandomHorizontalFlip(0.5)</code></li>
+                  <li><code>RandomRotation(15)</code></li>
+                  <li><code>ColorJitter(brightness=0.15, contrast=0.15, saturation=0.15)</code></li>
+                  <li><code>RandomErasing(p=0.10)</code> after normalization</li>
+                </ul>
+              </section>
+
+              <section class="story-block">
+                <p class="card-kicker">ViT-B/16 train transform</p>
+                <h3 class="card-title">Slightly lighter augmentation for fine-grained breed cues</h3>
+                <ul class="mini-list">
+                  <li><code>Resize((256, 256))</code></li>
+                  <li><code>RandomResizedCrop(224, scale=(0.78, 1.0))</code></li>
+                  <li><code>RandomHorizontalFlip(0.5)</code></li>
+                  <li><code>ColorJitter(brightness=0.10, contrast=0.10, saturation=0.10)</code></li>
+                  <li><code>RandomErasing(p=0.08)</code> after normalization</li>
+                  <li>No extra rotation is used here because the ViT setup is intentionally milder.</li>
+                </ul>
+              </section>
+            </div>
+            <div class="code-sample">
+              <div class="code-sample-bar">
+                <div class="code-sample-dots" aria-hidden="true">
+                  <span class="code-sample-dot code-sample-dot-red"></span>
+                  <span class="code-sample-dot code-sample-dot-yellow"></span>
+                  <span class="code-sample-dot code-sample-dot-green"></span>
+                </div>
+                <span class="code-sample-label">python</span>
+                <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+              </div>
+<pre class="language-python"><code class="language-python">resnet_train_transform = transforms.Compose([
+    transforms.Resize((256, 256)),
+    transforms.RandomResizedCrop(IMAGE_SIZE, scale=(0.72, 1.0)),
+    transforms.RandomHorizontalFlip(0.5),
+    transforms.RandomRotation(15),
+    transforms.ColorJitter(brightness=0.15, contrast=0.15, saturation=0.15),
+    transforms.ToTensor(),
+    transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
+    transforms.RandomErasing(p=0.10),
+])</code></pre>
+            </div>
+            <p class="deliverable-note">
+              This is why the ResNet batch preview visibly includes crop, flip, rotation, color, and erasing effects.
+              The ViT pipeline uses the same overall structure, but with a narrower crop range and softer color changes.
+            </p>
+          </section>
+
+          <div class="soft-divider"></div>
+
+          <section class="story-block">
             <p class="card-kicker">Split and batch summary</p>
             <h3 class="card-title">Balanced train/val split with matching loaders</h3>
+            <p class="track-copy">
+              The second ablation studies optimization strategy rather than data preprocessing. Here, the notebook compares
+              <strong>freeze backbone</strong> with <strong>full fine-tune</strong> for both backbones. In the frozen setting,
+              only the final classifier layer is trainable; in the full setting, every parameter receives gradients.
+            </p>
+            <ul class="mini-list mini-list-disclosure">
+              <li>
+                <details class="mini-disclosure" open>
+                  <summary>Why freeze-backbone can still work well</summary>
+                  <div class="mini-disclosure-body">
+                    Strong pretrained representations already contain many useful visual features. If those features transfer well
+                    to Stanford Dogs, training only a small classification head can be enough to reach strong accuracy while using
+                    far fewer trainable parameters and often a more stable optimization path.
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details class="mini-disclosure">
+                  <summary>How to interpret the ResNet and ViT outcomes</summary>
+                  <div class="mini-disclosure-body">
+                    In this extension run, freezing slightly outperforms full fine-tuning for both models. The effect is especially
+                    strong for ViT-B/16, whose frozen-head setting reaches the best accuracy and the best ECE. For ResNet-18,
+                    freezing gives a small accuracy gain but worse calibration, so the result should be read as a trade-off rather
+                    than a pure win.
+                  </div>
+                </details>
+              </li>
+            </ul>
+            <div class="code-sample">
+              <div class="code-sample-bar">
+                <div class="code-sample-dots" aria-hidden="true">
+                  <span class="code-sample-dot code-sample-dot-red"></span>
+                  <span class="code-sample-dot code-sample-dot-yellow"></span>
+                  <span class="code-sample-dot code-sample-dot-green"></span>
+                </div>
+                <span class="code-sample-label">python</span>
+                <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+              </div>
+<pre class="language-python"><code class="language-python">def freeze_resnet_backbone(model):
+    for param in model.parameters():
+        param.requires_grad = False
+    for param in model.fc.parameters():
+        param.requires_grad = True
+
+
+def freeze_vit_backbone(model):
+    for param in model.parameters():
+        param.requires_grad = False
+    for param in model.heads.parameters():
+        param.requires_grad = True
+
+
+def run_simple_experiment(model_builder, model_label, train_loader, val_loader, test_loader, epochs, lr, weight_decay, freeze_fn=None):
+    model = model_builder(NUM_CLASSES).to(DEVICE)
+    if freeze_fn is not None:
+        freeze_fn(model)
+        trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        optimizer = AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=lr, weight_decay=weight_decay)
+    else:
+        trainable_params = count_total_params(model)
+        optimizer = AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+
+    scheduler = CosineAnnealingLR(optimizer, T_max=max(1, epochs))
+    criterion = nn.CrossEntropyLoss()
+    _, training_seconds = fit_model(model, train_loader, val_loader, criterion, optimizer, scheduler=scheduler, epochs=epochs, stage_name=model_label)
+    targets, preds, probs = predict_model(model, test_loader)
+    ece, *_ = compute_ece(probs, targets, n_bins=10)
+    return {"setting": model_label, "accuracy": accuracy_score(targets, preds), "macro_f1": f1_score(targets, preds, average="macro"), "weighted_f1": f1_score(targets, preds, average="weighted"), "ece": ece, "train_time_s": training_seconds, "trainable_params": trainable_params}</code></pre>
+            </div>
+
             <div class="compare-table-wrap">
               <table class="compare-table">
                 <thead>
@@ -526,7 +895,39 @@
             <ul class="mini-list">
               <li>ResNet loaders: 319 train, 57 val, 269 test</li>
               <li>ViT loaders: 319 train, 57 val, 269 test</li>
+              <li>Train loader uses <code>shuffle=True</code>; validation and test loaders use <code>shuffle=False</code>.</li>
+              <li>All loaders use the same <code>batch_size=32</code>, <code>num_workers=4</code>, <code>pin_memory=True</code>, and <code>persistent_workers=True</code>.</li>
+              <li>A custom dataset wrapper reads <code>image_path</code>, converts every image to <code>RGB</code>, and returns <code>(image, label)</code>.</li>
             </ul>
+            <div class="code-sample">
+              <div class="code-sample-bar">
+                <div class="code-sample-dots" aria-hidden="true">
+                  <span class="code-sample-dot code-sample-dot-red"></span>
+                  <span class="code-sample-dot code-sample-dot-yellow"></span>
+                  <span class="code-sample-dot code-sample-dot-green"></span>
+                </div>
+                <span class="code-sample-label">python</span>
+                <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+              </div>
+<pre class="language-python"><code class="language-python">class StanfordDogsFrameDataset(Dataset):
+    def __getitem__(self, idx):
+        row = self.frame.iloc[idx]
+        image = Image.open(row["image_path"]).convert("RGB")
+        label = int(row["label"])
+        if self.transform is not None:
+            image = self.transform(image)
+        return image, label
+
+def build_loaders(train_transform):
+    train_ds = StanfordDogsFrameDataset(train_meta, transform=train_transform)
+    val_ds = StanfordDogsFrameDataset(val_meta, transform=common_eval_transform)
+    test_ds = StanfordDogsFrameDataset(test_meta, transform=common_eval_transform)
+
+    train_loader = DataLoader(train_ds, batch_size=32, shuffle=True,  num_workers=4, pin_memory=True, persistent_workers=True)
+    val_loader   = DataLoader(val_ds,   batch_size=32, shuffle=False, num_workers=4, pin_memory=True, persistent_workers=True)
+    test_loader  = DataLoader(test_ds,  batch_size=32, shuffle=False, num_workers=4, pin_memory=True, persistent_workers=True)
+    return train_loader, val_loader, test_loader</code></pre>
+            </div>
             <div class="figure-frame">
               <img src="../assets/assignment-1/stanford_dogs/eda/augmented_batch_preview.png" alt="Augmented Stanford Dogs batch preview">
             </div>
@@ -548,39 +949,436 @@
         </div>
 
         <article class="panel report-card content-card">
+          <section class="story-block">
+            <p class="card-kicker">Shared training logic</p>
+            <h3 class="card-title">The two models use the same evaluation loop and only differ in backbone and optimization strategy</h3>
+            <p class="track-copy">
+              In the notebook, the comparison is kept fair by using one common training-and-evaluation framework for both models.
+              The dataset split, validation protocol, test loader, and reporting functions are shared. The main differences are
+              the backbone architecture itself and the way each backbone is fine-tuned.
+            </p>
+            <ul class="mini-list mini-list-disclosure">
+              <li>
+                <details class="mini-disclosure" open>
+                  <summary>Adapt the pretrained classifier head to 120 Stanford Dogs classes</summary>
+                  <div class="mini-disclosure-body">
+                    Both backbones are loaded with ImageNet-pretrained weights, but the original classifier is not suitable for
+                    Stanford Dogs because ImageNet and Stanford Dogs do not share the same label space. The notebook therefore
+                    replaces the last classification layer with a new linear layer whose output dimension is exactly 120. This
+                    keeps most pretrained visual features while letting the model learn a task-specific breed classifier.
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details class="mini-disclosure">
+                  <summary><code>run_epoch(...)</code> performs one full pass through a loader</summary>
+                  <div class="mini-disclosure-body">
+                    The helper moves each image batch to the selected device, computes logits, applies the loss function, and,
+                    when an optimizer is provided, performs backpropagation and one optimizer step. It also stores predictions
+                    for the full epoch so that accuracy, macro F1, and weighted F1 are computed from the complete validation set
+                    rather than from only one minibatch.
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details class="mini-disclosure">
+                  <summary><code>fit_model(...)</code> keeps the best validation checkpoint, not just the last epoch</summary>
+                  <div class="mini-disclosure-body">
+                    During training, the notebook records train loss, train accuracy, validation loss, validation accuracy,
+                    validation macro F1, and current learning rate for every epoch. Whenever validation accuracy improves,
+                    the current weights are copied as the best model state. At the end, the helper restores those best weights
+                    before returning, so the later test results always use the strongest validation checkpoint.
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details class="mini-disclosure">
+                  <summary><code>predict_model(...)</code> and <code>evaluate_model(...)</code> generate the report artifacts</summary>
+                  <div class="mini-disclosure-body">
+                    The shared evaluation code runs inference on the test loader, converts logits into softmax probabilities,
+                    stores predicted labels, then exports the classification report, confusion matrices, and calibration plots.
+                    This is why both ResNet-18 and ViT-B/16 have the same style of artifacts and can be compared directly.
+                  </div>
+                </details>
+              </li>
+            </ul>
+            <div class="code-sample">
+              <div class="code-sample-bar">
+                <div class="code-sample-dots" aria-hidden="true">
+                  <span class="code-sample-dot code-sample-dot-red"></span>
+                  <span class="code-sample-dot code-sample-dot-yellow"></span>
+                  <span class="code-sample-dot code-sample-dot-green"></span>
+                </div>
+                <span class="code-sample-label">python</span>
+                <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+              </div>
+<pre class="language-python"><code class="language-python">def run_epoch(model, loader, criterion, optimizer=None):
+    is_train = optimizer is not None
+    model.train(is_train)
+    total_loss = 0.0
+    all_targets, all_preds = [], []
+
+    for images, targets in tqdm(loader, leave=False):
+        images = images.to(DEVICE, non_blocking=True)
+        targets = targets.to(DEVICE, non_blocking=True)
+        if is_train:
+            optimizer.zero_grad(set_to_none=True)
+
+        outputs = model(images)
+        loss = criterion(outputs, targets)
+
+        if is_train:
+            loss.backward()
+            optimizer.step()
+
+        preds = outputs.argmax(dim=1)
+        total_loss += loss.item() * images.size(0)
+        all_targets.extend(targets.detach().cpu().numpy())
+        all_preds.extend(preds.detach().cpu().numpy())
+
+    return {
+        "loss": total_loss / len(loader.dataset),
+        "acc": accuracy_score(all_targets, all_preds),
+        "macro_f1": f1_score(all_targets, all_preds, average="macro"),
+        "weighted_f1": f1_score(all_targets, all_preds, average="weighted"),
+    }
+
+
+def fit_model(model, train_loader, val_loader, criterion, optimizer, scheduler=None, epochs=10, stage_name="train"):
+    history = []
+    best_val_acc = -1.0
+    best_state = copy.deepcopy(model.state_dict())
+
+    for epoch in range(1, epochs + 1):
+        train_metrics = run_epoch(model, train_loader, criterion, optimizer=optimizer)
+        val_metrics = run_epoch(model, val_loader, criterion, optimizer=None)
+        if scheduler is not None:
+            scheduler.step()
+
+        history.append({
+            "stage": stage_name,
+            "epoch": epoch,
+            "train_loss": train_metrics["loss"],
+            "train_acc": train_metrics["acc"],
+            "val_loss": val_metrics["loss"],
+            "val_acc": val_metrics["acc"],
+            "val_macro_f1": val_metrics["macro_f1"],
+            "lr": optimizer.param_groups[0]["lr"],
+        })
+
+        if val_metrics["acc"] &gt; best_val_acc:
+            best_val_acc = val_metrics["acc"]
+            best_state = copy.deepcopy(model.state_dict())
+
+    model.load_state_dict(best_state)
+    return pd.DataFrame(history)</code></pre>
+            </div>
+            <p class="deliverable-note">
+              This shared loop is important for the report because it means the final differences mostly come from the model family
+              itself, not from using a completely different training script for each experiment.
+            </p>
+          </section>
+
+          <div class="soft-divider"></div>
+
           <div class="story-grid">
             <section class="story-block">
               <p class="card-kicker">CNN model</p>
-              <h3 class="card-title">ResNet-18</h3>
-              <ul class="mini-list">
-                <li>Backbone: ResNet-18 pretrained on ImageNet</li>
-                <li>Final head replaced for 120 Stanford Dogs classes</li>
-                <li>Full fine-tuning for 12 epochs</li>
-                <li>Loaded best saved checkpoint for evaluation</li>
-                <li>Total params: 11,238,072</li>
-                <li>Final val acc: 74.89%, val macro F1: 0.7482</li>
+              <h3 class="card-title">ResNet-18: a lightweight convolutional baseline</h3>
+              <p class="track-copy">
+                The CNN baseline uses <strong>ResNet-18</strong> with ImageNet-pretrained weights. In the notebook, its final
+                fully connected layer is replaced so that the network predicts 120 dog breeds instead of the original ImageNet
+                classes. After that replacement, the whole network is fine-tuned on Stanford Dogs for 12 epochs.
+              </p>
+              <ul class="mini-list mini-list-disclosure">
+                <li>
+                  <details class="mini-disclosure" open>
+                    <summary>Why ResNet-18 is a good baseline</summary>
+                    <div class="mini-disclosure-body">
+                      ResNet-18 is small enough to train quickly and easy to explain to new learners. It is also a strong
+                      baseline because the residual architecture already works well on many transfer-learning tasks. In this
+                      project, it represents the CNN family: local convolutional filters, progressively deeper feature maps,
+                      and a relatively small parameter budget compared with ViT-B/16.
+                    </div>
+                  </details>
+                </li>
+                <li>
+                  <details class="mini-disclosure">
+                    <summary>Optimizer and scheduler used for ResNet-18</summary>
+                    <div class="mini-disclosure-body">
+                      The notebook uses <code>CrossEntropyLoss</code> because the task is single-label multi-class
+                      classification. Optimization is handled by <code>AdamW</code>, which is a common choice for transfer
+                      learning because it combines adaptive learning rates with explicit weight decay. The learning-rate schedule
+                      uses a short linear warmup followed by cosine annealing: the warmup stabilizes the beginning of training,
+                      and cosine decay gradually reduces the step size as the model approaches a better local optimum.
+                    </div>
+                  </details>
+                </li>
+                <li>
+                  <details class="mini-disclosure">
+                    <summary>Checkpoint loading and best-epoch selection</summary>
+                    <div class="mini-disclosure-body">
+                      If a saved checkpoint already exists, the notebook reloads the model weights and the training history.
+                      Otherwise, it trains the model from scratch in the transfer-learning sense, saves the best validation state,
+                      and writes the training history to disk. This makes the workflow reproducible and lets the report reuse the
+                      same best checkpoint for the web demo and final evaluation.
+                    </div>
+                  </details>
+                </li>
+                <li>
+                  <details class="mini-disclosure">
+                    <summary>Observed validation behavior</summary>
+                    <div class="mini-disclosure-body">
+                      The final validation values reported in the notebook are <strong>74.89% validation accuracy</strong> and
+                      <strong>0.7482 validation macro F1</strong>. This is a reasonable baseline result on Stanford Dogs, but it
+                      also shows that fine-grained breed recognition is difficult for a small CNN because many classes differ only
+                      in subtle fur patterns, face shape, or body proportions.
+                    </div>
+                  </details>
+                </li>
               </ul>
+              <div class="code-sample">
+                <div class="code-sample-bar">
+                  <div class="code-sample-dots" aria-hidden="true">
+                    <span class="code-sample-dot code-sample-dot-red"></span>
+                    <span class="code-sample-dot code-sample-dot-yellow"></span>
+                    <span class="code-sample-dot code-sample-dot-green"></span>
+                  </div>
+                  <span class="code-sample-label">python</span>
+                  <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+                </div>
+<pre class="language-python"><code class="language-python">def create_resnet18(num_classes: int) -&gt; nn.Module:
+    model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
+    model.fc = nn.Linear(model.fc.in_features, num_classes)
+    return model
+
+
+resnet_model = create_resnet18(NUM_CLASSES).to(DEVICE)
+criterion = nn.CrossEntropyLoss()
+optimizer = AdamW(resnet_model.parameters(), lr=RESNET_LR, weight_decay=RESNET_WEIGHT_DECAY)
+
+warmup = LinearLR(optimizer, start_factor=0.2, total_iters=RESNET_WARMUP_EPOCHS)
+cosine = CosineAnnealingLR(optimizer, T_max=max(1, RESNET_EPOCHS - RESNET_WARMUP_EPOCHS))
+scheduler = SequentialLR(optimizer, schedulers=[warmup, cosine], milestones=[RESNET_WARMUP_EPOCHS])
+
+resnet_history, resnet_training_seconds = fit_model(
+    resnet_model,
+    resnet_train_loader,
+    resnet_val_loader,
+    criterion,
+    optimizer,
+    scheduler,
+    RESNET_EPOCHS,
+    "stanforddogs_resnet18",
+)</code></pre>
+              </div>
+              <p class="deliverable-note">
+                Final parameter count: <strong>11,238,072</strong>. This makes ResNet-18 much lighter than the ViT model and
+                therefore useful as a practical CNN baseline.
+              </p>
             </section>
 
             <section class="story-block">
               <p class="card-kicker">Transformer model</p>
-              <h3 class="card-title">ViT-B/16</h3>
-              <ul class="mini-list">
-                <li>Backbone: ViT-B/16 pretrained on ImageNet</li>
-                <li>Final head replaced for 120 Stanford Dogs classes</li>
-                <li>2-stage training: 3 head-only epochs + 8 full fine-tune epochs</li>
-                <li>Loaded best saved checkpoint for evaluation</li>
-                <li>Total params: 85,890,936</li>
-                <li>Final val acc: 93.94%, val macro F1: 0.9391</li>
+              <h3 class="card-title">ViT-B/16: a larger Vision Transformer with two-stage fine-tuning</h3>
+              <p class="track-copy">
+                The Transformer experiment uses <strong>ViT-B/16</strong>, again initialized from ImageNet-pretrained weights.
+                Instead of directly fine-tuning all layers from the first epoch, the notebook uses a two-stage strategy:
+                first it trains only the classification head for 3 epochs, then it unfreezes the entire backbone and continues
+                with full fine-tuning for 8 more epochs.
+              </p>
+              <ul class="mini-list mini-list-disclosure">
+                <li>
+                  <details class="mini-disclosure" open>
+                    <summary>Why start with head-only training</summary>
+                    <div class="mini-disclosure-body">
+                      ViT-B/16 is much larger than ResNet-18 and already contains strong pretrained features. Freezing the
+                      backbone at the beginning lets the new classifier head adapt to Stanford Dogs without immediately changing
+                      the pretrained transformer representation. This usually makes early training more stable and reduces the
+                      risk of damaging useful pretrained weights too quickly.
+                    </div>
+                  </details>
+                </li>
+                <li>
+                  <details class="mini-disclosure">
+                    <summary>Why unfreeze later for full fine-tuning</summary>
+                    <div class="mini-disclosure-body">
+                      After the classifier head has adapted to the new task, the notebook unfreezes all parameters and performs
+                      full fine-tuning. This second stage lets the deeper transformer blocks specialize to subtle breed-level
+                      differences such as ear shape, muzzle structure, coat texture, and long-range spatial relationships that
+                      are important in fine-grained dog recognition.
+                    </div>
+                  </details>
+                </li>
+                <li>
+                  <details class="mini-disclosure">
+                    <summary>Optimizer and scheduler choices for ViT-B/16</summary>
+                    <div class="mini-disclosure-body">
+                      Like the CNN baseline, ViT-B/16 also uses <code>CrossEntropyLoss</code> and <code>AdamW</code>. For both
+                      the head-only stage and the full-fine-tuning stage, the notebook uses cosine learning-rate decay. The
+                      difference is that the head optimizer sees only trainable head parameters in the first stage, while the
+                      second optimizer updates the entire model once all parameters are unfrozen.
+                    </div>
+                  </details>
+                </li>
+                <li>
+                  <details class="mini-disclosure">
+                    <summary>Observed validation behavior</summary>
+                    <div class="mini-disclosure-body">
+                      The final validation values reported in the notebook are <strong>93.94% validation accuracy</strong> and
+                      <strong>0.9391 validation macro F1</strong>. This large gap over ResNet-18 suggests that the transformer
+                      is much better at fine-grained breed separation on Stanford Dogs.
+                    </div>
+                  </details>
+                </li>
               </ul>
+              <div class="code-sample">
+                <div class="code-sample-bar">
+                  <div class="code-sample-dots" aria-hidden="true">
+                    <span class="code-sample-dot code-sample-dot-red"></span>
+                    <span class="code-sample-dot code-sample-dot-yellow"></span>
+                    <span class="code-sample-dot code-sample-dot-green"></span>
+                  </div>
+                  <span class="code-sample-label">python</span>
+                  <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+                </div>
+<pre class="language-python"><code class="language-python">def create_vit_b16(num_classes: int) -&gt; nn.Module:
+    model = models.vit_b_16(weights=models.ViT_B_16_Weights.IMAGENET1K_V1)
+    model.heads.head = nn.Linear(model.heads.head.in_features, num_classes)
+    return model
+
+
+vit_model = create_vit_b16(NUM_CLASSES).to(DEVICE)
+criterion = nn.CrossEntropyLoss()
+
+for param in vit_model.parameters():
+    param.requires_grad = False
+for param in vit_model.heads.parameters():
+    param.requires_grad = True
+
+optimizer_head = AdamW(filter(lambda p: p.requires_grad, vit_model.parameters()), lr=VIT_HEAD_LR, weight_decay=VIT_WEIGHT_DECAY)
+scheduler_head = CosineAnnealingLR(optimizer_head, T_max=max(1, VIT_HEAD_EPOCHS))
+vit_head_history, vit_head_seconds = fit_model(
+    vit_model, vit_train_loader, vit_val_loader, criterion, optimizer_head, scheduler_head, VIT_HEAD_EPOCHS, "stanforddogs_vit_head"
+)
+
+for param in vit_model.parameters():
+    param.requires_grad = True
+
+optimizer_full = AdamW(vit_model.parameters(), lr=VIT_FINETUNE_LR, weight_decay=VIT_WEIGHT_DECAY)
+scheduler_full = CosineAnnealingLR(optimizer_full, T_max=max(1, VIT_FINETUNE_EPOCHS))
+vit_full_history, vit_full_seconds = fit_model(
+    vit_model, vit_train_loader, vit_val_loader, criterion, optimizer_full, scheduler_full, VIT_FINETUNE_EPOCHS, "stanforddogs_vit_full"
+)</code></pre>
+              </div>
+              <p class="deliverable-note">
+                Final parameter count: <strong>85,890,936</strong>. The ViT model is much heavier, but the later test results show
+                that this extra capacity translates into a much stronger fine-grained classifier.
+              </p>
             </section>
           </div>
 
           <div class="soft-divider"></div>
 
           <section class="story-block">
+            <p class="card-kicker">Evaluation pipeline</p>
+            <h3 class="card-title">Accuracy, F1, confusion matrices, calibration, and report artifacts are all generated from the same test predictions</h3>
+            <p class="track-copy">
+              After training, the notebook evaluates the restored best checkpoint on the test loader. The prediction helper saves
+              three things for every sample: the true label, the predicted label, and the full softmax probability vector. Those
+              outputs are then reused to build every reporting artifact shown later in the web page.
+            </p>
+            <ul class="mini-list mini-list-disclosure">
+              <li>
+                <details class="mini-disclosure" open>
+                  <summary>Test accuracy measures the fraction of correct top-1 predictions</summary>
+                  <div class="mini-disclosure-body">
+                    This is the most familiar metric: it simply asks how often the predicted breed index matches the true breed
+                    index. It is useful as a headline number, but by itself it does not describe how evenly the model performs
+                    across rare and frequent breeds.
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details class="mini-disclosure">
+                  <summary>Macro F1 and weighted F1 explain class balance more carefully</summary>
+                  <div class="mini-disclosure-body">
+                    <strong>Macro F1</strong> gives every class equal importance, so a model is penalized if it performs poorly on
+                    some breeds even when its overall accuracy is high. <strong>Weighted F1</strong> still averages class-wise F1
+                    scores, but weights them by class support, so it remains closer to overall dataset performance.
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details class="mini-disclosure">
+                  <summary>Two confusion matrices are exported: raw counts and row-normalized values</summary>
+                  <div class="mini-disclosure-body">
+                    The raw-count confusion matrix shows how many images of each true breed were predicted as each other breed.
+                    The normalized version divides each row by its support, so the diagonal becomes per-class recall and the
+                    off-diagonal entries reveal the most common breed confusions in percentage terms.
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details class="mini-disclosure">
+                  <summary>ECE and reliability diagrams measure confidence calibration</summary>
+                  <div class="mini-disclosure-body">
+                    A model can be correct or incorrect, but it can also be overconfident or well-calibrated. The notebook uses
+                    the predicted probability vectors to compute the Expected Calibration Error (ECE), draw reliability diagrams,
+                    and export confidence histograms. Lower ECE means the confidence scores align better with actual correctness.
+                  </div>
+                </details>
+              </li>
+            </ul>
+            <div class="code-sample">
+              <div class="code-sample-bar">
+                <div class="code-sample-dots" aria-hidden="true">
+                  <span class="code-sample-dot code-sample-dot-red"></span>
+                  <span class="code-sample-dot code-sample-dot-yellow"></span>
+                  <span class="code-sample-dot code-sample-dot-green"></span>
+                </div>
+                <span class="code-sample-label">python</span>
+                <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+              </div>
+<pre class="language-python"><code class="language-python">def predict_model(model, loader):
+    model.eval()
+    all_targets, all_preds, all_probs = [], [], []
+
+    with torch.no_grad():
+        for images, targets in tqdm(loader, leave=False):
+            images = images.to(DEVICE, non_blocking=True)
+            outputs = model(images)
+            probs = outputs.softmax(dim=1)
+            preds = probs.argmax(dim=1)
+            all_targets.extend(targets.numpy())
+            all_preds.extend(preds.cpu().numpy())
+            all_probs.append(probs.cpu())
+
+    return np.array(all_targets), np.array(all_preds), torch.cat(all_probs, dim=0).numpy()
+
+
+targets, preds, probs = predict_model(model, loader)
+report_df = pd.DataFrame(classification_report(targets, preds, target_names=class_names, zero_division=0, output_dict=True)).transpose()
+cm = confusion_matrix(targets, preds)
+cm_norm = confusion_matrix(targets, preds, normalize="true")
+ece = expected_calibration_error(targets, probs)</code></pre>
+            </div>
+            <p class="deliverable-note">
+              In other words, the web page figures later in this report are not manually assembled. They are all generated from the
+              same prediction outputs exported by the notebook, which keeps the qualitative and quantitative analysis consistent.
+            </p>
+          </section>
+
+          <div class="soft-divider"></div>
+
+          <section class="story-block">
             <p class="card-kicker">Comparison table</p>
             <h3 class="card-title">Final image-model comparison</h3>
+            <p class="track-copy">
+              The table below summarizes the final test-set behavior of both backbones. It includes predictive performance,
+              confidence calibration, and training time so that the comparison reflects not only accuracy but also practical
+              cost and deployment trade-offs.
+            </p>
             <div class="compare-table-wrap">
               <table class="compare-table">
                 <thead>
@@ -623,7 +1421,8 @@
               </table>
             </div>
             <p class="deliverable-note">
-              ViT-B/16 is much stronger on Stanford Dogs, while ResNet-18 remains the lighter and faster baseline.
+              ViT-B/16 is much stronger on Stanford Dogs, while ResNet-18 remains the lighter and faster baseline. This makes the
+              pair a good illustration of the classic trade-off between efficiency and fine-grained recognition quality.
             </p>
           </section>
         </article>
@@ -753,10 +1552,22 @@
         <article class="panel deliverable-card content-card">
           <div class="extension-stack">
             <section class="extension-item">
+              <p class="card-kicker">Failure analysis</p>
+              <h3 class="card-title">Misclassified examples gallery</h3>
+              <p class="deliverable-note">
+                The notebook exports galleries of the most confident wrong predictions for both models. These examples are useful because they reveal which breeds remain visually confusing even when the model is very sure about its answer.
+              </p>
+              <div class="assignment-meta">
+                <span class="status-pill">Implemented</span>
+                <span class="chip">Error analysis</span>
+              </div>
+            </section>
+
+            <section class="extension-item">
               <p class="card-kicker">Interpretability</p>
               <h3 class="card-title">Grad-CAM and attention visualization</h3>
               <p class="deliverable-note">
-                ResNet-18 uses Grad-CAM while ViT-B/16 uses attention visualization. Together, they show that the models usually focus on the dog body, face, and fur region, while harder cases may still involve background context.
+                ResNet-18 uses Grad-CAM while ViT-B/16 uses last-layer attention visualization. Together, they reveal where the models attend when making their breed decision and whether that attention stays on the dog instead of the background.
               </p>
               <div class="assignment-meta">
                 <span class="status-pill">Implemented</span>
@@ -768,7 +1579,7 @@
               <p class="card-kicker">Ablation study</p>
               <h3 class="card-title">Augmentation vs no augmentation</h3>
               <p class="deliverable-note">
-                Augmentation helps ViT-B/16 more clearly than ResNet-18 in this setup. The ViT no-augmentation run drops from 91.27% to 89.90% accuracy, while ResNet-18 changes only slightly.
+                This ablation reruns each backbone with the standard training transform and with a no-augmentation baseline. It isolates how much the generalization gain really comes from data augmentation rather than only from the pretrained model.
               </p>
               <div class="assignment-meta">
                 <span class="status-pill">Implemented</span>
@@ -780,23 +1591,11 @@
               <p class="card-kicker">Ablation study</p>
               <h3 class="card-title">Freeze backbone vs full fine-tune</h3>
               <p class="deliverable-note">
-                In this experiment, freezing the pretrained backbone performs surprisingly well and even outperforms full fine-tuning for both models, especially for ViT-B/16.
+                This ablation compares a very small trainable head against updating the whole pretrained network. It answers an important transfer-learning question: how much of the pretrained representation should actually be changed for Stanford Dogs?
               </p>
               <div class="assignment-meta">
                 <span class="status-pill">Implemented</span>
                 <span class="chip">Transfer-learning strategy</span>
-              </div>
-            </section>
-
-            <section class="extension-item">
-              <p class="card-kicker">Section status</p>
-              <h3 class="card-title">Ready for GitHub Pages and presentation</h3>
-              <p class="deliverable-note">
-                The image component now has Stanford Dogs notebooks, trained checkpoints, exported figures, ablation outputs, and integrated report content for the assignment page.
-              </p>
-              <div class="assignment-meta">
-                <span class="status-pill">Ready</span>
-                <span class="chip">Report + artifacts</span>
               </div>
             </section>
           </div>
@@ -804,8 +1603,128 @@
           <div class="soft-divider"></div>
 
           <section class="story-block">
+            <p class="card-kicker">Extension design</p>
+            <h3 class="card-title">The notebook combines qualitative evidence and controlled ablation studies</h3>
+            <p class="track-copy">
+              The extension section is organized into two complementary roles. First, it provides <strong>qualitative evidence</strong>
+              through misclassified galleries and explanation maps. Second, it provides <strong>controlled ablation studies</strong>
+              where one training choice is changed at a time while the split and test protocol remain fixed. This makes the extension
+              material much more useful for a report than simply adding extra images without a clear experimental purpose.
+            </p>
+            <ul class="mini-list mini-list-disclosure">
+              <li>
+                <details class="mini-disclosure" open>
+                  <summary>Qualitative extensions answer “why did the model behave like this?”</summary>
+                  <div class="mini-disclosure-body">
+                    The misclassified galleries reveal which breeds remain difficult even when the prediction confidence is high.
+                    Grad-CAM and ViT attention visualizations then show whether the model is looking at the dog itself or being
+                    distracted by the background, framing, or lighting context.
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details class="mini-disclosure">
+                  <summary>Quantitative ablations answer “what changed when one design choice changed?”</summary>
+                  <div class="mini-disclosure-body">
+                    In the augmentation and freeze-vs-full experiments, the notebook reuses the same train, validation, and test
+                    split. That means the effect of the changed variable is easier to interpret because the evaluation protocol stays
+                    constant.
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details class="mini-disclosure">
+                  <summary>Notebook flags make the extension workflow reproducible</summary>
+                  <div class="mini-disclosure-body">
+                    The extension blocks are controlled by <code>RUN_MISCLASSIFIED_GALLERY</code>,
+                    <code>RUN_INTERPRETABILITY</code>, and <code>RUN_ABLATIONS</code>. This allows the notebook to rerun
+                    qualitative analysis or ablations without repeating every earlier EDA cell manually.
+                  </div>
+                </details>
+              </li>
+            </ul>
+            <div class="code-sample">
+              <div class="code-sample-bar">
+                <div class="code-sample-dots" aria-hidden="true">
+                  <span class="code-sample-dot code-sample-dot-red"></span>
+                  <span class="code-sample-dot code-sample-dot-yellow"></span>
+                  <span class="code-sample-dot code-sample-dot-green"></span>
+                </div>
+                <span class="code-sample-label">python</span>
+                <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+              </div>
+<pre class="language-python"><code class="language-python">RUN_MISCLASSIFIED_GALLERY = True
+RUN_INTERPRETABILITY = True
+RUN_ABLATIONS = True
+
+if RUN_MISCLASSIFIED_GALLERY:
+    plot_misclassified_gallery(..., "ResNet-18 misclassified examples", CNN_ARTIFACT_ROOT / "resnet18_misclassified_gallery.png")
+    plot_misclassified_gallery(..., "ViT-B/16 misclassified examples", VIT_ARTIFACT_ROOT / "vit_b16_misclassified_gallery.png")
+
+if RUN_INTERPRETABILITY:
+    plot_interpretability_gallery(..., method="gradcam", title="ResNet-18 Grad-CAM examples", save_path=CNN_ARTIFACT_ROOT / "resnet18_gradcam_gallery.png")
+    plot_interpretability_gallery(..., method="attention", title="ViT-B/16 attention visualization examples", save_path=VIT_ARTIFACT_ROOT / "vit_b16_attention_gallery.png")</code></pre>
+            </div>
+          </section>
+
+          <div class="soft-divider"></div>
+
+          <section class="story-block">
             <p class="card-kicker">Extension tables</p>
             <h3 class="card-title">Ablation summary from the notebook</h3>
+            <p class="track-copy">
+              The first ablation compares the standard training pipeline against a no-augmentation baseline. In the notebook,
+              the no-augmentation setting is created by reusing the deterministic evaluation transform as the training transform.
+              This makes the experiment easy to interpret because the only changed factor is the presence of stochastic augmentation.
+            </p>
+            <ul class="mini-list mini-list-disclosure">
+              <li>
+                <details class="mini-disclosure" open>
+                  <summary>How the no-augmentation baseline is defined</summary>
+                  <div class="mini-disclosure-body">
+                    The ablation does not change the dataset split or the loss function. Instead, it sets
+                    <code>no_aug_train_transform = common_eval_transform</code> and rebuilds the loaders. That means train, val,
+                    and test still refer to the same Stanford Dogs metadata; only the training-time randomness is removed.
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details class="mini-disclosure">
+                  <summary>What the results mean</summary>
+                  <div class="mini-disclosure-body">
+                    In this short ablation budget, ResNet-18 changes only slightly with or without augmentation, while ViT-B/16
+                    benefits more clearly from augmentation. This suggests the larger transformer makes better use of moderate image
+                    diversity when learning breed-level differences.
+                  </div>
+                </details>
+              </li>
+            </ul>
+            <div class="code-sample">
+              <div class="code-sample-bar">
+                <div class="code-sample-dots" aria-hidden="true">
+                  <span class="code-sample-dot code-sample-dot-red"></span>
+                  <span class="code-sample-dot code-sample-dot-yellow"></span>
+                  <span class="code-sample-dot code-sample-dot-green"></span>
+                </div>
+                <span class="code-sample-label">python</span>
+                <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+              </div>
+<pre class="language-python"><code class="language-python">no_aug_train_transform = common_eval_transform
+
+resnet_aug_loaders = build_loaders(resnet_train_transform)
+resnet_noaug_loaders = build_loaders(no_aug_train_transform)
+vit_aug_loaders = build_loaders(vit_train_transform)
+vit_noaug_loaders = build_loaders(no_aug_train_transform)
+
+augmentation_results = [
+    run_simple_experiment(create_resnet18, "ResNet-18 | with augmentation", *resnet_aug_loaders, epochs=RESNET_ABLATION_EPOCHS, lr=RESNET_FULL_LR, weight_decay=RESNET_WEIGHT_DECAY),
+    run_simple_experiment(create_resnet18, "ResNet-18 | no augmentation", *resnet_noaug_loaders, epochs=RESNET_ABLATION_EPOCHS, lr=RESNET_FULL_LR, weight_decay=RESNET_WEIGHT_DECAY),
+    run_simple_experiment(create_vit_b16, "ViT-B/16 | with augmentation", *vit_aug_loaders, epochs=VIT_ABLATION_EPOCHS, lr=VIT_FULL_LR, weight_decay=VIT_WEIGHT_DECAY),
+    run_simple_experiment(create_vit_b16, "ViT-B/16 | no augmentation", *vit_noaug_loaders, epochs=VIT_ABLATION_EPOCHS, lr=VIT_FULL_LR, weight_decay=VIT_WEIGHT_DECAY),
+]
+
+augmentation_results_df = pd.DataFrame(augmentation_results)</code></pre>
+            </div>
             <div class="compare-table-wrap">
               <table class="compare-table">
                 <thead>
@@ -849,6 +1768,11 @@
                 </tbody>
               </table>
             </div>
+
+            <p class="deliverable-note">
+              The main conclusion from this first ablation is that augmentation helps ViT-B/16 more clearly than ResNet-18 in the
+              short extension setting, even though the calibration trend does not always move in exactly the same direction as accuracy.
+            </p>
 
             <div class="compare-table-wrap">
               <table class="compare-table">
@@ -894,8 +1818,44 @@
               </table>
             </div>
 
+            <p class="deliverable-note">
+              This second ablation shows that “more trainable parameters” does not automatically mean “better result.” On this
+              dataset and under this short budget, the pretrained backbones are already strong enough that a frozen-head setting can
+              be surprisingly competitive or even stronger.
+            </p>
+
             <div class="soft-divider"></div>
 
+            <p class="track-copy">
+              The interpretability figures below complement the ablation tables. They do not replace quantitative evaluation, but
+              they help explain why the ViT model often separates similar breeds more reliably and where the CNN still loses focus
+              in difficult examples.
+            </p>
+            <div class="code-sample">
+              <div class="code-sample-bar">
+                <div class="code-sample-dots" aria-hidden="true">
+                  <span class="code-sample-dot code-sample-dot-red"></span>
+                  <span class="code-sample-dot code-sample-dot-yellow"></span>
+                  <span class="code-sample-dot code-sample-dot-green"></span>
+                </div>
+                <span class="code-sample-label">python</span>
+                <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+              </div>
+<pre class="language-python"><code class="language-python">def plot_misclassified_gallery(frame, targets, preds, probs, title, save_path: Path, top_k: int = 12):
+    ...
+
+
+def compute_gradcam_resnet(model, image_tensor, class_idx=None, target_layer=None):
+    ...
+
+
+def extract_vit_last_attention_map(model, image_tensor):
+    ...
+
+
+plot_misclassified_gallery(..., "ResNet-18 misclassified examples", CNN_ARTIFACT_ROOT / "resnet18_misclassified_gallery.png")
+plot_misclassified_gallery(..., "ViT-B/16 misclassified examples", VIT_ARTIFACT_ROOT / "vit_b16_misclassified_gallery.png")</code></pre>
+            </div>
             <div class="figure-stack">
               <section class="figure-stack-item">
                 <div class="figure-frame">
@@ -1284,6 +2244,44 @@
           if (isOpen) {
             resetView();
           }
+        });
+      })();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-clike.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+
+    <script>
+      (function () {
+        const buttons = Array.from(document.querySelectorAll("[data-copy-code]"));
+
+        if (!buttons.length) {
+          return;
+        }
+
+        buttons.forEach(function (button) {
+          button.addEventListener("click", async function () {
+            const sample = button.closest(".code-sample");
+            const code = sample ? sample.querySelector("pre code") : null;
+
+            if (!code) {
+              return;
+            }
+
+            const original = button.textContent;
+
+            try {
+              await navigator.clipboard.writeText(code.textContent);
+              button.textContent = "Copied";
+            } catch (error) {
+              button.textContent = "Failed";
+            }
+
+            window.setTimeout(function () {
+              button.textContent = original;
+            }, 1400);
+          });
         });
       })();
     </script>
