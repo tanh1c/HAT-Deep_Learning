@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import io
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Any, Dict, List
@@ -21,6 +22,9 @@ sys.path.insert(0, str(ASSIGNMENT_ROOT))
 import numpy as np
 from PIL import Image
 import streamlit as st
+import torch
+import wandb
+from transformers import BertTokenizer, DistilBertForSequenceClassification
 
 from app.image.resnet18 import StanfordDogsResNet18Handler
 from app.image.vit_b16 import StanfordDogsViTHandler
@@ -29,6 +33,7 @@ from app.shared.model_assets import ensure_model_checkpoint
 
 REPO_ROOT = ASSIGNMENT_ROOT.parent.parent
 MODEL_ROOT = ASSIGNMENT_ROOT / "image" / "models"
+TEXT_MODEL_ROOT = ASSIGNMENT_ROOT / "text" / "models"
 
 MODEL_SPECS: Dict[str, Dict[str, Any]] = {
     "stanforddogs_resnet18": {
@@ -49,6 +54,62 @@ MODEL_SPECS: Dict[str, Dict[str, Any]] = {
         "configured_gdrive_key": "STANFORDDOGS_VIT_B16_GDRIVE_ID",
         "family": "Transformer",
     },
+}
+
+TEXT_ARTIFACT_NAME = (
+    "nguyenquochieujff7-ho-chi-minh-city-university-of-technology/"
+    "bert-models/DistilBERT_Full:v0"
+)
+TEXT_BASE_MODEL_NAME = "distilbert-base-uncased"
+TEXT_NUM_LABELS = 20
+TEXT_MAX_LENGTH = 512
+TEXT_MAX_WORDS = 400
+TEXT_LOCAL_MODEL_DIR = TEXT_MODEL_ROOT / "DistilBERT_Full-v0"
+
+TEXT_CLASS_NAMES = [
+    "alt.atheism",
+    "comp.graphics",
+    "comp.os.ms-windows.misc",
+    "comp.sys.ibm.pc.hardware",
+    "comp.sys.mac.hardware",
+    "comp.windows.x",
+    "misc.forsale",
+    "rec.autos",
+    "rec.motorcycles",
+    "rec.sport.baseball",
+    "rec.sport.hockey",
+    "sci.crypt",
+    "sci.electronics",
+    "sci.med",
+    "sci.space",
+    "soc.religion.christian",
+    "talk.politics.guns",
+    "talk.politics.mideast",
+    "talk.politics.misc",
+    "talk.religion.misc",
+]
+
+TEXT_CLASS_DISPLAY_NAMES = {
+    "alt.atheism": "Atheism",
+    "comp.graphics": "Computer Graphics",
+    "comp.os.ms-windows.misc": "MS Windows",
+    "comp.sys.ibm.pc.hardware": "IBM PC Hardware",
+    "comp.sys.mac.hardware": "Mac Hardware",
+    "comp.windows.x": "X Window System",
+    "misc.forsale": "For Sale",
+    "rec.autos": "Autos",
+    "rec.motorcycles": "Motorcycles",
+    "rec.sport.baseball": "Baseball",
+    "rec.sport.hockey": "Hockey",
+    "sci.crypt": "Cryptography",
+    "sci.electronics": "Electronics",
+    "sci.med": "Medicine",
+    "sci.space": "Space",
+    "soc.religion.christian": "Christianity",
+    "talk.politics.guns": "Politics - Guns",
+    "talk.politics.mideast": "Politics - Middle East",
+    "talk.politics.misc": "Politics - Misc",
+    "talk.religion.misc": "Religion - Misc",
 }
 
 
@@ -139,6 +200,186 @@ def render_sidebar(selected_model_key: str) -> None:
     )
 
 
+def clean_text(text: str) -> str:
+    lines = str(text).split("\n")
+    cleaned = []
+
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith(">") or stripped.startswith(":") or stripped.startswith("|"):
+            continue
+
+        if any(
+            line.startswith(header)
+            for header in [
+                "From:",
+                "Subject:",
+                "Organization:",
+                "Lines:",
+                "Reply-To:",
+                "NNTP-Posting-Host:",
+            ]
+        ):
+            continue
+
+        if stripped == "--":
+            break
+
+        cleaned.append(line)
+
+    cleaned_text = " ".join(cleaned).strip()
+    cleaned_text = re.sub(r"http\S+|ftp\S+|www\.\S+", "", cleaned_text)
+    cleaned_text = re.sub(r"\S+@\S+", "", cleaned_text)
+    cleaned_text = re.sub(r"\s+", " ", cleaned_text).strip()
+    cleaned_text = re.sub(r"\[.*?deletia.*?\]", "", cleaned_text, flags=re.IGNORECASE)
+    cleaned_text = re.sub(r"\[.*?snip.*?\]", "", cleaned_text, flags=re.IGNORECASE)
+    return cleaned_text
+
+
+def truncate_text(text: str, max_words: int = TEXT_MAX_WORDS) -> str:
+    words = str(text).split()
+    if len(words) > max_words:
+        return " ".join(words[:max_words])
+    return str(text)
+
+
+def preprocess_text(text: str) -> str:
+    return truncate_text(clean_text(text))
+
+
+def resolve_text_checkpoint_path(artifact_dir: Path) -> Path:
+    preferred_name = "best_model_distilbert_full_fine_tune.pt"
+    direct_preferred = artifact_dir / preferred_name
+    if direct_preferred.exists():
+        return direct_preferred
+
+    nested_preferred = sorted(artifact_dir.rglob(preferred_name))
+    if nested_preferred:
+        return nested_preferred[0]
+
+    checkpoints = sorted(artifact_dir.rglob("*.pt"))
+    if not checkpoints:
+        raise FileNotFoundError(
+            f"No .pt checkpoint found inside artifact folder: {artifact_dir}"
+        )
+    return checkpoints[0]
+
+
+def download_text_wandb_artifact() -> Path:
+    TEXT_LOCAL_MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    if any(TEXT_LOCAL_MODEL_DIR.rglob("*.pt")):
+        return TEXT_LOCAL_MODEL_DIR
+
+    try:
+        wandb_api_key = st.secrets["WANDB_API_KEY"]
+    except Exception as exc:
+        raise RuntimeError("Missing `WANDB_API_KEY` in Streamlit secrets.") from exc
+
+    wandb.login(key=wandb_api_key, relogin=True)
+    artifact = wandb.Api().artifact(TEXT_ARTIFACT_NAME, type="model")
+    artifact_path = artifact.download(root=str(TEXT_LOCAL_MODEL_DIR))
+    return Path(artifact_path)
+
+
+@st.cache_resource(show_spinner="Loading DistilBERT model...")
+def load_text_model_and_tokenizer():
+    artifact_dir = download_text_wandb_artifact()
+    checkpoint_path = resolve_text_checkpoint_path(artifact_dir)
+    tokenizer = BertTokenizer.from_pretrained(TEXT_BASE_MODEL_NAME)
+    model = DistilBertForSequenceClassification.from_pretrained(
+        TEXT_BASE_MODEL_NAME,
+        num_labels=TEXT_NUM_LABELS,
+        seq_classif_dropout=0.1,
+    )
+    state_dict = torch.load(checkpoint_path, map_location="cpu")
+    model.load_state_dict(state_dict)
+    model.eval()
+    return model, tokenizer, checkpoint_path
+
+
+def predict_text(model, tokenizer, text: str, top_k: int = 5):
+    normalized_text = preprocess_text(text)
+    encoded = tokenizer(
+        normalized_text,
+        truncation=True,
+        max_length=TEXT_MAX_LENGTH,
+        return_tensors="pt",
+    )
+
+    with torch.no_grad():
+        outputs = model(**encoded)
+        probs = torch.softmax(outputs.logits, dim=1).squeeze(0)
+
+    top_probs, top_indices = torch.topk(probs, k=min(top_k, TEXT_NUM_LABELS))
+    predictions = [
+        {
+            "rank": rank + 1,
+            "class_id": int(idx),
+            "label": TEXT_CLASS_DISPLAY_NAMES.get(
+                TEXT_CLASS_NAMES[int(idx)],
+                TEXT_CLASS_NAMES[int(idx)],
+            ),
+            "raw_label": TEXT_CLASS_NAMES[int(idx)],
+            "probability": float(prob),
+        }
+        for rank, (prob, idx) in enumerate(zip(top_probs, top_indices))
+    ]
+    return normalized_text, predictions
+
+
+def render_text_sidebar() -> None:
+    st.sidebar.title("Text Demo")
+    st.sidebar.caption("20 Newsgroups - DistilBERT")
+    st.sidebar.markdown(
+        "[Assignment page](https://tanh1c.github.io/HAT-Deep_Learning/assignment-1/text.html)  \n"
+        "[GitHub repository](https://github.com/HatakekkSheeshh/classification-finetune-bert)"
+    )
+    st.sidebar.markdown("### W&B Artifact")
+    st.sidebar.code(TEXT_ARTIFACT_NAME, language="text")
+
+
+def run_text_app() -> None:
+    render_text_sidebar()
+    st.title("20 Newsgroups Text Classification")
+    st.caption("DistilBERT_Full fine-tuned checkpoint from W&B artifact")
+
+    try:
+        model, tokenizer, checkpoint_path = load_text_model_and_tokenizer()
+        st.success(f"Loaded checkpoint: {checkpoint_path}")
+    except Exception as exc:
+        st.error(str(exc))
+        st.stop()
+
+    sample_text = (
+        "NASA recently announced a new space telescope mission focused on observing "
+        "distant galaxies and studying exoplanet atmospheres."
+    )
+    text_input = st.text_area("Input text to classify", value=sample_text, height=220)
+    top_k = st.slider("Top-K labels", min_value=1, max_value=10, value=5)
+
+    if st.button("Predict", type="primary"):
+        if not text_input.strip():
+            st.warning("Please enter text before prediction.")
+            st.stop()
+
+        cleaned_input, predictions = predict_text(
+            model,
+            tokenizer,
+            text_input,
+            top_k=top_k,
+        )
+        best = predictions[0]
+
+        st.subheader("Prediction")
+        st.metric("Predicted label", best["label"], f"{best['probability']:.2%}")
+
+        st.subheader("Top-K probabilities")
+        st.dataframe(predictions, use_container_width=True, hide_index=True)
+
+        with st.expander("Preprocessed text"):
+            st.write(cleaned_input)
+
+
 def render_model_info(handler, source: str, resolved_path: Path) -> None:
     info = handler.get_model_info()
 
@@ -186,14 +427,7 @@ def render_calibration(handler) -> None:
     )
 
 
-def run_app() -> None:
-    st.set_page_config(
-        page_title="Stanford Dogs Image Demo",
-        page_icon="🐶",
-        layout="wide",
-        initial_sidebar_state="expanded",
-    )
-
+def run_image_app() -> None:
     st.title("Stanford Dogs Image Demo")
     st.caption(
         "A lightweight Streamlit deployment for the Assignment 1 image track. "
@@ -314,6 +548,27 @@ def run_app() -> None:
         ),
         width="stretch",
     )
+
+
+def run_app() -> None:
+    st.set_page_config(
+        page_title="Assignment 1 Demo",
+        page_icon="A1",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+
+    selected_track = st.sidebar.radio(
+        "Choose demo track",
+        ["Image", "Text"],
+        horizontal=True,
+    )
+
+    if selected_track == "Text":
+        run_text_app()
+        return
+
+    run_image_app()
 
 
 if __name__ == "__main__":
