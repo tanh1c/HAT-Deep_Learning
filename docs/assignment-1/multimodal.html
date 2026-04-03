@@ -68,6 +68,84 @@
       .multimodal-report-page .page-callout .chip {
         font-size: 1.02rem;
       }
+
+      .multimodal-report-page .pipeline-board {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .multimodal-report-page .pipeline-card {
+        border: 1px solid #d8d8d8;
+        border-radius: 22px;
+        padding: 1.1rem;
+        background: #f8f8f8;
+        color: #111111;
+      }
+
+      .multimodal-report-page .pipeline-card .card-kicker {
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #111111;
+      }
+
+      .multimodal-report-page .pipeline-flow {
+        margin-top: 0.7rem;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .multimodal-report-page .pipeline-step {
+        min-height: 74px;
+        min-width: 170px;
+        padding: 0.72rem 0.95rem;
+        border-radius: 14px;
+        border: 1px solid #cfcfcf;
+        background: #ffffff;
+        color: #111111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-weight: 700;
+        line-height: 1.3;
+      }
+
+      .multimodal-report-page .pipeline-step em {
+        font-style: normal;
+        display: block;
+        font-size: 0.86rem;
+        font-weight: 600;
+        color: #111111;
+        opacity: 0.9;
+      }
+
+      .multimodal-report-page .pipeline-arrow {
+        font-weight: 800;
+        color: #111111;
+        font-size: 1.12rem;
+        line-height: 1;
+        padding: 0 0.16rem;
+      }
+
+      .multimodal-report-page .pipeline-detail-list {
+        margin-top: 0.8rem;
+        color: #111111;
+      }
+
+      @media (max-width: 900px) {
+        .multimodal-report-page .pipeline-flow {
+          gap: 0.45rem;
+        }
+
+        .multimodal-report-page .pipeline-step {
+          min-width: 148px;
+          min-height: 64px;
+          padding: 0.58rem 0.72rem;
+          font-size: 0.92rem;
+        }
+      }
     </style>
   </head>
   <body class="multimodal-report-page theme-red">
@@ -128,6 +206,20 @@
               </svg>
             </span>
             <span class="side-rail-label">Overview</span>
+          </a>
+
+          <a class="side-rail-link" href="#multi-pipeline" data-section-link="multi-pipeline">
+            <span class="side-rail-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12h5l2.2-4 3.6 8L16 12h5"></path>
+                <circle cx="3" cy="12" r="1.2"></circle>
+                <circle cx="8" cy="12" r="1.2"></circle>
+                <circle cx="13.8" cy="16" r="1.2"></circle>
+                <circle cx="16" cy="12" r="1.2"></circle>
+                <circle cx="21" cy="12" r="1.2"></circle>
+              </svg>
+            </span>
+            <span class="side-rail-label">Pipeline</span>
           </a>
 
           <a class="side-rail-link" href="#multi-outline" data-section-link="multi-outline">
@@ -301,6 +393,73 @@
         </aside>
       </section>
 
+      <section id="multi-pipeline" class="shell section">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Overall Pipeline (Zero-shot & Few-shot)</h2>
+            <p class="section-copy">A unified, box-based overview of the full multimodal pipeline.</p>
+          </div>
+        </div>
+
+        <article class="panel report-card content-card">
+          <div class="pipeline-board">
+            <section class="pipeline-card">
+              <p class="card-kicker">ZERO-SHOT PIPELINE</p>
+              <h3 class="card-title">CLIP multimodal zero-shot classification</h3>
+              <div class="pipeline-flow" aria-label="Zero-shot pipeline flow">
+                <div class="pipeline-step">Input<em>image + paired text</em></div>
+                <span class="pipeline-arrow" aria-hidden="true">→</span>
+                <div class="pipeline-step">Backbone: CLIP Encoder<em>ViT-B/16 or RN50 (frozen)</em></div>
+                <span class="pipeline-arrow" aria-hidden="true">→</span>
+                <div class="pipeline-step">Head: Prompt Matching<em>z = (f_img + f_txt)/2</em></div>
+                <span class="pipeline-arrow" aria-hidden="true">→</span>
+                <div class="pipeline-step">Output<em>predicted class</em></div>
+              </div>
+              <ul class="mini-list pipeline-detail-list">
+                <li><strong>Prompt bank:</strong> class prompts are encoded once (e.g., <code>a photo of &lt;class&gt;</code>).</li>
+                <li><strong>Decision rule:</strong> choose the class with maximum cosine similarity.</li>
+              </ul>
+            </section>
+
+            <section class="pipeline-card">
+              <p class="card-kicker">FEW-SHOT PIPELINE — LINEAR HEAD</p>
+              <h3 class="card-title">CLIP multimodal few-shot adaptation (Linear)</h3>
+              <div class="pipeline-flow" aria-label="Few-shot linear pipeline flow">
+                <div class="pipeline-step">Input<em>K-shot support + query</em></div>
+                <span class="pipeline-arrow" aria-hidden="true">→</span>
+                <div class="pipeline-step">Backbone: CLIP Encoder<em>ViT-B/16 or RN50 (frozen)</em></div>
+                <span class="pipeline-arrow" aria-hidden="true">→</span>
+                <div class="pipeline-step">Head: Linear Classifier<em>z = [f_img ; f_txt], o = Wz + b</em></div>
+                <span class="pipeline-arrow" aria-hidden="true">→</span>
+                <div class="pipeline-step">Output<em>class + Accuracy/Precision/F1</em></div>
+              </div>
+              <ul class="mini-list pipeline-detail-list">
+                <li><strong>Training:</strong> only the linear head is trained on support samples.</li>
+                <li><strong>Data setting:</strong> evaluated with 5-shot and 10-shot under no_aug / aug.</li>
+              </ul>
+            </section>
+
+            <section class="pipeline-card">
+              <p class="card-kicker">FEW-SHOT PIPELINE — PROTOTYPE HEAD</p>
+              <h3 class="card-title">CLIP multimodal few-shot adaptation (Prototype)</h3>
+              <div class="pipeline-flow" aria-label="Few-shot prototype pipeline flow">
+                <div class="pipeline-step">Input<em>K-shot support + query</em></div>
+                <span class="pipeline-arrow" aria-hidden="true">→</span>
+                <div class="pipeline-step">Backbone: CLIP Encoder<em>ViT-B/16 or RN50 (frozen)</em></div>
+                <span class="pipeline-arrow" aria-hidden="true">→</span>
+                <div class="pipeline-step">Head: Prototype Classifier<em>p_c = (1/K) Σ z_i</em></div>
+                <span class="pipeline-arrow" aria-hidden="true">→</span>
+                <div class="pipeline-step">Output<em>class + Accuracy/Precision/F1</em></div>
+              </div>
+              <ul class="mini-list pipeline-detail-list">
+                <li><strong>Inference:</strong> predict with <code>argmax cos(z, p_c)</code> over class prototypes.</li>
+                <li><strong>Data setting:</strong> evaluated with 5-shot and 10-shot under no_aug / aug.</li>
+              </ul>
+            </section>
+          </div>
+        </article>
+      </section>
+
       <section id="multi-outline" class="shell section">
         <div class="section-head">
           <div>
@@ -310,6 +469,7 @@
         </div>
 
         <div class="report-nav">
+          <a href="#multi-pipeline">Overall Pipeline (Zero-shot & Few-shot)</a>
           <a href="#multi-problem">Problem Definition</a>
           <a href="#multi-dataset">Dataset & EDA</a>
           <a href="#multi-preprocess">Dataset, DataLoader & Augmentation</a>
