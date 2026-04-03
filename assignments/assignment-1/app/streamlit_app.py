@@ -19,10 +19,13 @@ from typing import Any, Dict, List
 ASSIGNMENT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ASSIGNMENT_ROOT))
 
+import clip
 import numpy as np
+import pandas as pd
 from PIL import Image
 import streamlit as st
 import torch
+import torch.nn as nn
 import wandb
 from transformers import BertTokenizer, DistilBertForSequenceClassification
 
@@ -111,6 +114,22 @@ TEXT_CLASS_DISPLAY_NAMES = {
     "talk.politics.misc": "Politics - Misc",
     "talk.religion.misc": "Religion - Misc",
 }
+
+MULTIMODAL_MODEL_ROOT = ASSIGNMENT_ROOT / "multimodal" / "models"
+MULTIMODAL_DEFAULT_GDRIVE_URL = "https://drive.google.com/file/d/1MPqx6Inl_85N03W2I5R5k1ZZ4G-mph8z/view?usp=sharing"
+MULTIMODAL_CHECKPOINT_NAME = "best_few_shot_10shot.pth"
+MULTIMODAL_CLASS_NAMES = [
+    "donuts",
+    "french_fries",
+    "hamburger",
+    "hot_dog",
+    "ice_cream",
+    "pho",
+    "pizza",
+    "steak",
+    "sushi",
+    "tacos",
+]
 
 
 def _get_prediction_state_key(model_key: str) -> str:
@@ -558,6 +577,159 @@ def run_image_app() -> None:
     )
 
 
+class MultimodalFewShotClassifier(nn.Module):
+    def __init__(self, clip_model: nn.Module, num_classes: int) -> None:
+        super().__init__()
+        self.clip_model = clip_model
+
+        self.clip_model.eval()
+        for parameter in self.clip_model.parameters():
+            parameter.requires_grad = False
+
+        feature_dim = clip_model.visual.output_dim
+        self.classifier = nn.Linear(feature_dim * 2, num_classes)
+
+    def forward(self, images: torch.Tensor, texts: List[str]) -> torch.Tensor:
+        with torch.no_grad():
+            image_features = self.clip_model.encode_image(images)
+            image_features = image_features / image_features.norm(dim=-1, keepdim=True).clamp(min=1e-6)
+
+            text_tokens = clip.tokenize([str(text) for text in texts], truncate=True).to(images.device)
+            text_features = self.clip_model.encode_text(text_tokens)
+            text_features = text_features / text_features.norm(dim=-1, keepdim=True).clamp(min=1e-6)
+
+            features = torch.cat([image_features, text_features], dim=1)
+            features = features / features.norm(dim=-1, keepdim=True).clamp(min=1e-6)
+
+        return 10.0 * self.classifier(features.float())
+
+
+def _resolve_multimodal_checkpoint() -> tuple[Path, str]:
+    try:
+        return ensure_model_checkpoint(
+            filename=MULTIMODAL_CHECKPOINT_NAME,
+            default_local_dir=MULTIMODAL_MODEL_ROOT,
+            configured_path_key="MULTIMODAL_FEWSHOT_PATH",
+            configured_url_key="MULTIMODAL_FEWSHOT_URL",
+            configured_gdrive_key="MULTIMODAL_FEWSHOT_GDRIVE_ID",
+            secrets=st.secrets,
+        )
+    except Exception:
+        return ensure_model_checkpoint(
+            filename=MULTIMODAL_CHECKPOINT_NAME,
+            default_local_dir=MULTIMODAL_MODEL_ROOT,
+            configured_path_key="MULTIMODAL_FEWSHOT_PATH",
+            configured_url_key="MULTIMODAL_FEWSHOT_URL",
+            configured_gdrive_key="MULTIMODAL_FEWSHOT_GDRIVE_URL",
+            secrets={"models": {"MULTIMODAL_FEWSHOT_GDRIVE_URL": MULTIMODAL_DEFAULT_GDRIVE_URL}},
+        )
+
+
+@st.cache_resource(show_spinner="Loading CLIP + few-shot checkpoint...")
+def load_multimodal_bundle() -> Dict[str, Any]:
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    clip_model, preprocess = clip.load("ViT-B/16", device=device)
+
+    classifier = MultimodalFewShotClassifier(
+        clip_model,
+        num_classes=len(MULTIMODAL_CLASS_NAMES),
+    ).to(device)
+    checkpoint_path, source = _resolve_multimodal_checkpoint()
+
+    state_dict = torch.load(checkpoint_path, map_location=device)
+    classifier.load_state_dict(state_dict)
+    classifier.eval()
+
+    return {
+        "device": device,
+        "classifier": classifier,
+        "preprocess": preprocess,
+        "checkpoint_path": checkpoint_path,
+        "checkpoint_source": source,
+    }
+
+
+def predict_multimodal_topk(
+    bundle: Dict[str, Any],
+    image: Image.Image,
+    text: str,
+    top_k: int,
+) -> List[Dict[str, Any]]:
+    image_tensor = bundle["preprocess"](image).unsqueeze(0).to(bundle["device"])
+    caption = text.strip() or "a photo of food"
+
+    with torch.no_grad():
+        logits = bundle["classifier"](image_tensor, [caption])
+        probs = torch.softmax(logits, dim=-1).squeeze(0).cpu().numpy()
+
+    top_indices = np.argsort(-probs)[: max(1, min(top_k, len(MULTIMODAL_CLASS_NAMES)))]
+    return [
+        {
+            "rank": rank + 1,
+            "label": MULTIMODAL_CLASS_NAMES[int(index)],
+            "probability": float(probs[int(index)]),
+        }
+        for rank, index in enumerate(top_indices)
+    ]
+
+
+def run_multimodal_app() -> None:
+    st.sidebar.title("Multimodal Demo")
+    st.sidebar.caption("CLIP ViT-B/16 · Few-shot")
+    st.sidebar.markdown(
+        f"[Google Drive checkpoint (.pt/.pth)]({MULTIMODAL_DEFAULT_GDRIVE_URL})"
+    )
+
+    st.title("Multimodal Few-shot Demo")
+    st.caption("CLIP ViT-B/16 + best_few_shot_10shot.pth")
+
+    try:
+        bundle = load_multimodal_bundle()
+        st.success(f"Loaded checkpoint: {bundle['checkpoint_path']}")
+        st.sidebar.info(f"Source: {bundle['checkpoint_source']}")
+        st.sidebar.info(f"Device: {bundle['device']}")
+    except Exception as exc:
+        st.error(f"Load model failed: {exc}")
+        st.stop()
+
+    left, right = st.columns([0.55, 0.45], gap="large")
+
+    with left:
+        uploaded = st.file_uploader(
+            "Upload image",
+            type=["jpg", "jpeg", "png", "webp"],
+        )
+        caption = st.text_area(
+            "Caption/Text",
+            value="a delicious plate of sushi",
+            height=120,
+        )
+        top_k = st.slider("Top-K", 1, 10, 5)
+        run = st.button("Predict", type="primary")
+
+    if uploaded is None:
+        st.info("Please upload an image to get started.")
+        return
+
+    image = Image.open(uploaded).convert("RGB")
+    with right:
+        st.image(image, caption="Input image", width="stretch")
+
+    if not run:
+        return
+
+    predictions = predict_multimodal_topk(bundle, image, caption, top_k)
+    best = predictions[0]
+
+    c1, c2 = st.columns(2)
+    c1.metric("Predicted class", best["label"])
+    c2.metric("Top-1 confidence", f"{best['probability']:.2%}")
+
+    df = pd.DataFrame(predictions)
+    df["probability"] = df["probability"].map(lambda value: f"{value:.2%}")
+    st.dataframe(df, use_container_width=True, hide_index=True)
+
+
 def run_app() -> None:
     st.set_page_config(
         page_title="Assignment 1 Demo",
@@ -568,12 +740,16 @@ def run_app() -> None:
 
     selected_track = st.sidebar.radio(
         "Choose demo track",
-        ["Image", "Text"],
+        ["Image", "Text", "Multimodal"],
         horizontal=True,
     )
 
     if selected_track == "Text":
         run_text_app()
+        return
+
+    if selected_track == "Multimodal":
+        run_multimodal_app()
         return
 
     run_image_app()
