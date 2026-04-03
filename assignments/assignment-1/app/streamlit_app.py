@@ -270,10 +270,18 @@ def download_text_wandb_artifact() -> Path:
     if any(TEXT_LOCAL_MODEL_DIR.rglob("*.pt")):
         return TEXT_LOCAL_MODEL_DIR
 
-    try:
-        wandb_api_key = st.secrets["WANDB_API_KEY"]
-    except Exception as exc:
-        raise RuntimeError("Missing `WANDB_API_KEY` in Streamlit secrets.") from exc
+    model_secrets = st.secrets.get("models", {})
+    wandb_api_key = (
+        st.secrets.get("WANDB_API_KEY")
+        or st.secrets.get("wandb_key")
+        or model_secrets.get("WANDB_API_KEY")
+        or model_secrets.get("wandb_key")
+    )
+    if not wandb_api_key:
+        raise RuntimeError(
+            "Missing W&B API key in Streamlit secrets. Set `WANDB_API_KEY` "
+            "or `wandb_key`."
+        )
 
     wandb.login(key=wandb_api_key, relogin=True)
     artifact = wandb.Api().artifact(TEXT_ARTIFACT_NAME, type="model")

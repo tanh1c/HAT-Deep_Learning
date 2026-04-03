@@ -971,6 +971,17 @@ img {
   text-transform: uppercase;
 }
 
+html[data-text-theme="dark"] .text-report-page .bert-pipeline-title,
+html[data-text-theme="dark"] .text-report-page .bert-subtitle,
+html[data-text-theme="dark"] .text-report-page .bert-mini-list li,
+html[data-text-theme="dark"] .text-report-page .bert-mini-list code,
+html[data-text-theme="dark"] .text-report-page .bert-shape-title,
+html[data-text-theme="dark"] .text-report-page .bert-shape-table th,
+html[data-text-theme="dark"] .text-report-page .bert-shape-table td,
+html[data-text-theme="dark"] .text-report-page .bert-shape-table code {
+  color: #ffffff;
+}
+
 .text-report-page .bert-backbone-flow {
   display: flex;
   gap: 0.8rem;
