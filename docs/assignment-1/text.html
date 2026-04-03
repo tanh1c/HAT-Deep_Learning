@@ -771,6 +771,7 @@
             </ul>
           </article>
         </div>
+      </section>
 
       <section id="text-models" class="shell section">
         <div class="section-head">
@@ -778,6 +779,457 @@
             <h2 class="section-title">3. Model building, training, evaluation, and comparison</h2>
           </div>
         </div>
+
+        <article class="panel report-card bert-pipeline-card" data-bert-pipeline>
+          <p class="card-kicker">RNN pipeline</p>
+          <h3 class="card-title">BiLSTM text classification architecture</h3>
+
+          <div class="bert-pipeline-flow" data-bert-pipeline-overview>
+            <button class="bert-pipeline-stage bert-stage-input" type="button" data-bert-stage-trigger="input">
+              <h4 class="bert-pipeline-title">Input</h4>
+            </button>
+
+            <div class="bert-pipeline-arrow">-&gt;</div>
+
+            <button class="bert-pipeline-stage bert-stage-backbone" type="button" data-bert-stage-trigger="backbone">
+              <h4 class="bert-pipeline-title">Backbone: BiLSTM Encoder</h4>
+            </button>
+
+            <div class="bert-pipeline-arrow">-&gt;</div>
+
+            <button class="bert-pipeline-stage bert-stage-head" type="button" data-bert-stage-trigger="head">
+              <h4 class="bert-pipeline-title">Head: Classification Head</h4>
+            </button>
+
+            <div class="bert-pipeline-arrow">-&gt;</div>
+
+            <button class="bert-pipeline-stage bert-stage-output" type="button" data-bert-stage-trigger="output">
+              <h4 class="bert-pipeline-title">Output</h4>
+            </button>
+          </div>
+
+          <div class="bert-stage-detail" data-bert-stage-panel="input" hidden>
+            <div class="bert-detail-head">
+              <h4 class="bert-pipeline-title">Input</h4>
+              <button class="bert-back-button" type="button" data-bert-pipeline-back>Back</button>
+            </div>
+            <div class="bert-shape-card">
+              <p class="bert-shape-title">Shape Map</p>
+              <table class="bert-shape-table">
+                <thead>
+                  <tr><th>Node</th><th>Shape</th><th>Note</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>token_indices</td><td><code>(B, 256)</code></td><td>Padded token ids</td></tr>
+                  <tr><td>vocab_size</td><td><code>len(vocab)</code></td><td><code>max_vocab=50000</code>, <code>PAD=0</code>, <code>UNK=1</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="bert-pipeline-stack">
+              <div class="bert-pipeline-subblock bert-stage-input">
+                <p class="bert-subtitle">Token indices</p>
+                <ul class="bert-mini-list">
+                  <li><code>token_indices</code>: shape <code>(B, 256)</code></li>
+                  <li><code>vocab_size &asymp; len(vocab)</code>, <code>max_vocab=50000</code></li>
+                  <li><code>PAD=0</code>, <code>UNK=1</code></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="bert-stage-detail" data-bert-stage-panel="backbone" hidden>
+            <div class="bert-detail-head">
+              <h4 class="bert-pipeline-title">Backbone: BiLSTM Encoder</h4>
+              <button class="bert-back-button" type="button" data-bert-pipeline-back>Back</button>
+            </div>
+            <div class="bert-shape-card">
+              <p class="bert-shape-title">Shape Map</p>
+              <table class="bert-shape-table">
+                <thead>
+                  <tr><th>Node</th><th>Shape</th><th>Note</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Embedding</td><td><code>(B, 256, 300)</code></td><td>GloVe token vectors</td></tr>
+                  <tr><td>TF-IDF weighting</td><td><code>(B, 256, 300)</code></td><td>Elementwise scaling by <code>(B, 256, 1)</code></td></tr>
+                  <tr><td>BiLSTM output</td><td><code>(B, 256, 256)</code></td><td>2 directions x 128 hidden size</td></tr>
+                  <tr><td>Attention context</td><td><code>(B, 256)</code></td><td>Weighted sum over timesteps</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="bert-backbone-flow">
+              <div class="bert-pipeline-subblock bert-stage-backbone">
+                <p class="bert-subtitle">Embedding</p>
+                <ul class="bert-mini-list">
+                  <li>type: <code>nn.Embedding</code></li>
+                  <li><code>vocab_size=len(vocab)</code>, <code>embedding_dim=300</code></li>
+                  <li><code>padding_idx=0</code>, pretrained <code>GloVe 6B 300d</code></li>
+                  <li><code>freeze_embeddings=False</code></li>
+                  <li>output: <code>(B, 256, 300)</code></li>
+                </ul>
+              </div>
+
+              <div class="bert-backbone-arrow">-&gt;</div>
+
+              <div class="bert-pipeline-subblock bert-stage-backbone">
+                <p class="bert-subtitle">TF-IDF Weighting</p>
+                <ul class="bert-mini-list">
+                  <li>weights shape: <code>(B, 256, 1)</code></li>
+                  <li>operation: <code>embedding * tfidf_weight</code></li>
+                  <li>output: <code>(B, 256, 300)</code></li>
+                </ul>
+              </div>
+
+              <div class="bert-backbone-arrow">-&gt;</div>
+
+              <div class="bert-pipeline-subblock bert-stage-backbone">
+                <p class="bert-subtitle">Dropout</p>
+                <ul class="bert-mini-list">
+                  <li><code>p=0.3</code></li>
+                </ul>
+              </div>
+
+              <div class="bert-backbone-arrow">-&gt;</div>
+
+              <div class="bert-pipeline-subblock bert-stage-backbone">
+                <p class="bert-subtitle">BiLSTM</p>
+                <ul class="bert-mini-list">
+                  <li>type: <code>nn.LSTM</code></li>
+                  <li><code>input_size=300</code>, <code>hidden_size=128</code>, <code>num_layers=2</code></li>
+                  <li><code>bidirectional=True</code>, <code>batch_first=True</code>, <code>dropout=0.3</code></li>
+                  <li>output <code>lstm_out</code>: <code>(B, 256, 256)</code></li>
+                </ul>
+              </div>
+
+              <div class="bert-backbone-arrow">-&gt;</div>
+
+              <div class="bert-pipeline-subblock bert-stage-backbone">
+                <p class="bert-subtitle">Attention</p>
+                <ul class="bert-mini-list">
+                  <li><code>Linear(256 -&gt; 1)</code></li>
+                  <li><code>Softmax(dim=1)</code></li>
+                  <li>Weighted Sum over timesteps</li>
+                  <li><code>attn_weights</code>: <code>(B, 256, 1)</code></li>
+                  <li><code>context</code>: <code>(B, 256)</code></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="bert-stage-detail" data-bert-stage-panel="head" hidden>
+            <div class="bert-detail-head">
+              <h4 class="bert-pipeline-title">Head: Classification Head</h4>
+              <button class="bert-back-button" type="button" data-bert-pipeline-back>Back</button>
+            </div>
+            <div class="bert-shape-card">
+              <p class="bert-shape-title">Shape Map</p>
+              <table class="bert-shape-table">
+                <thead>
+                  <tr><th>Node</th><th>Shape</th><th>Note</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>context</td><td><code>(B, 256)</code></td><td>Attention pooled sequence vector</td></tr>
+                  <tr><td>logits</td><td><code>(B, 20)</code></td><td>One score per class</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="bert-backbone-flow">
+              <div class="bert-pipeline-subblock bert-stage-head">
+                <p class="bert-subtitle">Dropout</p>
+                <ul class="bert-mini-list">
+                  <li><code>p=0.3</code></li>
+                </ul>
+              </div>
+
+              <div class="bert-backbone-arrow">-&gt;</div>
+
+              <div class="bert-pipeline-subblock bert-stage-head">
+                <p class="bert-subtitle">FC</p>
+                <ul class="bert-mini-list">
+                  <li><code>Linear(256 -&gt; 20)</code></li>
+                  <li>output logits: <code>(B, 20)</code></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="bert-stage-detail" data-bert-stage-panel="output" hidden>
+            <div class="bert-detail-head">
+              <h4 class="bert-pipeline-title">Output</h4>
+              <button class="bert-back-button" type="button" data-bert-pipeline-back>Back</button>
+            </div>
+            <div class="bert-shape-card">
+              <p class="bert-shape-title">Shape Map</p>
+              <table class="bert-shape-table">
+                <thead>
+                  <tr><th>Node</th><th>Shape</th><th>Note</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>logits</td><td><code>(B, 20)</code></td><td>Raw class scores</td></tr>
+                  <tr><td>pred / class_id</td><td><code>(B,)</code></td><td>Argmax class index in <code>[0..19]</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="bert-pipeline-stack">
+              <div class="bert-pipeline-subblock bert-stage-output">
+                <p class="bert-subtitle">Prediction</p>
+                <ul class="bert-mini-list">
+                  <li><code>pred = Argmax(logits)</code></li>
+                  <li>output <code>class_id &isin; [0..19]</code></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel report-card bert-pipeline-card" data-bert-pipeline>
+          <p class="card-kicker">Transformer pipeline</p>
+          <h3 class="card-title">DistilBERT text classification architecture</h3>
+
+          <div class="bert-pipeline-flow" data-bert-pipeline-overview>
+            <button class="bert-pipeline-stage bert-stage-input" type="button" data-bert-stage-trigger="input">
+              <h4 class="bert-pipeline-title">Input</h4>
+            </button>
+
+            <div class="bert-pipeline-arrow">-&gt;</div>
+
+            <button class="bert-pipeline-stage bert-stage-backbone" type="button" data-bert-stage-trigger="backbone">
+              <h4 class="bert-pipeline-title">Backbone: DistilBERT Encoder</h4>
+            </button>
+
+            <div class="bert-pipeline-arrow">-&gt;</div>
+
+            <button class="bert-pipeline-stage bert-stage-head" type="button" data-bert-stage-trigger="head">
+              <h4 class="bert-pipeline-title">Head: Classification Head</h4>
+            </button>
+
+            <div class="bert-pipeline-arrow">-&gt;</div>
+
+            <button class="bert-pipeline-stage bert-stage-output" type="button" data-bert-stage-trigger="output">
+              <h4 class="bert-pipeline-title">Output</h4>
+            </button>
+          </div>
+
+          <div class="bert-stage-detail" data-bert-stage-panel="input" hidden>
+            <div class="bert-detail-head">
+              <h4 class="bert-pipeline-title">Input</h4>
+              <button class="bert-back-button" type="button" data-bert-pipeline-back>Back</button>
+            </div>
+            <div class="bert-shape-card">
+              <p class="bert-shape-title">Shape Map</p>
+              <table class="bert-shape-table">
+                <thead>
+                  <tr>
+                    <th>Node</th>
+                    <th>Shape</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>input_ids</td>
+                    <td><code>(B, L)</code></td>
+                    <td>Token indices, <code>L &le; 512</code></td>
+                  </tr>
+                  <tr>
+                    <td>attention_mask</td>
+                    <td><code>(B, L)</code></td>
+                    <td>1 = real token, 0 = padding</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="bert-pipeline-stack">
+              <div class="bert-pipeline-subblock bert-stage-input">
+                <p class="bert-subtitle">Tokenized tensors</p>
+                <ul class="bert-mini-list">
+                  <li><code>input_ids</code>: shape <code>(B, L)</code>, <code>max_length=512</code></li>
+                  <li><code>attention_mask</code>: shape <code>(B, L)</code></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="bert-stage-detail" data-bert-stage-panel="backbone" hidden>
+            <div class="bert-detail-head">
+              <h4 class="bert-pipeline-title">Backbone: DistilBERT Encoder</h4>
+              <button class="bert-back-button" type="button" data-bert-pipeline-back>Back</button>
+            </div>
+              <div class="bert-shape-card">
+                <p class="bert-shape-title">Shape Map</p>
+                <table class="bert-shape-table">
+                  <thead>
+                    <tr>
+                      <th>Node</th>
+                      <th>Shape</th>
+                      <th>Note</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Embedding output</td>
+                      <td><code>(B, L, 768)</code></td>
+                      <td>Token + position embeddings</td>
+                    </tr>
+                    <tr>
+                      <td>Encoder x6 output</td>
+                      <td><code>(B, L, 768)</code></td>
+                      <td>Sequence representation preserved</td>
+                    </tr>
+                    <tr>
+                      <td>[CLS] hidden state</td>
+                      <td><code>(B, 768)</code></td>
+                      <td>First-token vector for classification</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="bert-backbone-flow">
+                <div class="bert-pipeline-subblock bert-stage-backbone">
+                  <p class="bert-subtitle">Embedding</p>
+                  <ul class="bert-mini-list">
+                    <li>token embedding: <code>vocab_size=30522</code>, <code>dim=768</code></li>
+                    <li>position embedding: <code>max_position_embeddings=512</code>, <code>dim=768</code></li>
+                    <li>output: <code>(B, L, 768)</code></li>
+                  </ul>
+                </div>
+
+                <div class="bert-backbone-arrow">-&gt;</div>
+
+                <div class="bert-pipeline-subblock bert-stage-backbone">
+                  <p class="bert-subtitle">Transformer Encoder x6</p>
+                  <ul class="bert-mini-list">
+                    <li><code>n_layers=6</code>, <code>dim=768</code>, <code>hidden_dim=3072</code></li>
+                    <li><code>n_heads=12</code>, <code>dropout=0.1</code>, <code>attention_dropout=0.1</code></li>
+                    <li>Multi-Head Self-Attention: <code>num_heads=12</code>, <code>head_dim=64</code></li>
+                    <li>Add &amp; LayerNorm</li>
+                    <li>Feed Forward Network: <code>Linear(768 -&gt; 3072)</code> -> <code>GELU</code> -> <code>Linear(3072 -&gt; 768)</code></li>
+                    <li>Add &amp; LayerNorm</li>
+                    <li>output: <code>(B, L, 768)</code></li>
+                  </ul>
+                </div>
+
+                <div class="bert-backbone-arrow">-&gt;</div>
+
+                <div class="bert-pipeline-subblock bert-stage-backbone">
+                  <p class="bert-subtitle">[CLS] hidden state</p>
+                  <ul class="bert-mini-list">
+                    <li>Take hidden state at token <code>[CLS]</code></li>
+                    <li>shape: <code>(B, 768)</code></li>
+                  </ul>
+                </div>
+              </div>
+          </div>
+
+          <div class="bert-stage-detail" data-bert-stage-panel="head" hidden>
+            <div class="bert-detail-head">
+              <h4 class="bert-pipeline-title">Head: Classification Head</h4>
+              <button class="bert-back-button" type="button" data-bert-pipeline-back>Back</button>
+            </div>
+              <div class="bert-shape-card">
+                <p class="bert-shape-title">Shape Map</p>
+                <table class="bert-shape-table">
+                  <thead>
+                    <tr>
+                      <th>Node</th>
+                      <th>Shape</th>
+                      <th>Note</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>[CLS] input</td>
+                      <td><code>(B, 768)</code></td>
+                      <td>Classifier receives pooled [CLS] vector</td>
+                    </tr>
+                    <tr>
+                      <td>Pre-Classifier + ReLU</td>
+                      <td><code>(B, 768)</code></td>
+                      <td>Feature projection keeps hidden dim</td>
+                    </tr>
+                    <tr>
+                      <td>Classifier logits</td>
+                      <td><code>(B, 20)</code></td>
+                      <td>One score per class</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="bert-backbone-flow">
+                <div class="bert-pipeline-subblock bert-stage-head">
+                  <p class="bert-subtitle">Pre-Classifier</p>
+                  <ul class="bert-mini-list">
+                    <li><code>Linear(768 -&gt; 768)</code></li>
+                    <li><code>ReLU</code></li>
+                  </ul>
+                </div>
+
+                <div class="bert-backbone-arrow">-&gt;</div>
+
+                <div class="bert-pipeline-subblock bert-stage-head">
+                  <p class="bert-subtitle">Dropout</p>
+                  <ul class="bert-mini-list">
+                    <li><code>p=0.1</code></li>
+                  </ul>
+                </div>
+
+                <div class="bert-backbone-arrow">-&gt;</div>
+
+                <div class="bert-pipeline-subblock bert-stage-head">
+                  <p class="bert-subtitle">Classifier</p>
+                  <ul class="bert-mini-list">
+                    <li><code>Linear(768 -&gt; 20)</code></li>
+                    <li>output logits: <code>(B, 20)</code></li>
+                  </ul>
+                </div>
+              </div>
+          </div>
+
+          <div class="bert-stage-detail" data-bert-stage-panel="output" hidden>
+            <div class="bert-detail-head">
+              <h4 class="bert-pipeline-title">Output</h4>
+              <button class="bert-back-button" type="button" data-bert-pipeline-back>Back</button>
+            </div>
+              <div class="bert-shape-card">
+                <p class="bert-shape-title">Shape Map</p>
+                <table class="bert-shape-table">
+                  <thead>
+                    <tr>
+                      <th>Node</th>
+                      <th>Shape</th>
+                      <th>Note</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>logits</td>
+                      <td><code>(B, 20)</code></td>
+                      <td>Raw class scores</td>
+                    </tr>
+                    <tr>
+                      <td>probs</td>
+                      <td><code>(B, 20)</code></td>
+                      <td>Softmax probabilities</td>
+                    </tr>
+                    <tr>
+                      <td>pred / class_id</td>
+                      <td><code>(B,)</code></td>
+                      <td>Argmax class index in <code>[0..19]</code></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="bert-pipeline-stack">
+                <div class="bert-pipeline-subblock bert-stage-output">
+                  <p class="bert-subtitle">Prediction</p>
+                  <ul class="bert-mini-list">
+                    <li><code>probs = Softmax(logits)</code></li>
+                    <li><code>pred = Argmax(probs)</code></li>
+                    <li>output <code>class_id &isin; [0..19]</code></li>
+                  </ul>
+                </div>
+              </div>
+          </div>
+        </article>
 
         <div class="report-grid">
           <article class="panel report-card">
@@ -844,9 +1296,6 @@
         <div class="section-head">
           <div>
             <h2 class="section-title">4. Experimental results, figures, analysis, and discussion</h2>
-            <p class="section-copy">
-              Add the final metrics table, figures, qualitative examples, and analysis here.
-            </p>
           </div>
         </div>
 
@@ -1209,6 +1658,23 @@
       </div>
     </main>
 
+    <div class="image-lightbox" data-image-lightbox hidden>
+      <div class="image-lightbox-backdrop" data-image-lightbox-close></div>
+      <div class="image-lightbox-shell" role="dialog" aria-modal="true" aria-label="Expanded image viewer">
+        <div class="image-lightbox-toolbar">
+          <button class="image-lightbox-button" type="button" data-lightbox-zoom-out aria-label="Zoom out">-</button>
+          <button class="image-lightbox-button" type="button" data-lightbox-zoom-in aria-label="Zoom in">+</button>
+          <button class="image-lightbox-button" type="button" data-lightbox-reset aria-label="Reset zoom">Reset</button>
+          <a class="image-lightbox-button" data-lightbox-open-original href="#" target="_blank" rel="noreferrer">Open original</a>
+          <button class="image-lightbox-button" type="button" data-image-lightbox-close aria-label="Close image viewer">Close</button>
+        </div>
+        <div class="image-lightbox-stage" data-image-lightbox-stage>
+          <img class="image-lightbox-image" data-image-lightbox-image src="" alt="">
+        </div>
+        <p class="image-lightbox-caption" data-image-lightbox-caption></p>
+      </div>
+    </div>
+
     <footer class="shell footer">
       <div class="panel footer-card">
         <div class="footer-links">
@@ -1311,6 +1777,344 @@
         }, { passive: true });
 
         window.addEventListener("resize", updateDockedState);
+      })();
+    </script>
+
+    <script>
+      (function () {
+        const collapsibleSectionIds = [
+          "text-background",
+          "text-eda",
+          "text-pipeline",
+          "text-models",
+          "text-results",
+          "text-extensions"
+        ];
+        const collapsibleSections = collapsibleSectionIds
+          .map((sectionId) => document.getElementById(sectionId))
+          .filter(Boolean);
+
+        collapsibleSections.forEach((section) => {
+          const sectionHead = section.querySelector(":scope > .section-head");
+
+          if (!sectionHead || section.querySelector(":scope > .section-collapse")) {
+            return;
+          }
+
+          const collapseBody = document.createElement("div");
+          collapseBody.className = "section-collapse";
+          collapseBody.id = `${section.id}-collapse`;
+
+          while (sectionHead.nextElementSibling) {
+            collapseBody.appendChild(sectionHead.nextElementSibling);
+          }
+
+          section.appendChild(collapseBody);
+
+          const toggleButton = document.createElement("button");
+          toggleButton.type = "button";
+          toggleButton.className = "section-toggle";
+          toggleButton.setAttribute("aria-controls", collapseBody.id);
+          toggleButton.setAttribute("aria-expanded", "true");
+          toggleButton.textContent = "Hide";
+
+          toggleButton.addEventListener("click", () => {
+            const isCollapsed = section.classList.toggle("is-section-collapsed");
+            toggleButton.setAttribute("aria-expanded", String(!isCollapsed));
+            toggleButton.textContent = isCollapsed ? "Show" : "Hide";
+          });
+
+          sectionHead.appendChild(toggleButton);
+        });
+      })();
+    </script>
+
+    <script>
+      (function () {
+        const pipelines = Array.from(document.querySelectorAll("[data-bert-pipeline]"));
+
+        if (!pipelines.length) {
+          return;
+        }
+
+        pipelines.forEach((pipeline) => {
+          const overview = pipeline.querySelector("[data-bert-pipeline-overview]");
+          const triggers = Array.from(pipeline.querySelectorAll("[data-bert-stage-trigger]"));
+          const panels = Array.from(pipeline.querySelectorAll("[data-bert-stage-panel]"));
+          const backButtons = Array.from(pipeline.querySelectorAll("[data-bert-pipeline-back]"));
+
+          const showOverview = () => {
+            if (overview) {
+              overview.hidden = false;
+            }
+
+            panels.forEach((panel) => {
+              panel.hidden = true;
+            });
+          };
+
+          triggers.forEach((trigger) => {
+            trigger.addEventListener("click", () => {
+              const targetPanel = pipeline.querySelector(
+                `[data-bert-stage-panel="${trigger.dataset.bertStageTrigger}"]`
+              );
+
+              if (overview) {
+                overview.hidden = true;
+              }
+
+              panels.forEach((panel) => {
+                panel.hidden = panel !== targetPanel;
+              });
+            });
+          });
+
+          backButtons.forEach((button) => {
+            button.addEventListener("click", showOverview);
+          });
+        });
+      })();
+    </script>
+
+    <script>
+      (function () {
+        const body = document.body;
+        const lightbox = document.querySelector("[data-image-lightbox]");
+        const stage = document.querySelector("[data-image-lightbox-stage]");
+        const viewerImage = document.querySelector("[data-image-lightbox-image]");
+        const caption = document.querySelector("[data-image-lightbox-caption]");
+        const openableImages = Array.from(document.querySelectorAll(".figure-frame img"));
+
+        if (!lightbox || !stage || !viewerImage || !openableImages.length) {
+          return;
+        }
+
+        const zoomInButton = document.querySelector("[data-lightbox-zoom-in]");
+        const zoomOutButton = document.querySelector("[data-lightbox-zoom-out]");
+        const resetButton = document.querySelector("[data-lightbox-reset]");
+        const openOriginalLink = document.querySelector("[data-lightbox-open-original]");
+        const closeButtons = Array.from(document.querySelectorAll("[data-image-lightbox-close]"));
+
+        let baseScale = 1;
+        let zoomLevel = 1;
+        let minZoomLevel = 1;
+        let maxZoomLevel = 6;
+        let translateX = 0;
+        let translateY = 0;
+        let isOpen = false;
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let startTranslateX = 0;
+        let startTranslateY = 0;
+
+        const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+        const getRenderedMetrics = () => {
+          const naturalWidth = viewerImage.naturalWidth || viewerImage.width || 1;
+          const naturalHeight = viewerImage.naturalHeight || viewerImage.height || 1;
+          const totalScale = baseScale * zoomLevel;
+
+          return {
+            naturalWidth,
+            naturalHeight,
+            renderedWidth: naturalWidth * totalScale,
+            renderedHeight: naturalHeight * totalScale,
+            totalScale,
+          };
+        };
+
+        const clampPan = () => {
+          if (!stage.clientWidth || !stage.clientHeight) {
+            return;
+          }
+
+          const metrics = getRenderedMetrics();
+          const slackX = Math.max(0, (metrics.renderedWidth - stage.clientWidth) / 2);
+          const slackY = Math.max(0, (metrics.renderedHeight - stage.clientHeight) / 2);
+          const paddingX = metrics.renderedWidth > stage.clientWidth ? 36 : 0;
+          const paddingY = metrics.renderedHeight > stage.clientHeight ? 36 : 0;
+
+          translateX = clamp(translateX, -(slackX + paddingX), slackX + paddingX);
+          translateY = clamp(translateY, -(slackY + paddingY), slackY + paddingY);
+        };
+
+        const syncImageScaleToStage = () => {
+          const naturalWidth = viewerImage.naturalWidth || 1;
+          const naturalHeight = viewerImage.naturalHeight || 1;
+          const stageWidth = Math.max(stage.clientWidth - 24, 1);
+          const stageHeight = Math.max(stage.clientHeight - 24, 1);
+
+          viewerImage.style.width = naturalWidth + "px";
+          viewerImage.style.height = naturalHeight + "px";
+
+          baseScale = Math.min(stageWidth / naturalWidth, stageHeight / naturalHeight, 1);
+          minZoomLevel = 1;
+          maxZoomLevel = Math.max(6, Number((1.8 / Math.max(baseScale, 0.01)).toFixed(2)));
+        };
+
+        const updateTransform = () => {
+          clampPan();
+          viewerImage.style.transform =
+            "translate(calc(-50% + " + translateX + "px), calc(-50% + " + translateY + "px)) scale(" + (baseScale * zoomLevel) + ")";
+        };
+
+        const resetView = () => {
+          syncImageScaleToStage();
+          zoomLevel = minZoomLevel;
+          translateX = 0;
+          translateY = 0;
+          updateTransform();
+        };
+
+        const applyZoom = (delta) => {
+          const nextZoomLevel = clamp(Number((zoomLevel + delta).toFixed(2)), minZoomLevel, maxZoomLevel);
+
+          if (nextZoomLevel === minZoomLevel) {
+            translateX = 0;
+            translateY = 0;
+          }
+
+          zoomLevel = nextZoomLevel;
+          updateTransform();
+        };
+
+        const closeLightbox = () => {
+          lightbox.hidden = true;
+          body.classList.remove("lightbox-open");
+          stage.classList.remove("is-dragging");
+          isOpen = false;
+          isDragging = false;
+          resetView();
+        };
+
+        const openLightbox = (img) => {
+          viewerImage.src = img.currentSrc || img.src;
+          viewerImage.alt = img.alt || "";
+
+          if (openOriginalLink) {
+            openOriginalLink.href = img.currentSrc || img.src;
+          }
+
+          const figure = img.closest(".report-card, .figure-frame");
+          const figureCaption = figure ? figure.querySelector(".figure-caption") : null;
+          caption.textContent = figureCaption ? figureCaption.textContent.trim() : (img.alt || "Expanded figure");
+
+          lightbox.hidden = false;
+          body.classList.add("lightbox-open");
+          isOpen = true;
+
+          if (viewerImage.complete) {
+            requestAnimationFrame(resetView);
+          }
+        };
+
+        viewerImage.addEventListener("load", () => {
+          if (isOpen) {
+            resetView();
+          }
+        });
+
+        openableImages.forEach((img) => {
+          img.tabIndex = 0;
+          img.setAttribute("role", "button");
+          img.setAttribute("aria-label", (img.alt || "Figure") + ". Click to enlarge.");
+
+          img.addEventListener("click", () => openLightbox(img));
+          img.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              openLightbox(img);
+            }
+          });
+        });
+
+        closeButtons.forEach((button) => {
+          button.addEventListener("click", closeLightbox);
+        });
+
+        zoomInButton.addEventListener("click", () => applyZoom(0.2));
+        zoomOutButton.addEventListener("click", () => applyZoom(-0.2));
+        resetButton.addEventListener("click", resetView);
+
+        document.addEventListener("keydown", (event) => {
+          if (!isOpen) {
+            return;
+          }
+
+          if (event.key === "Escape") {
+            closeLightbox();
+          } else if (event.key === "+" || event.key === "=") {
+            applyZoom(0.2);
+          } else if (event.key === "-" || event.key === "_") {
+            applyZoom(-0.2);
+          } else if (event.key.toLowerCase() === "0") {
+            resetView();
+          }
+        });
+
+        stage.addEventListener("wheel", (event) => {
+          if (!isOpen) {
+            return;
+          }
+
+          event.preventDefault();
+          applyZoom(event.deltaY < 0 ? 0.16 : -0.16);
+        }, { passive: false });
+
+        stage.addEventListener("dblclick", () => {
+          if (zoomLevel > minZoomLevel + 0.2) {
+            resetView();
+          } else {
+            applyZoom(Math.max(1.5, Number((1 / Math.max(baseScale, 0.01) * 0.28).toFixed(2))));
+          }
+        });
+
+        stage.addEventListener("pointerdown", (event) => {
+          if (zoomLevel <= minZoomLevel + 0.01) {
+            return;
+          }
+
+          isDragging = true;
+          dragStartX = event.clientX;
+          dragStartY = event.clientY;
+          startTranslateX = translateX;
+          startTranslateY = translateY;
+          stage.classList.add("is-dragging");
+          stage.setPointerCapture(event.pointerId);
+        });
+
+        stage.addEventListener("pointermove", (event) => {
+          if (!isDragging) {
+            return;
+          }
+
+          translateX = startTranslateX + (event.clientX - dragStartX);
+          translateY = startTranslateY + (event.clientY - dragStartY);
+          updateTransform();
+        });
+
+        const stopDragging = (event) => {
+          if (!isDragging) {
+            return;
+          }
+
+          isDragging = false;
+          stage.classList.remove("is-dragging");
+
+          if (event && event.pointerId !== undefined && stage.hasPointerCapture(event.pointerId)) {
+            stage.releasePointerCapture(event.pointerId);
+          }
+        };
+
+        stage.addEventListener("pointerup", stopDragging);
+        stage.addEventListener("pointercancel", stopDragging);
+        stage.addEventListener("pointerleave", stopDragging);
+        window.addEventListener("resize", () => {
+          if (isOpen) {
+            resetView();
+          }
+        });
       })();
     </script>
   </body>
