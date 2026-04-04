@@ -1,0 +1,106 @@
+{
+  "id": "82qpkftg",
+  "name": "resnet_50__head_3_+_full_fine_tune_8_epochs",
+  "display_name": "resnet_50__head_3_+_full_fine_tune_8_epochs",
+  "url": "https://wandb.ai/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/runs/82qpkftg",
+  "state": "finished",
+  "entity": "nguyenquochieujff7-ho-chi-minh-city-university-of-technology",
+  "project": "stanford-dogs-transfer-learning-new",
+  "group": "stanford-dogs-fair-benchmark",
+  "job_type": "train",
+  "created_at": "2026-04-04T05:54:32Z",
+  "updated_at": null,
+  "config": {
+    "seed": 42,
+    "family": "cnn",
+    "phases": [
+      {
+        "lr": 0.001,
+        "mode": "head_only",
+        "name": "head_only",
+        "epochs": 3,
+        "weight_decay": 0.0001
+      },
+      {
+        "lr": 0.0001,
+        "mode": "full_finetune",
+        "name": "full_finetune",
+        "epochs": 8,
+        "weight_decay": 0.0001
+      }
+    ],
+    "dataset": "Stanford Dogs",
+    "strategy": "Head 3 + full fine-tune 8 epochs",
+    "batch_size": 32,
+    "image_size": 224,
+    "model_name": "ResNet-50",
+    "num_classes": 120,
+    "total_params": 23753912
+  },
+  "summary": {
+    "checkpoint/loaded_existing": false,
+    "epoch": 11,
+    "evaluation/calibration": {
+      "caption": "ResNet-50 | Head 3 + full fine-tune 8 epochs calibration",
+      "format": "png",
+      "height": 984,
+      "path": "media/images/evaluation/calibration_15_5a29d73eec2e0df323f6.png",
+      "sha256": "5a29d73eec2e0df323f60880faf8398b17bf9f91396d86c3183b8c45bc88cec3",
+      "size": 193319,
+      "width": 3181
+    },
+    "evaluation/classification_report": {
+      "artifact_path": "wandb-client-artifact://ve6pg9n1grw992mqetvxr36hq6zqgqowbdshyz4mdytcysjrxkbqidimtrdxzlsuv0jzrouv4dturraspmldgamdtvvrcie8t5hyddrp0b2osmeuxyqkx5qaon47jpv8/evaluation/classification_report.table.json",
+      "log_mode": "IMMUTABLE",
+      "ncols": 5,
+      "nrows": 123,
+      "path": "media/table/evaluation/classification_report_11_1759965f8c131ad9b492.table.json",
+      "sha256": "1759965f8c131ad9b492af017933dfd912521647379a459ad6c7226254c473e8",
+      "size": 9981
+    },
+    "evaluation/confusion_matrix_counts": {
+      "caption": "ResNet-50 | Head 3 + full fine-tune 8 epochs confusion matrix (counts)",
+      "format": "png",
+      "height": 4852,
+      "path": "media/images/evaluation/confusion_matrix_counts_12_1bf3ea1c66ca2b1325e9.png",
+      "sha256": "1bf3ea1c66ca2b1325e9317ef85ee06e32380f8d634d9b38554bca94c350ed53",
+      "size": 1554314,
+      "width": 5414
+    },
+    "evaluation/confusion_matrix_normalized": {
+      "caption": "ResNet-50 | Head 3 + full fine-tune 8 epochs confusion matrix (normalized)",
+      "format": "png",
+      "height": 4852,
+      "path": "media/images/evaluation/confusion_matrix_normalized_13_6f0f992a5a672ab41917.png",
+      "sha256": "6f0f992a5a672ab41917438bb2bf4ca70efe8c22cd1817b71574c4fafd453ae8",
+      "size": 1853938,
+      "width": 5395
+    },
+    "model/total_params": 23753912,
+    "phase/epoch": 8,
+    "phase/name": "resnet_50_|_head_3_+_full_fine_tune_8_epochs_full_finetune",
+    "test/accuracy": 0.8655011655011655,
+    "test/ece": 0.04077731474261462,
+    "test/macro_f1": 0.8598878391092841,
+    "test/weighted_f1": 0.8659049534140357,
+    "train/acc": 0.983529411764706,
+    "train/loss": 0.07229823417815508,
+    "train/macro_f1": 0.9835209063138106,
+    "train/weighted_f1": 0.9835209063138108,
+    "trainer/lr": 0,
+    "trainer/training_seconds": 205.03127145767212,
+    "training/history_table": {
+      "artifact_path": "wandb-client-artifact://iji263ptrfuyjwzaf64s4346l63mt6pujyc6nmazj2by7qbh56vzcfo35ivq7pw5ewux3d4knf0r73htt05cjo89vyyva9r4gfelm61stllzqhkqqwflb22o6jhxha3n/training/history_table.table.json",
+      "log_mode": "IMMUTABLE",
+      "ncols": 15,
+      "nrows": 11,
+      "path": "media/table/training/history_table_14_29dea8c84c198252edfd.table.json",
+      "sha256": "29dea8c84c198252edfdf9dc92964e72a0f2b566cec77699192bbc02895342b4",
+      "size": 3232
+    },
+    "val/acc": 0.8544444444444445,
+    "val/loss": 0.44332809772756365,
+    "val/macro_f1": 0.8537203702438849,
+    "val/weighted_f1": 0.8537203702438848
+  }
+}

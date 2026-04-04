@@ -1,0 +1,80 @@
+[
+  {
+    "name": "artifact/2653753887/wandb_manifest.json",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/artifact/2653753887/wandb_manifest.json",
+    "size_bytes": 348,
+    "updated_at": "2026-04-04T05:54:28Z"
+  },
+  {
+    "name": "artifact/2653753968/wandb_manifest.json",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/artifact/2653753968/wandb_manifest.json",
+    "size_bytes": 337,
+    "updated_at": "2026-04-04T05:54:29Z"
+  },
+  {
+    "name": "artifact/2653791022/wandb_manifest.json",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/artifact/2653791022/wandb_manifest.json",
+    "size_bytes": 0,
+    "updated_at": "2026-04-04T06:04:34Z"
+  },
+  {
+    "name": "artifact/2653791502/wandb_manifest.json",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/artifact/2653791502/wandb_manifest.json",
+    "size_bytes": 0,
+    "updated_at": "2026-04-04T06:04:43Z"
+  },
+  {
+    "name": "config.yaml",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/config.yaml",
+    "size_bytes": 3167,
+    "updated_at": "2026-04-04T05:54:31Z"
+  },
+  {
+    "name": "media/images/evaluation/calibration_16_2fde97f9d5de1141dc10.png",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/media/images/evaluation/calibration_16_2fde97f9d5de1141dc10.png",
+    "size_bytes": 190342,
+    "updated_at": "2026-04-04T05:54:31Z"
+  },
+  {
+    "name": "media/images/evaluation/confusion_matrix_counts_13_9072881e88eb216ae7d7.png",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/media/images/evaluation/confusion_matrix_counts_13_9072881e88eb216ae7d7.png",
+    "size_bytes": 1562603,
+    "updated_at": "2026-04-04T05:54:31Z"
+  },
+  {
+    "name": "media/images/evaluation/confusion_matrix_normalized_14_66ef4d8830014bcf2118.png",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/media/images/evaluation/confusion_matrix_normalized_14_66ef4d8830014bcf2118.png",
+    "size_bytes": 1873406,
+    "updated_at": "2026-04-04T05:54:31Z"
+  },
+  {
+    "name": "media/table/evaluation/classification_report_12_2730924e6683d0eb4d4f.table.json",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/media/table/evaluation/classification_report_12_2730924e6683d0eb4d4f.table.json",
+    "size_bytes": 9868,
+    "updated_at": "2026-04-04T05:54:31Z"
+  },
+  {
+    "name": "media/table/training/history_table_15_ba752b3504afd5914821.table.json",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/media/table/training/history_table_15_ba752b3504afd5914821.table.json",
+    "size_bytes": 3584,
+    "updated_at": "2026-04-04T05:54:31Z"
+  },
+  {
+    "name": "requirements.txt",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/requirements.txt",
+    "size_bytes": 4064,
+    "updated_at": "2026-04-04T05:49:49Z"
+  },
+  {
+    "name": "wandb-metadata.json",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/wandb-metadata.json",
+    "size_bytes": 1572,
+    "updated_at": "2026-04-04T05:49:49Z"
+  },
+  {
+    "name": "wandb-summary.json",
+    "url": "https://api.wandb.ai/files/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/4vbmbqdj/wandb-summary.json",
+    "size_bytes": 3181,
+    "updated_at": "2026-04-04T05:54:31Z"
+  }
+]

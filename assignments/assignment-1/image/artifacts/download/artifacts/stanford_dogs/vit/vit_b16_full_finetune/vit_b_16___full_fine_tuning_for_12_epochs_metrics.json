@@ -1,0 +1,6 @@
+{
+  "model": "ViT-B/16 | Full fine-tuning for 12 epochs",
+  "accuracy": 0.9076923076923077,
+  "macro_f1": 0.90259026228592,
+  "weighted_f1": 0.9079926334592723
+}

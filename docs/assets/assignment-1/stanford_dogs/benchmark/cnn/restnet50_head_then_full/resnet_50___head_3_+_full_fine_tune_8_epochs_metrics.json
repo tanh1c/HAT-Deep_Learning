@@ -1,0 +1,6 @@
+{
+  "model": "ResNet-50 | Head 3 + full fine-tune 8 epochs",
+  "accuracy": 0.8655011655011655,
+  "macro_f1": 0.8598878391092841,
+  "weighted_f1": 0.8659049534140357
+}

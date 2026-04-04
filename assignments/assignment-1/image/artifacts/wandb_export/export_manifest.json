@@ -1,0 +1,53 @@
+{
+  "entity": "nguyenquochieujff7-ho-chi-minh-city-university-of-technology",
+  "project": "stanford-dogs-transfer-learning-new",
+  "group": null,
+  "filters": {
+    "run_id": [],
+    "run_name_contains": [],
+    "exclude_run_name_contains": [
+      "connection-test"
+    ],
+    "file_pattern": null,
+    "skip_files": false,
+    "skip_history": false
+  },
+  "runs": [
+    {
+      "run_id": "4vbmbqdj",
+      "run_name": "resnet_50__full_fine_tuning_for_12_epochs",
+      "run_url": "https://wandb.ai/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/runs/4vbmbqdj",
+      "metadata_json": "runs\\resnet_50_full_fine_tuning_for_12_epochs__4vbmbqdj\\run_metadata.json",
+      "history_csv": "runs\\resnet_50_full_fine_tuning_for_12_epochs__4vbmbqdj\\history.csv",
+      "files_manifest_json": "runs\\resnet_50_full_fine_tuning_for_12_epochs__4vbmbqdj\\files_manifest.json",
+      "downloaded_file_count": 13
+    },
+    {
+      "run_id": "82qpkftg",
+      "run_name": "resnet_50__head_3_+_full_fine_tune_8_epochs",
+      "run_url": "https://wandb.ai/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/runs/82qpkftg",
+      "metadata_json": "runs\\resnet_50_head_3_full_fine_tune_8_epochs__82qpkftg\\run_metadata.json",
+      "history_csv": "runs\\resnet_50_head_3_full_fine_tune_8_epochs__82qpkftg\\history.csv",
+      "files_manifest_json": "runs\\resnet_50_head_3_full_fine_tune_8_epochs__82qpkftg\\files_manifest.json",
+      "downloaded_file_count": 13
+    },
+    {
+      "run_id": "qt797v8c",
+      "run_name": "vit_b_16__full_fine_tuning_for_12_epochs",
+      "run_url": "https://wandb.ai/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/runs/qt797v8c",
+      "metadata_json": "runs\\vit_b_16_full_fine_tuning_for_12_epochs__qt797v8c\\run_metadata.json",
+      "history_csv": "runs\\vit_b_16_full_fine_tuning_for_12_epochs__qt797v8c\\history.csv",
+      "files_manifest_json": "runs\\vit_b_16_full_fine_tuning_for_12_epochs__qt797v8c\\files_manifest.json",
+      "downloaded_file_count": 13
+    },
+    {
+      "run_id": "kqlnnxbe",
+      "run_name": "vit_b_16__head_3_+_full_fine_tune_8_epochs",
+      "run_url": "https://wandb.ai/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/runs/kqlnnxbe",
+      "metadata_json": "runs\\vit_b_16_head_3_full_fine_tune_8_epochs__kqlnnxbe\\run_metadata.json",
+      "history_csv": "runs\\vit_b_16_head_3_full_fine_tune_8_epochs__kqlnnxbe\\history.csv",
+      "files_manifest_json": "runs\\vit_b_16_head_3_full_fine_tune_8_epochs__kqlnnxbe\\files_manifest.json",
+      "downloaded_file_count": 13
+    }
+  ]
+}

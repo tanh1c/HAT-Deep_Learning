@@ -1,0 +1,106 @@
+{
+  "id": "kqlnnxbe",
+  "name": "vit_b_16__head_3_+_full_fine_tune_8_epochs",
+  "display_name": "vit_b_16__head_3_+_full_fine_tune_8_epochs",
+  "url": "https://wandb.ai/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/runs/kqlnnxbe",
+  "state": "finished",
+  "entity": "nguyenquochieujff7-ho-chi-minh-city-university-of-technology",
+  "project": "stanford-dogs-transfer-learning-new",
+  "group": "stanford-dogs-fair-benchmark",
+  "job_type": "train",
+  "created_at": "2026-04-04T06:16:00Z",
+  "updated_at": null,
+  "config": {
+    "seed": 42,
+    "family": "vit",
+    "phases": [
+      {
+        "lr": 0.001,
+        "mode": "head_only",
+        "name": "head_only",
+        "epochs": 3,
+        "weight_decay": 0.0001
+      },
+      {
+        "lr": 3e-05,
+        "mode": "full_finetune",
+        "name": "full_finetune",
+        "epochs": 8,
+        "weight_decay": 0.0001
+      }
+    ],
+    "dataset": "Stanford Dogs",
+    "strategy": "Head 3 + full fine-tune 8 epochs",
+    "batch_size": 32,
+    "image_size": 224,
+    "model_name": "ViT-B/16",
+    "num_classes": 120,
+    "total_params": 85890936
+  },
+  "summary": {
+    "checkpoint/loaded_existing": false,
+    "epoch": 11,
+    "evaluation/calibration": {
+      "caption": "ViT-B/16 | Head 3 + full fine-tune 8 epochs calibration",
+      "format": "png",
+      "height": 984,
+      "path": "media/images/evaluation/calibration_15_917529e1ff19812d9aae.png",
+      "sha256": "917529e1ff19812d9aae3c44fea05002d39cad8ab9f328a113a67d93eeea0bb4",
+      "size": 179246,
+      "width": 3153
+    },
+    "evaluation/classification_report": {
+      "artifact_path": "wandb-client-artifact://4a9v6h6ze92at1lt59xvhljnrsm70vtlc0hovh3tlxrygodqyhaeurj1dcx7tww9bw20nco6j69nxqasor27pm3f8mmlu6ecry5w9hnnk9e3rxtbyorcp5dmn2jwhb5y/evaluation/classification_report.table.json",
+      "log_mode": "IMMUTABLE",
+      "ncols": 5,
+      "nrows": 123,
+      "path": "media/table/evaluation/classification_report_11_9f18976e1fed3b1e3e99.table.json",
+      "sha256": "9f18976e1fed3b1e3e998b60893730fbded150fe61a5209fd84d3ba1f6a2d8c1",
+      "size": 9660
+    },
+    "evaluation/confusion_matrix_counts": {
+      "caption": "ViT-B/16 | Head 3 + full fine-tune 8 epochs confusion matrix (counts)",
+      "format": "png",
+      "height": 4852,
+      "path": "media/images/evaluation/confusion_matrix_counts_12_c2a83338e51f77a8d360.png",
+      "sha256": "c2a83338e51f77a8d360aa9c925bc919d6aac96c59a7ecb0fed6501cfde93720",
+      "size": 1526282,
+      "width": 5414
+    },
+    "evaluation/confusion_matrix_normalized": {
+      "caption": "ViT-B/16 | Head 3 + full fine-tune 8 epochs confusion matrix (normalized)",
+      "format": "png",
+      "height": 4852,
+      "path": "media/images/evaluation/confusion_matrix_normalized_13_5e30ffe31fa108bcf92f.png",
+      "sha256": "5e30ffe31fa108bcf92fb4417fe744da45576a0d1a4273209bb5727ec60ff246",
+      "size": 1797052,
+      "width": 5395
+    },
+    "model/total_params": 85890936,
+    "phase/epoch": 8,
+    "phase/name": "vit_b_16_|_head_3_+_full_fine_tune_8_epochs_full_finetune",
+    "test/accuracy": 0.9348484848484848,
+    "test/ece": 0.019799207089282136,
+    "test/macro_f1": 0.9311446032182342,
+    "test/weighted_f1": 0.934996196127068,
+    "train/acc": 0.996078431372549,
+    "train/loss": 0.02082730168896709,
+    "train/macro_f1": 0.9960758958445384,
+    "train/weighted_f1": 0.9960758958445384,
+    "trainer/lr": 0,
+    "trainer/training_seconds": 755.2139191627502,
+    "training/history_table": {
+      "artifact_path": "wandb-client-artifact://ue0pmjogdnmyy319cw57le2777wwm6z5lp5z7q4jdx3fgdw0zcntny5y5cqmrwucj7tbdv4cnm6rd5gvi6u7kvasors8bb0xgfqm39arowrzm4ypvsgu8mm7imx1k334/training/history_table.table.json",
+      "log_mode": "IMMUTABLE",
+      "ncols": 15,
+      "nrows": 11,
+      "path": "media/table/training/history_table_14_900257baccf083c5c8dc.table.json",
+      "sha256": "900257baccf083c5c8dc602125973a538501096230ee25cd519c7e738892b3f3",
+      "size": 3238
+    },
+    "val/acc": 0.9344444444444444,
+    "val/loss": 0.22448852714565065,
+    "val/macro_f1": 0.9340944275735928,
+    "val/weighted_f1": 0.9340944275735928
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "id": "qt797v8c",
+  "name": "vit_b_16__full_fine_tuning_for_12_epochs",
+  "display_name": "vit_b_16__full_fine_tuning_for_12_epochs",
+  "url": "https://wandb.ai/nguyenquochieujff7-ho-chi-minh-city-university-of-technology/stanford-dogs-transfer-learning-new/runs/qt797v8c",
+  "state": "finished",
+  "entity": "nguyenquochieujff7-ho-chi-minh-city-university-of-technology",
+  "project": "stanford-dogs-transfer-learning-new",
+  "group": "stanford-dogs-fair-benchmark",
+  "job_type": "train",
+  "created_at": "2026-04-04T05:59:03Z",
+  "updated_at": null,
+  "config": {
+    "seed": 42,
+    "family": "vit",
+    "phases": [
+      {
+        "lr": 3e-05,
+        "mode": "full_finetune",
+        "name": "full_finetune",
+        "epochs": 12,
+        "weight_decay": 0.0001
+      }
+    ],
+    "dataset": "Stanford Dogs",
+    "strategy": "Full fine-tuning for 12 epochs",
+    "batch_size": 32,
+    "image_size": 224,
+    "model_name": "ViT-B/16",
+    "num_classes": 120,
+    "total_params": 85890936
+  },
+  "summary": {
+    "checkpoint/loaded_existing": false,
+    "epoch": 12,
+    "evaluation/calibration": {
+      "caption": "ViT-B/16 | Full fine-tuning for 12 epochs calibration",
+      "format": "png",
+      "height": 984,
+      "path": "media/images/evaluation/calibration_16_d0871ec4c553b41bbaa0.png",
+      "sha256": "d0871ec4c553b41bbaa0a1d914697601e74562e6b04ff1ac314c4632e4c58ee2",
+      "size": 176363,
+      "width": 3121
+    },
+    "evaluation/classification_report": {
+      "artifact_path": "wandb-client-artifact://79irelmufxk43idvi1u6yn6chd1j1pdup0cirzmmvhomebuu5h1ruoahx5slv1p643ivx585v034ksmbs95wvtk51caf7433iejvd4793c9k512ze0gvobazv5tylh0i/evaluation/classification_report.table.json",
+      "log_mode": "IMMUTABLE",
+      "ncols": 5,
+      "nrows": 123,
+      "path": "media/table/evaluation/classification_report_12_5ef8ecd3c09914926862.table.json",
+      "sha256": "5ef8ecd3c09914926862620442423d32ad7cb5ba63ad216b5ef23d96251648dc",
+      "size": 9833
+    },
+    "evaluation/confusion_matrix_counts": {
+      "caption": "ViT-B/16 | Full fine-tuning for 12 epochs confusion matrix (counts)",
+      "format": "png",
+      "height": 4852,
+      "path": "media/images/evaluation/confusion_matrix_counts_13_9a17390569cac985a665.png",
+      "sha256": "9a17390569cac985a66553aad74bbfe2179ed94c36700f0ad6acd81c26673f62",
+      "size": 1538411,
+      "width": 5414
+    },
+    "evaluation/confusion_matrix_normalized": {
+      "caption": "ViT-B/16 | Full fine-tuning for 12 epochs confusion matrix (normalized)",
+      "format": "png",
+      "height": 4852,
+      "path": "media/images/evaluation/confusion_matrix_normalized_14_45cc97ba6e074969e9ad.png",
+      "sha256": "45cc97ba6e074969e9adc07528ab89d40f737f82af0686ee1d9599c7ad84c372",
+      "size": 1828888,
+      "width": 5395
+    },
+    "model/total_params": 85890936,
+    "phase/epoch": 12,
+    "phase/name": "vit_b_16_|_full_fine_tuning_for_12_epochs_full_finetune",
+    "test/accuracy": 0.9076923076923076,
+    "test/ece": 0.017775577808663005,
+    "test/macro_f1": 0.90259026228592,
+    "test/weighted_f1": 0.9079926334592724,
+    "train/acc": 0.9952941176470588,
+    "train/loss": 0.031102004811605983,
+    "train/macro_f1": 0.995294945126966,
+    "train/weighted_f1": 0.995294945126966,
+    "trainer/lr": 0,
+    "trainer/training_seconds": 943.427754163742,
+    "training/history_table": {
+      "artifact_path": "wandb-client-artifact://snjr4kn66dxjp4gdl1svldpt6qmljvan8070k300x94qwhp01ede112yyfkzueiki6xfawvqcl2lp8k4rtnmmnt23pgjwg25o5x2u1fwi3ojeplgwbluc7u6u7a8mtni/training/history_table.table.json",
+      "log_mode": "IMMUTABLE",
+      "ncols": 15,
+      "nrows": 12,
+      "path": "media/table/training/history_table_15_7774d7f30218b27097c6.table.json",
+      "sha256": "7774d7f30218b27097c67038c55a2bd710760e841f2d55b899363d354884c468",
+      "size": 3532
+    },
+    "val/acc": 0.9061111111111112,
+    "val/loss": 0.3536730583508809,
+    "val/macro_f1": 0.9060291757592284,
+    "val/weighted_f1": 0.9060291757592284
+  }
+}

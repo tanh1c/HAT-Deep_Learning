@@ -1,0 +1,101 @@
+_wandb:
+    value:
+        cli_version: 0.25.1
+        e:
+            1i3vbupqwuq1j7ctkp0b8y625gog0m8f:
+                args:
+                    - --ext
+                    - modal.experimental.ipython
+                    - -f
+                    - /tmp/tmpr9l1alzo
+                    - --Completer.use_jedi=False
+                    - --TerminalInteractiveShell.simple_prompt=True
+                    - --TerminalIPythonApp.display_banner=False
+                    - --IPCompleter.use_jedi=False
+                    - --TerminalInteractiveShell.autosuggestions_provider=None
+                    - --TerminalInteractiveShell.colors=NoColor
+                    - --InteractiveShell.color_info=False
+                    - --TerminalIPythonApp.gui=None
+                    - --TerminalIPythonApp.matplotlib=None
+                    - --HistoryManager.enabled=False
+                    - --TerminalInteractiveShell.mouse_support=False
+                    - --TerminalInteractiveShell.auto_match=False
+                    - --TerminalInteractiveShell.confirm_exit=False
+                    - --InteractiveShell.quiet=True
+                cpu_count: 43
+                cpu_count_logical: 43
+                cudaVersion: "12.8"
+                disk:
+                    /:
+                        total: "549755813888"
+                        used: "2674634752"
+                email: chunguyentuananh11b6@gmail.com
+                executable: /usr/local/bin/python
+                gpu: NVIDIA A100 80GB PCIe
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "85899345920"
+                      name: NVIDIA A100 80GB PCIe
+                      uuid: GPU-7a4fd5fc-68ff-2724-dcfc-60974f334833
+                host: modal
+                memory:
+                    total: "1081071706112"
+                os: Linux-4.4.0-x86_64-with-glibc2.36
+                program: <python with no main file>
+                python: CPython 3.12.6
+                root: /root/wandb
+                startedAt: "2026-04-04T05:59:02.865180Z"
+                writerId: 1i3vbupqwuq1j7ctkp0b8y625gog0m8f
+        m: []
+        python_version: 3.12.6
+        t:
+            "1":
+                - 1
+                - 5
+                - 41
+                - 53
+            "2":
+                - 1
+                - 5
+                - 41
+                - 53
+            "3":
+                - 2
+                - 13
+                - 15
+                - 16
+                - 61
+                - 62
+            "4": 3.12.6
+            "5": 0.25.1
+            "8":
+                - 13
+            "12": 0.25.1
+            "13": linux-x86_64
+batch_size:
+    value: 32
+dataset:
+    value: Stanford Dogs
+family:
+    value: vit
+image_size:
+    value: 224
+model_name:
+    value: ViT-B/16
+num_classes:
+    value: 120
+phases:
+    value:
+        - epochs: 12
+          lr: 3e-05
+          mode: full_finetune
+          name: full_finetune
+          weight_decay: 0.0001
+seed:
+    value: 42
+strategy:
+    value: Full fine-tuning for 12 epochs
+total_params:
+    value: 85890936
