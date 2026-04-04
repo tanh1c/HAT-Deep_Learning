@@ -1,15 +1,12 @@
 """
-Stanford Dogs ViT-B/16 model handler.
-
-This handler powers the Assignment 1 image demo for the Stanford Dogs
-benchmark, including prediction, attention visualization, and loading the
-exported calibration artifact from the final notebook outputs.
+Stanford Dogs ViT-B/16 handlers for the fair benchmark variants.
 """
 
 from __future__ import annotations
 
-import os
 import types
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import numpy as np
@@ -19,7 +16,11 @@ import torchvision.transforms as transforms
 from PIL import Image
 from torchvision.models import vit_b_16
 
-from app.image.data import get_model_comparison_row, load_stanford_dogs_class_labels
+from app.image.data import (
+    get_model_comparison_row,
+    load_stanford_dogs_class_labels,
+    resolve_stanford_dogs_artifact_path,
+)
 from app.shared.artifact_utils import normalize_history
 from app.shared.model_registry import (
     BaseModelHandler,
@@ -33,16 +34,38 @@ IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 OFFICIAL_TEST_SAMPLES = 8580
 
-ASSIGNMENT_ROOT = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+@dataclass(frozen=True)
+class ViTVariantConfig:
+    display_name: str
+    model_name: str
+    training_strategy: str
+    architecture: str
+    calibration_image_path: Path
+
+
+VIT_B16_FULL_CONFIG = ViTVariantConfig(
+    display_name="ViT-B/16 · Full fine-tuning",
+    model_name="ViT-B/16",
+    training_strategy="Full fine-tuning for 12 epochs",
+    architecture="ViT-B/16 (Transfer Learning from ImageNet)",
+    calibration_image_path=resolve_stanford_dogs_artifact_path(
+        "vit",
+        "vit_b16_full_finetune",
+        "vit_b_16___full_fine_tuning_for_12_epochs_calibration.png",
+    ),
 )
-CALIBRATION_IMAGE_PATH = os.path.join(
-    ASSIGNMENT_ROOT,
-    "image",
-    "artifacts",
-    "stanford_dogs",
-    "vit",
-    "vit_b16_calibration.png",
+
+VIT_B16_STAGED_CONFIG = ViTVariantConfig(
+    display_name="ViT-B/16 · Head 3 + Full 8",
+    model_name="ViT-B/16",
+    training_strategy="Head 3 + full fine-tune 8 epochs",
+    architecture="ViT-B/16 (Transfer Learning from ImageNet)",
+    calibration_image_path=resolve_stanford_dogs_artifact_path(
+        "vit",
+        "vit_b16_head_then_full",
+        "vit_b_16___head_3_+_full_fine_tune_8_epochs_calibration.png",
+    ),
 )
 
 
@@ -111,7 +134,11 @@ class ViTAttentionVisualizer:
         return attention_map
 
 
-def create_attention_overlay(image_np: np.ndarray, attention_map: Optional[np.ndarray], alpha: float = 0.5) -> np.ndarray:
+def create_attention_overlay(
+    image_np: np.ndarray,
+    attention_map: Optional[np.ndarray],
+    alpha: float = 0.5,
+) -> np.ndarray:
     """Create a three-panel attention visualization."""
     import matplotlib
 
@@ -158,13 +185,20 @@ def create_attention_overlay(image_np: np.ndarray, attention_map: Optional[np.nd
     return result
 
 
-def load_cached_calibration_result() -> Optional[CalibrationResult]:
-    """Load the exported ViT-B/16 calibration artifact for Stanford Dogs."""
-    row = get_model_comparison_row("ViT-B/16")
-    if row is None or not os.path.exists(CALIBRATION_IMAGE_PATH):
+def load_cached_calibration_result(
+    variant: ViTVariantConfig,
+) -> Optional[CalibrationResult]:
+    """Load the exported ViT-B/16 calibration artifact for a specific run."""
+    row = get_model_comparison_row(
+        variant.model_name,
+        variant.training_strategy,
+    )
+    if row is None or not variant.calibration_image_path.exists():
         return None
 
-    reliability_diagram = np.array(Image.open(CALIBRATION_IMAGE_PATH).convert("RGB"))
+    reliability_diagram = np.array(
+        Image.open(variant.calibration_image_path).convert("RGB")
+    )
     ece = float(row["ECE"])
     return CalibrationResult(
         ece=ece,
@@ -172,15 +206,16 @@ def load_cached_calibration_result() -> Optional[CalibrationResult]:
         bin_confidences=[],
         bin_counts=[OFFICIAL_TEST_SAMPLES],
         reliability_diagram=reliability_diagram,
-        source="Notebook artifact (official Stanford Dogs test set)",
+        source=f"Notebook artifact ({variant.training_strategy})",
     )
 
 
 class StanfordDogsViTHandler(BaseModelHandler):
-    """Model handler for the Stanford Dogs ViT-B/16 checkpoint."""
+    """Model handler for a Stanford Dogs ViT-B/16 checkpoint variant."""
 
-    def __init__(self, model_path: str):
+    def __init__(self, model_path: str, variant: ViTVariantConfig):
         self.model_path = model_path
+        self.variant = variant
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.class_labels = load_stanford_dogs_class_labels()
         self.model: Optional[nn.Module] = None
@@ -199,20 +234,22 @@ class StanfordDogsViTHandler(BaseModelHandler):
         self._load_model()
 
     def _load_model(self) -> None:
-        self.model = create_vit_classifier(num_classes=len(self.class_labels))
-
-        if os.path.exists(self.model_path):
-            checkpoint = torch.load(
-                self.model_path,
-                map_location=self.device,
-                weights_only=True,
-            )
+        checkpoint = None
+        model_path = Path(self.model_path)
+        if model_path.exists():
+            checkpoint = torch.load(model_path, map_location=self.device)
             if isinstance(checkpoint, dict):
+                checkpoint_class_names = checkpoint.get("class_names")
+                if isinstance(checkpoint_class_names, list) and checkpoint_class_names:
+                    self.class_labels = [str(name) for name in checkpoint_class_names]
                 self.history = normalize_history(checkpoint.get("history", {}))
                 val_acc = self.history.get("val_acc")
                 if isinstance(val_acc, list) and val_acc:
                     self.best_accuracy = float(max(val_acc))
 
+        self.model = create_vit_classifier(num_classes=len(self.class_labels))
+
+        if checkpoint is not None:
             if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
                 self.model.load_state_dict(checkpoint["model_state_dict"])
             else:
@@ -222,12 +259,12 @@ class StanfordDogsViTHandler(BaseModelHandler):
         self.model.eval()
         self.attention_viz = ViTAttentionVisualizer(self.model)
 
-        precomputed_full = load_cached_calibration_result()
-        if precomputed_full is not None:
-            self._calibration_cache["full"] = precomputed_full
+        precomputed = load_cached_calibration_result(self.variant)
+        if precomputed is not None:
+            self._calibration_cache["official_test"] = precomputed
 
     def get_model_name(self) -> str:
-        return "ViT-B/16"
+        return self.variant.display_name
 
     def get_dataset_name(self) -> str:
         return "Stanford Dogs"
@@ -240,14 +277,18 @@ class StanfordDogsViTHandler(BaseModelHandler):
 
     def get_model_info(self) -> Dict[str, str]:
         total_params = sum(p.numel() for p in self.model.parameters())
-        comparison_row = get_model_comparison_row("ViT-B/16")
+        comparison_row = get_model_comparison_row(
+            self.variant.model_name,
+            self.variant.training_strategy,
+        )
 
         info = {
-            "Architecture": "ViT-B/16 (Transfer Learning from ImageNet)",
+            "Architecture": self.variant.architecture,
+            "Model Variant": self.variant.display_name,
             "Dataset": "Stanford Dogs (120 classes, 20,580 images)",
             "Parameters": f"{total_params:,}",
-            "Input Size": f"{IMAGE_SIZE}×{IMAGE_SIZE}×3",
-            "Training": "Head 3 epochs + full fine-tuning 8 epochs",
+            "Input Size": f"{IMAGE_SIZE}x{IMAGE_SIZE}x3",
+            "Training": self.variant.training_strategy,
             "Device": str(self.device),
         }
 
@@ -257,6 +298,7 @@ class StanfordDogsViTHandler(BaseModelHandler):
         if comparison_row is not None:
             info["Test Accuracy"] = f"{float(comparison_row['Test accuracy']) * 100:.2f}%"
             info["Macro F1"] = f"{float(comparison_row['Macro F1']):.4f}"
+            info["Weighted F1"] = f"{float(comparison_row['Weighted F1']):.4f}"
             info["Train Time"] = f"{float(comparison_row['Train time (s)']):.2f} s"
             info["Official-Test ECE"] = f"{float(comparison_row['ECE']):.6f}"
 
@@ -299,6 +341,18 @@ class StanfordDogsViTHandler(BaseModelHandler):
         return []
 
     def get_calibration_data(
-        self, max_samples: Optional[int] = None
+        self,
+        max_samples: Optional[int] = None,
     ) -> Optional[CalibrationResult]:
-        return self._calibration_cache.get("full")
+        return self._calibration_cache.get("official_test")
+
+
+class StanfordDogsViTFullHandler(StanfordDogsViTHandler):
+    def __init__(self, model_path: str):
+        super().__init__(model_path, VIT_B16_FULL_CONFIG)
+
+
+class StanfordDogsViTStagedHandler(StanfordDogsViTHandler):
+    def __init__(self, model_path: str):
+        super().__init__(model_path, VIT_B16_STAGED_CONFIG)
+

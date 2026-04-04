@@ -30,7 +30,7 @@ streamlit run deploy/streamlit-cloud/app.py
 
 The app resolves model files in this order:
 
-1. local repository file under `assignments/assignment-1/image/models/`
+1. local repository file under `assignments/assignment-1/image/artifacts/download/models/`
 2. configured local absolute/relative path
 3. cached downloaded file
 4. remote Google Drive file or direct URL
@@ -46,30 +46,36 @@ In Streamlit Community Cloud, open **Advanced settings** and paste something lik
 
 ```toml
 [models]
-STANFORDDOGS_RESNET18_GDRIVE_ID = "your-google-drive-file-id"
-STANFORDDOGS_VIT_B16_GDRIVE_ID = "your-google-drive-file-id"
+STANFORDDOGS_RESNET50_FULL_GDRIVE_ID = "your-google-drive-file-id"
+STANFORDDOGS_RESNET50_STAGED_GDRIVE_ID = "your-google-drive-file-id"
+STANFORDDOGS_VIT_B16_FULL_GDRIVE_ID = "your-google-drive-file-id"
+STANFORDDOGS_VIT_B16_STAGED_GDRIVE_ID = "your-google-drive-file-id"
 ```
 
 You can also use direct URLs instead:
 
 ```toml
 [models]
-STANFORDDOGS_RESNET18_URL = "https://example.com/stanforddogs_resnet18.pth"
-STANFORDDOGS_VIT_B16_URL = "https://example.com/stanforddogs_vit_b16.pth"
+STANFORDDOGS_RESNET50_FULL_URL = "https://example.com/stanforddogs_resnet50_full_finetune.pth"
+STANFORDDOGS_RESNET50_STAGED_URL = "https://example.com/stanforddogs_resnet50_head_then_full.pth"
+STANFORDDOGS_VIT_B16_FULL_URL = "https://example.com/stanforddogs_vit_b16_full_finetune.pth"
+STANFORDDOGS_VIT_B16_STAGED_URL = "https://example.com/stanforddogs_vit_b16_head_then_full.pth"
 ```
 
 Or local custom paths for local development:
 
 ```toml
 [models]
-STANFORDDOGS_RESNET18_PATH = "assignments/assignment-1/image/models/stanforddogs_resnet18.pth"
-STANFORDDOGS_VIT_B16_PATH = "assignments/assignment-1/image/models/stanforddogs_vit_b16.pth"
+STANFORDDOGS_RESNET50_FULL_PATH = "assignments/assignment-1/image/artifacts/download/models/stanforddogs_resnet50_full_finetune.pth"
+STANFORDDOGS_RESNET50_STAGED_PATH = "assignments/assignment-1/image/artifacts/download/models/stanforddogs_resnet50_head_then_full.pth"
+STANFORDDOGS_VIT_B16_FULL_PATH = "assignments/assignment-1/image/artifacts/download/models/stanforddogs_vit_b16_full_finetune.pth"
+STANFORDDOGS_VIT_B16_STAGED_PATH = "assignments/assignment-1/image/artifacts/download/models/stanforddogs_vit_b16_head_then_full.pth"
 ```
 
 ## What the app shows
 
 - upload one dog image
-- choose `ResNet-18` or `ViT-B/16`
+- choose one of the 4 fair-benchmark checkpoints
 - top-k predictions
 - Grad-CAM or attention-based explanation
 - calibration artifact exported from the final notebook

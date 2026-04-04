@@ -29,8 +29,11 @@ from app.shared.model_registry import (
     get_models_by_type,
     BaseModelHandler,
 )
-from app.image.resnet18 import StanfordDogsResNet18Handler
-from app.image.vit_b16 import StanfordDogsViTHandler
+from app.image.resnet18 import (
+    StanfordDogsResNet50FullHandler,
+    StanfordDogsResNet50StagedHandler,
+)
+from app.image.vit_b16 import StanfordDogsViTFullHandler, StanfordDogsViTStagedHandler
 
 
 # ============================================================================
@@ -99,31 +102,52 @@ CUSTOM_THEME = gr.themes.Base(
 
 def init_models():
     """Initialize and register all available models."""
-    model_dir = os.path.join(ASSIGNMENT_ROOT, "image", "models")
+    model_dir = os.path.join(
+        ASSIGNMENT_ROOT,
+        "image",
+        "artifacts",
+        "download",
+        "models",
+    )
 
-    # Stanford Dogs ResNet-18
-    resnet18_path = os.path.join(model_dir, "stanforddogs_resnet18.pth")
-    if os.path.exists(resnet18_path):
-        try:
-            handler = StanfordDogsResNet18Handler(resnet18_path)
-            register_model("stanforddogs_resnet18", handler)
-            print(f"✅ Loaded: Stanford Dogs ResNet-18 from {resnet18_path}")
-        except Exception as e:
-            print(f"❌ Failed to load Stanford Dogs ResNet-18: {e}")
-    else:
-        print(f"⚠️ Model file not found: {resnet18_path}")
+    model_specs = [
+        (
+            "stanforddogs_resnet50_full",
+            "stanforddogs_resnet50_full_finetune.pth",
+            StanfordDogsResNet50FullHandler,
+            "Stanford Dogs ResNet-50 · Full fine-tuning",
+        ),
+        (
+            "stanforddogs_resnet50_staged",
+            "stanforddogs_resnet50_head_then_full.pth",
+            StanfordDogsResNet50StagedHandler,
+            "Stanford Dogs ResNet-50 · Head 3 + Full 8",
+        ),
+        (
+            "stanforddogs_vit_b16_full",
+            "stanforddogs_vit_b16_full_finetune.pth",
+            StanfordDogsViTFullHandler,
+            "Stanford Dogs ViT-B/16 · Full fine-tuning",
+        ),
+        (
+            "stanforddogs_vit_b16_staged",
+            "stanforddogs_vit_b16_head_then_full.pth",
+            StanfordDogsViTStagedHandler,
+            "Stanford Dogs ViT-B/16 · Head 3 + Full 8",
+        ),
+    ]
 
-    # Stanford Dogs ViT-B/16
-    vit_path = os.path.join(model_dir, "stanforddogs_vit_b16.pth")
-    if os.path.exists(vit_path):
-        try:
-            handler = StanfordDogsViTHandler(vit_path)
-            register_model("stanforddogs_vit", handler)
-            print(f"✅ Loaded: Stanford Dogs ViT-B/16 from {vit_path}")
-        except Exception as e:
-            print(f"❌ Failed to load Stanford Dogs ViT-B/16: {e}")
-    else:
-        print(f"⚠️ Model file not found: {vit_path}")
+    for model_key, filename, handler_cls, label in model_specs:
+        model_path = os.path.join(model_dir, filename)
+        if os.path.exists(model_path):
+            try:
+                handler = handler_cls(model_path)
+                register_model(model_key, handler)
+                print(f"✅ Loaded: {label} from {model_path}")
+            except Exception as e:
+                print(f"❌ Failed to load {label}: {e}")
+        else:
+            print(f"⚠️ Model file not found: {model_path}")
 
 
 # ============================================================================

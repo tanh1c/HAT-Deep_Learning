@@ -29,33 +29,58 @@ import torch.nn as nn
 import wandb
 from transformers import BertTokenizer, DistilBertForSequenceClassification
 
-from app.image.resnet18 import StanfordDogsResNet18Handler
-from app.image.vit_b16 import StanfordDogsViTHandler
+from app.image.resnet18 import (
+    StanfordDogsResNet50FullHandler,
+    StanfordDogsResNet50StagedHandler,
+)
+from app.image.vit_b16 import StanfordDogsViTFullHandler, StanfordDogsViTStagedHandler
 from app.shared.model_assets import ensure_model_checkpoint
 
 
 REPO_ROOT = ASSIGNMENT_ROOT.parent.parent
-MODEL_ROOT = ASSIGNMENT_ROOT / "image" / "models"
+MODEL_ROOT = ASSIGNMENT_ROOT / "image" / "artifacts" / "download" / "models"
 TEXT_MODEL_ROOT = ASSIGNMENT_ROOT / "text" / "models"
 
 MODEL_SPECS: Dict[str, Dict[str, Any]] = {
-    "stanforddogs_resnet18": {
-        "label": "ResNet-18",
-        "filename": "stanforddogs_resnet18.pth",
-        "handler_cls": StanfordDogsResNet18Handler,
-        "configured_path_key": "STANFORDDOGS_RESNET18_PATH",
-        "configured_url_key": "STANFORDDOGS_RESNET18_URL",
-        "configured_gdrive_key": "STANFORDDOGS_RESNET18_GDRIVE_ID",
+    "stanforddogs_resnet50_full": {
+        "label": "ResNet-50 · Full fine-tuning",
+        "filename": "stanforddogs_resnet50_full_finetune.pth",
+        "handler_cls": StanfordDogsResNet50FullHandler,
+        "configured_path_key": "STANFORDDOGS_RESNET50_FULL_PATH",
+        "configured_url_key": "STANFORDDOGS_RESNET50_FULL_URL",
+        "configured_gdrive_key": "STANFORDDOGS_RESNET50_FULL_GDRIVE_ID",
         "family": "CNN",
+        "interpretability_caption": "Grad-CAM overlay generated directly from the ResNet-50 full fine-tuning checkpoint.",
     },
-    "stanforddogs_vit_b16": {
-        "label": "ViT-B/16",
-        "filename": "stanforddogs_vit_b16.pth",
-        "handler_cls": StanfordDogsViTHandler,
-        "configured_path_key": "STANFORDDOGS_VIT_B16_PATH",
-        "configured_url_key": "STANFORDDOGS_VIT_B16_URL",
-        "configured_gdrive_key": "STANFORDDOGS_VIT_B16_GDRIVE_ID",
+    "stanforddogs_resnet50_staged": {
+        "label": "ResNet-50 · Head 3 + Full 8",
+        "filename": "stanforddogs_resnet50_head_then_full.pth",
+        "handler_cls": StanfordDogsResNet50StagedHandler,
+        "configured_path_key": "STANFORDDOGS_RESNET50_STAGED_PATH",
+        "configured_url_key": "STANFORDDOGS_RESNET50_STAGED_URL",
+        "configured_gdrive_key": "STANFORDDOGS_RESNET50_STAGED_GDRIVE_ID",
+        "family": "CNN",
+        "interpretability_caption": "Grad-CAM overlay generated directly from the ResNet-50 staged fine-tuning checkpoint.",
+    },
+    "stanforddogs_vit_b16_full": {
+        "label": "ViT-B/16 · Full fine-tuning",
+        "filename": "stanforddogs_vit_b16_full_finetune.pth",
+        "handler_cls": StanfordDogsViTFullHandler,
+        "configured_path_key": "STANFORDDOGS_VIT_B16_FULL_PATH",
+        "configured_url_key": "STANFORDDOGS_VIT_B16_FULL_URL",
+        "configured_gdrive_key": "STANFORDDOGS_VIT_B16_FULL_GDRIVE_ID",
         "family": "Transformer",
+        "interpretability_caption": "Attention overlay generated directly from the ViT-B/16 full fine-tuning checkpoint.",
+    },
+    "stanforddogs_vit_b16_staged": {
+        "label": "ViT-B/16 · Head 3 + Full 8",
+        "filename": "stanforddogs_vit_b16_head_then_full.pth",
+        "handler_cls": StanfordDogsViTStagedHandler,
+        "configured_path_key": "STANFORDDOGS_VIT_B16_STAGED_PATH",
+        "configured_url_key": "STANFORDDOGS_VIT_B16_STAGED_URL",
+        "configured_gdrive_key": "STANFORDDOGS_VIT_B16_STAGED_GDRIVE_ID",
+        "family": "Transformer",
+        "interpretability_caption": "Attention overlay generated directly from the ViT-B/16 staged fine-tuning checkpoint.",
     },
 }
 
@@ -458,8 +483,8 @@ def run_image_app() -> None:
     st.title("Stanford Dogs Image Demo")
     st.caption(
         "A lightweight Streamlit deployment for the Assignment 1 image track. "
-        "The app reuses the final Stanford Dogs checkpoints, explanation outputs, "
-        "and calibration artifacts."
+        "This version uses the fair 4-run benchmark: ResNet-50 and ViT-B/16, "
+        "each evaluated with full fine-tuning and head-then-full fine-tuning."
     )
 
     selected_model_key = st.radio(
@@ -480,8 +505,10 @@ def run_image_app() -> None:
             "\n".join(
                 [
                     "[models]",
-                    'STANFORDDOGS_RESNET18_GDRIVE_ID = "your-google-drive-file-id"',
-                    'STANFORDDOGS_VIT_B16_GDRIVE_ID = "your-google-drive-file-id"',
+                    'STANFORDDOGS_RESNET50_FULL_GDRIVE_ID = "your-google-drive-file-id"',
+                    'STANFORDDOGS_RESNET50_STAGED_GDRIVE_ID = "your-google-drive-file-id"',
+                    'STANFORDDOGS_VIT_B16_FULL_GDRIVE_ID = "your-google-drive-file-id"',
+                    'STANFORDDOGS_VIT_B16_STAGED_GDRIVE_ID = "your-google-drive-file-id"',
                 ]
             ),
             language="toml",
@@ -569,10 +596,7 @@ def run_image_app() -> None:
     st.subheader("Interpretability view")
     st.image(
         result.explanation_image,
-        caption=(
-            "Grad-CAM for ResNet-18 or attention overlay for ViT-B/16. "
-            "This is generated directly from the loaded checkpoint."
-        ),
+        caption=MODEL_SPECS[selected_model_key]["interpretability_caption"],
         width="stretch",
     )
 

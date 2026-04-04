@@ -1,14 +1,15 @@
 """
-Stanford Dogs ResNet-18 model handler.
+Stanford Dogs ResNet handlers.
 
-This handler powers the Assignment 1 image demo for the Stanford Dogs
-benchmark, including prediction, Grad-CAM visualization, and loading the
-exported calibration artifact from the final notebook outputs.
+The module name is kept for backward compatibility with older imports, but the
+current Streamlit demo uses the fair-benchmark ResNet-50 checkpoints exported
+from the latest notebook workflow.
 """
 
 from __future__ import annotations
 
-import os
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import numpy as np
@@ -16,9 +17,13 @@ import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
 from PIL import Image
-from torchvision.models import resnet18
+from torchvision.models import resnet50
 
-from app.image.data import get_model_comparison_row, load_stanford_dogs_class_labels
+from app.image.data import (
+    get_model_comparison_row,
+    load_stanford_dogs_class_labels,
+    resolve_stanford_dogs_artifact_path,
+)
 from app.shared.artifact_utils import normalize_history
 from app.shared.model_registry import (
     BaseModelHandler,
@@ -32,22 +37,44 @@ IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 OFFICIAL_TEST_SAMPLES = 8580
 
-ASSIGNMENT_ROOT = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+@dataclass(frozen=True)
+class ResNetVariantConfig:
+    display_name: str
+    model_name: str
+    training_strategy: str
+    architecture: str
+    calibration_image_path: Path
+
+
+RESNET50_FULL_CONFIG = ResNetVariantConfig(
+    display_name="ResNet-50 · Full fine-tuning",
+    model_name="ResNet-50",
+    training_strategy="Full fine-tuning for 12 epochs",
+    architecture="ResNet-50 (Transfer Learning from ImageNet)",
+    calibration_image_path=resolve_stanford_dogs_artifact_path(
+        "cnn",
+        "restnet50_full_finetune",
+        "resnet_50___full_fine_tuning_for_12_epochs_calibration.png",
+    ),
 )
-CALIBRATION_IMAGE_PATH = os.path.join(
-    ASSIGNMENT_ROOT,
-    "image",
-    "artifacts",
-    "stanford_dogs",
-    "cnn",
-    "resnet18_calibration.png",
+
+RESNET50_STAGED_CONFIG = ResNetVariantConfig(
+    display_name="ResNet-50 · Head 3 + Full 8",
+    model_name="ResNet-50",
+    training_strategy="Head 3 + full fine-tune 8 epochs",
+    architecture="ResNet-50 (Transfer Learning from ImageNet)",
+    calibration_image_path=resolve_stanford_dogs_artifact_path(
+        "cnn",
+        "restnet50_head_then_full",
+        "resnet_50___head_3_+_full_fine_tune_8_epochs_calibration.png",
+    ),
 )
 
 
-def create_resnet18_classifier(num_classes: int) -> nn.Module:
-    """Create a ResNet-18 classifier with a custom output head."""
-    model = resnet18(weights=None)
+def create_resnet50_classifier(num_classes: int) -> nn.Module:
+    """Create a ResNet-50 classifier with a custom output head."""
+    model = resnet50(weights=None)
     num_features = model.fc.in_features
     model.fc = nn.Linear(num_features, num_classes)
     return model
@@ -73,7 +100,11 @@ class GradCAM:
         self.target_layer.register_forward_hook(forward_hook)
         self.target_layer.register_full_backward_hook(backward_hook)
 
-    def generate(self, input_tensor: torch.Tensor, target_class: Optional[int] = None) -> np.ndarray:
+    def generate(
+        self,
+        input_tensor: torch.Tensor,
+        target_class: Optional[int] = None,
+    ) -> np.ndarray:
         self.model.eval()
         output = self.model(input_tensor)
 
@@ -101,7 +132,11 @@ class GradCAM:
         return cam.squeeze().cpu().numpy()
 
 
-def create_gradcam_overlay(image_np: np.ndarray, heatmap: np.ndarray, alpha: float = 0.5) -> np.ndarray:
+def create_gradcam_overlay(
+    image_np: np.ndarray,
+    heatmap: np.ndarray,
+    alpha: float = 0.5,
+) -> np.ndarray:
     """Create a three-panel Grad-CAM visualization."""
     import matplotlib
 
@@ -139,13 +174,20 @@ def create_gradcam_overlay(image_np: np.ndarray, heatmap: np.ndarray, alpha: flo
     return result
 
 
-def load_cached_calibration_result() -> Optional[CalibrationResult]:
-    """Load the exported ResNet-18 calibration artifact for Stanford Dogs."""
-    row = get_model_comparison_row("ResNet-18")
-    if row is None or not os.path.exists(CALIBRATION_IMAGE_PATH):
+def load_cached_calibration_result(
+    variant: ResNetVariantConfig,
+) -> Optional[CalibrationResult]:
+    """Load the exported ResNet-50 calibration artifact for a specific run."""
+    row = get_model_comparison_row(
+        variant.model_name,
+        variant.training_strategy,
+    )
+    if row is None or not variant.calibration_image_path.exists():
         return None
 
-    reliability_diagram = np.array(Image.open(CALIBRATION_IMAGE_PATH).convert("RGB"))
+    reliability_diagram = np.array(
+        Image.open(variant.calibration_image_path).convert("RGB")
+    )
     ece = float(row["ECE"])
     return CalibrationResult(
         ece=ece,
@@ -153,15 +195,16 @@ def load_cached_calibration_result() -> Optional[CalibrationResult]:
         bin_confidences=[],
         bin_counts=[OFFICIAL_TEST_SAMPLES],
         reliability_diagram=reliability_diagram,
-        source="Notebook artifact (official Stanford Dogs test set)",
+        source=f"Notebook artifact ({variant.training_strategy})",
     )
 
 
-class StanfordDogsResNet18Handler(BaseModelHandler):
-    """Model handler for the Stanford Dogs ResNet-18 checkpoint."""
+class StanfordDogsResNet50Handler(BaseModelHandler):
+    """Model handler for a Stanford Dogs ResNet-50 checkpoint variant."""
 
-    def __init__(self, model_path: str):
+    def __init__(self, model_path: str, variant: ResNetVariantConfig):
         self.model_path = model_path
+        self.variant = variant
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.class_labels = load_stanford_dogs_class_labels()
         self.model: Optional[nn.Module] = None
@@ -180,20 +223,22 @@ class StanfordDogsResNet18Handler(BaseModelHandler):
         self._load_model()
 
     def _load_model(self) -> None:
-        self.model = create_resnet18_classifier(num_classes=len(self.class_labels))
-
-        if os.path.exists(self.model_path):
-            checkpoint = torch.load(
-                self.model_path,
-                map_location=self.device,
-                weights_only=True,
-            )
+        checkpoint = None
+        model_path = Path(self.model_path)
+        if model_path.exists():
+            checkpoint = torch.load(model_path, map_location=self.device)
             if isinstance(checkpoint, dict):
+                checkpoint_class_names = checkpoint.get("class_names")
+                if isinstance(checkpoint_class_names, list) and checkpoint_class_names:
+                    self.class_labels = [str(name) for name in checkpoint_class_names]
                 self.history = normalize_history(checkpoint.get("history", {}))
                 val_acc = self.history.get("val_acc")
                 if isinstance(val_acc, list) and val_acc:
                     self.best_accuracy = float(max(val_acc))
 
+        self.model = create_resnet50_classifier(num_classes=len(self.class_labels))
+
+        if checkpoint is not None:
             if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
                 self.model.load_state_dict(checkpoint["model_state_dict"])
             elif isinstance(checkpoint, dict) and "state_dict" in checkpoint:
@@ -205,12 +250,12 @@ class StanfordDogsResNet18Handler(BaseModelHandler):
         self.model.eval()
         self.grad_cam = GradCAM(self.model, self.model.layer4[-1])
 
-        precomputed_full = load_cached_calibration_result()
-        if precomputed_full is not None:
-            self._calibration_cache["full"] = precomputed_full
+        precomputed = load_cached_calibration_result(self.variant)
+        if precomputed is not None:
+            self._calibration_cache["official_test"] = precomputed
 
     def get_model_name(self) -> str:
-        return "ResNet-18"
+        return self.variant.display_name
 
     def get_dataset_name(self) -> str:
         return "Stanford Dogs"
@@ -223,14 +268,18 @@ class StanfordDogsResNet18Handler(BaseModelHandler):
 
     def get_model_info(self) -> Dict[str, str]:
         total_params = sum(p.numel() for p in self.model.parameters())
-        comparison_row = get_model_comparison_row("ResNet-18")
+        comparison_row = get_model_comparison_row(
+            self.variant.model_name,
+            self.variant.training_strategy,
+        )
 
         info = {
-            "Architecture": "ResNet-18 (Transfer Learning from ImageNet)",
+            "Architecture": self.variant.architecture,
+            "Model Variant": self.variant.display_name,
             "Dataset": "Stanford Dogs (120 classes, 20,580 images)",
             "Parameters": f"{total_params:,}",
-            "Input Size": f"{IMAGE_SIZE}×{IMAGE_SIZE}×3",
-            "Training": "Full fine-tuning for 12 epochs",
+            "Input Size": f"{IMAGE_SIZE}x{IMAGE_SIZE}x3",
+            "Training": self.variant.training_strategy,
             "Device": str(self.device),
         }
 
@@ -240,6 +289,7 @@ class StanfordDogsResNet18Handler(BaseModelHandler):
         if comparison_row is not None:
             info["Test Accuracy"] = f"{float(comparison_row['Test accuracy']) * 100:.2f}%"
             info["Macro F1"] = f"{float(comparison_row['Macro F1']):.4f}"
+            info["Weighted F1"] = f"{float(comparison_row['Weighted F1']):.4f}"
             info["Train Time"] = f"{float(comparison_row['Train time (s)']):.2f} s"
             info["Official-Test ECE"] = f"{float(comparison_row['ECE']):.6f}"
 
@@ -284,6 +334,18 @@ class StanfordDogsResNet18Handler(BaseModelHandler):
         return []
 
     def get_calibration_data(
-        self, max_samples: Optional[int] = None
+        self,
+        max_samples: Optional[int] = None,
     ) -> Optional[CalibrationResult]:
-        return self._calibration_cache.get("full")
+        return self._calibration_cache.get("official_test")
+
+
+class StanfordDogsResNet50FullHandler(StanfordDogsResNet50Handler):
+    def __init__(self, model_path: str):
+        super().__init__(model_path, RESNET50_FULL_CONFIG)
+
+
+class StanfordDogsResNet50StagedHandler(StanfordDogsResNet50Handler):
+    def __init__(self, model_path: str):
+        super().__init__(model_path, RESNET50_STAGED_CONFIG)
+
