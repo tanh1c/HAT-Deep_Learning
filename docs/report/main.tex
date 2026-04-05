@@ -112,7 +112,7 @@ Mean aspect ratio & 1.187 \\
 \small
 \begin{tabularx}{0.96\textwidth}{>{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}X}
 \toprule
-\textbf{Artifact} & \textbf{Main role in the notebook and report} \\
+\textbf{Artifact} & \textbf{Main role in the pipeline and report} \\
 \midrule
 \begin{tabular}[t]{@{}l@{}}\texttt{metadata\_with\_quality}\\\texttt{.csv}\end{tabular} & Master per-image metadata table. It keeps the official split identity, relative image path, breed label, geometry statistics, and image-quality descriptors such as brightness, contrast, saturation, and RGB means. This file supports the dataset-level EDA plots and summary statistics. \\
 \texttt{split\_metadata.csv} & Final train/validation/test table after stratified validation splitting. It is the bridge between the EDA stage and the DataLoader stage because it records which image is assigned to each final split. \\
@@ -177,10 +177,79 @@ Mean $B$ channel & 0.3910 \\
 \end{figure}
 
 \subsection{Text Dataset: 20 Newsgroups}
-20 Newsgroups is used for topic classification with 20 classes and over 18,000 documents. It provides sufficient class diversity and realistic semantic overlap for comparing BiLSTM and Transformer fine-tuning.
+\noindent \textbf{Problem Statement} There are diversities of papers, newsletter, books... with various genres. We are not, however, able to manually distinguish between them in a short time. Therefore, RNN-based LSTM and Transformer-based DistilBERT are both taken into account to estimate the accuracy of classifying categories of each document based on natural language input.
+
+
+\noindent \textbf{Dataset information} In this classification task, after examining a wide range of datasets, we determined to use the \texttt{20 Newsgroups} dataset as the primary dataset for the NLP-based topic classification task. With exactly 20 classes and over 18,000 documents, this dataset satisfies all the course requirements. The dataset details are as follows:
+
+\begin{table}[H]
+\centering
+\begin{minipage}[t]{0.40\textwidth}
+\centering
+\textbf{Corpus Statistics}
+\vspace{0.4em}
+\begin{tabular}{lr}
+\toprule
+\textbf{Statistic} & \textbf{Value / Info} \\
+\midrule
+Total words & 3,423,145 \\
+Total characters & 22,043,554 \\
+Min docs/class & 628 (talk.religion.misc) \\
+Max docs/class & 999 (rec.sport.hockey) \\
+Mean docs/class & 942.3 \\
+Std & 97.0 \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\hspace*{2cm}
+\begin{minipage}[t]{0.40\textwidth}
+\centering
+\textbf{Per-document Word Count}
+\vspace{0.4em}
+\begin{tabular}{lr}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Mean & 181.6 \\
+Median & 83.0 \\
+Std & 501.3 \\
+Min & 0 \\
+Max & 11765 \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\caption{Corpus and document statistics for the 20 Newsgroups dataset. The table shows that the number of documents across classes is relatively uniform, while document lengths vary widely, ranging from 0 to 11,765 words.}
+\end{table}
+
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.4\textwidth}
+\centering
+\includegraphics[width=\textwidth]{assets/text/doc_cnt.png}
+\caption{Word-frequency visualization from the EDA section.}
+\label{fig:doc_cnt}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.56\textwidth}
+\centering
+\includegraphics[width=\textwidth]{assets/text/doc_per_cor.png}
+\caption{Number of documents per Corpus}
+\label{fig:doc_per_cor}
+\end{minipage}
+\end{figure}
+
+\textbf{Document length variability} The large gap between the mean (181.6) and median (83.0) document length, together with the high standard deviation (501.3), indicates a strongly right-skewed distribution. Most documents are relatively short, but a small number of extremely long documents act as outliers.
+
+\textbf{Presence of empty documents} The minimum document length of 0 suggests that some samples may be empty after preprocessing or contain no meaningful textual content. Such cases should be handled carefully, as they may introduce noise into the training process.
+
+\textbf{Implication for preprocessing} These observations motivate several preprocessing decisions, such as removing empty or extremely short documents and truncating overly long samples to fit the model’s maximum input length.
 
 \subsection{Multimodal Dataset: UPMC-Food101 Subset}
 For multimodal classification, we use paired image-text samples from a 10-class subset of UPMC-Food101. The dataset contains genuine image-caption/title pairs, which satisfies the multimodal requirement of semantic alignment between modalities.
+
+
+
 
 \section{Methodology}
 
@@ -241,11 +310,23 @@ Training uses \texttt{CrossEntropyLoss}, \texttt{AdamW}, and cosine annealing le
 \end{figure}
 
 \subsection{Text Track: BiLSTM + Attention vs DistilBERT}
-\begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{BiLSTM + Attention}: recurrent baseline with sequence modeling and attention aggregation.
-    \item \textbf{DistilBERT}: Transformer backbone fine-tuned end-to-end for classification.
-\end{itemize}
-The text pipeline includes cleaning, truncation, stratified splitting, dynamic padding, and class-weighted cross-entropy to reduce imbalance effects.
+\noindent \textbf{BiLSTM with Attention} \\
+We employ a Bidirectional Long Short-Term Memory (BiLSTM) model with an attention mechanism for text classification. The input tokens are first mapped to 300-dimensional GloVe embeddings, achieving approximately 43.3\% vocabulary coverage. These embeddings are further weighted using TF-IDF to emphasize informative terms.
+
+\noindent The backbone consists of a two-layer BiLSTM encoder, which captures both forward and backward contextual dependencies in the sequence. On top of the encoder, an attention layer is applied to aggregate token-level representations into a context-aware document representation, allowing the model to focus on the most relevant parts of the input text. The resulting representation is then fed into a fully connected layer for classification. \\ 
+\newpage
+\noindent \textbf{DistilBERT} \\
+\noindent We utilize the pretrained \texttt{distilbert-base-uncased} model as the backbone for our classification task. DistilBERT is a lightweight transformer-based model that retains most of BERT's performance while being more computationally efficient.
+
+\noindent The model is fine-tuned on our dataset by adding a classification head on top of the [CLS] token representation. During training, the entire model is updated end-to-end. This approach enables the model to leverage rich contextual representations learned during pretraining while adapting to the specific downstream classification task.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/text/text_pipeline.png}
+    \caption{Text-track pipeline used in the report. The same preprocessed document input is sent to either a BiLSTM backbone or a DistilBERT
+backbone, then mapped to a 20-class classifier head.}
+    \label{fig:text_pipeline}
+\end{figure}
 
 \subsection{Multimodal Track: CLIP Zero-shot vs Few-shot}
 CLIP is used as the shared multimodal backbone.
@@ -257,18 +338,10 @@ The main backbone is CLIP ViT-B/16; CLIP RN50 is reported as an extension.
 
 \section{Experimental Setup}
 
-\subsection{Preprocessing and DataLoader}
-Each track uses a dedicated preprocessing pipeline with fixed random seed and stratified splitting where applicable. DataLoaders are configured to ensure fair comparison across models in the same modality.
-
-\subsection{Evaluation Metrics}
-Primary metrics are \textbf{Accuracy} and \textbf{F1-score} (macro or weighted depending on context). We also report precision, confusion matrices, and calibration metrics (ECE/reliability diagrams) in extension analysis.
-
-\section{Results and Discussion}
-
 \subsection{Image Track --- Stanford Dogs, ResNet-50, and ViT-B/16}
 
 \subsubsection{Dataset, DataLoader, and Setup}
-\noindent \textbf{Split construction} After reading the official split files, the notebook creates a stratified validation set from the official training partition. This gives the final benchmark split shown below.
+\noindent \textbf{Split construction} After reading the official split files, our pipeline creates a stratified validation set from the official training partition. This gives the final benchmark split shown below.
 
 \begin{table}[H]
 \centering
@@ -291,7 +364,7 @@ Test & 8,580 & 269 & Official Stanford Dogs test split \\
 \]
 The training path is family-specific. ResNet-50 uses a stronger augmentation policy with a wider \texttt{RandomResizedCrop} range, horizontal flip, rotation, color jitter, and random erasing. ViT-B/16 uses a milder crop range and lighter perturbation strength to preserve fine-grained breed cues. In all cases, the input is standardized to a $224 \times 224$ tensor and batched with \texttt{batch\_size = 32}.\\
 
-\noindent \textbf{Normalization} Both models are initialized from ImageNet-pretrained checkpoints, so the notebook normalizes RGB channels with ImageNet statistics:
+\noindent \textbf{Normalization} Both models are initialized from ImageNet-pretrained checkpoints, so the pipeline normalizes RGB channels with ImageNet statistics:
 \[
 x_{\mathrm{norm}} = \frac{x - \mu}{\sigma}, \quad
 \mu=(0.485, 0.456, 0.406), \quad
@@ -302,14 +375,14 @@ Although the exported Stanford Dogs metadata shows slightly different dataset RG
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.84\textwidth]{augmented_batch_preview.png}
-\caption{Notebook preview of an augmented training batch after resizing, cropping, tensor conversion, and normalization-aware preprocessing.}
+\caption{Preview of an augmented training batch after resizing, cropping, tensor conversion, and normalization-aware preprocessing.}
 \label{fig:stanforddogs_augmented_batch_preview}
 \end{figure}
 
 \subsubsection{Model Building, Training, Evaluation, and Comparison}
 \noindent \textbf{ResNet-50} is used as the CNN baseline. The model starts from ImageNet-pretrained weights and replaces the final fully connected layer with a new classifier head for 120 breeds.\\
 
-\noindent \textbf{ViT-B/16} is used as the Transformer baseline. The notebook replaces the head on the CLS token representation and compares the same two transfer-learning schedules used for ResNet-50.\\
+\noindent \textbf{ViT-B/16} is used as the Transformer baseline. Our implementation replaces the head on the CLS token representation and compares the same two transfer-learning schedules used for ResNet-50.\\
 
 \noindent \textbf{Training strategies} To make the comparison fair, each backbone is evaluated with two strategies:
 \begin{itemize}[leftmargin=*, nosep]
@@ -333,8 +406,64 @@ ViT-B/16 & Transformer & 85.89M & Head 3 + full fine-tune 8 epochs \\
 \label{tab:image_track_model_summary}
 \end{table}
 
+% \subsection{Preprocessing and DataLoader}
+% Each track uses a dedicated preprocessing pipeline with fixed random seed and stratified splitting where applicable. DataLoaders are configured to ensure fair comparison across models in the same modality.
+
+% \subsection{Evaluation Metrics}
+% Primary metrics are \textbf{Accuracy} and \textbf{F1-score} (macro or weighted depending on context). We also report precision, confusion matrices, and calibration metrics (ECE/reliability diagrams) in extension analysis.
+
+\subsection{Text Track: BiLSTM + Attention vs DistilBERT}
+\subsubsection{Dataset, DataLoader, and Setup}
+\noindent \textbf{Dataset overview} To ensure reliable access to the dataset, we downloaded it from Hugging Face. We then split 60\% of the data into a training set and used the remaining 40\% as the test set. Finally, we observe a moderate class imbalance, with the number of documents per class ranging from 628 to 999. \\ 
+
+\noindent \textbf{Cleaning and Truncation} To obtain clean data prior to training, we applied several preprocessing strategies. After extensive experimentation, we found that the most effective pipeline removes quoted text, email headers, and signatures. In addition, we discard short documents containing fewer than 50 characters and truncate each document to a maximum of 400 words to better fit the BERT input constraint (512 tokens). \\ 
+
+\noindent \textbf{Splitting strategy} The fine-grained data splitting strategy is shown below.
+
+\begin{table}[H]
+\centering
+\caption{Train/Validation/Test Split}
+\begin{tabular}{lrl}
+\toprule
+\textbf{Split} & \textbf{Samples} & \textbf{Note} \\
+\midrule
+Train & 8,584 & Stratified \\
+Validation & 2,146 & Stratified \\
+Test & 7,112 & Stratified \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent \textbf{Tokenizer details} We adopt the \texttt{distilbert-base-uncased} tokenizer in our pipeline. Dynamic padding is applied via \texttt{DataCollatorWithPadding} to avoid unnecessary memory consumption. Approximately 90\% of the documents fit within the 512-token limit. \\ 
+
+\noindent \textbf{Weighted loss} Due to class imbalance, we apply a weighting scheme to mitigate model bias. The loss function is defined as follows:
+
+\begin{equation}
+w_c = \frac{N}{C \cdot n_c}
+\end{equation}
+\begin{equation}
+\mathcal{L} = \text{CrossEntropy}(x, y; w_c)
+\end{equation}
+
+\noindent where $N$ is the total number of samples, $C$ is the number of classes, and $n_c$ is the number of samples in class $c$. The weight $w_c$ is inversely proportional to the class frequency, giving higher importance to underrepresented classes. \\
+
+\noindent \textbf{Batch setup} Due to the high computational cost of training BERT, we use a batch size of 12 for the training set and 36 for both the validation and test sets. As described earlier, token sequences are dynamically padded to match the maximum sequence length within each batch. \\ 
+
+
+\subsubsection{Model Configuration and Experimental Setup} 
+\noindent \textbf{BiLSTM with Attention} The BiLSTM with Attention model was trained for 20 epochs using Adam with a learning rate of $1\times10^{-3}$ and a batch size of 16. Pretrained 300-dimensional GloVe embeddings, enhanced with TF-IDF weighting, were used as input representations. The backbone consists of a two-layer bidirectional LSTM with 128 hidden units per direction, followed by a self-attention mechanism over all time steps and a dropout rate of 0.3 to reduce overfitting. To improve optimization stability, cosine scheduling with warmup was applied, while weighted cross-entropy loss was used to handle class imbalance. The maximum sequence length was set to 256 tokens to balance context coverage and computational cost. \\
+\noindent \textbf{DistilBERT} The DistilBERT model was fine-tuned from the pretrained \\\texttt{distilbert-base-uncased} checkpoint using a two-phase training strategy over 15 epochs. In the first phase, only the classification head was unfrozen, while in the second phase all encoder layers were unfrozen for end-to-end fine-tuning. Optimization was performed with AdamW, and a layer-wise differential learning rate strategy was adopted to allow smaller updates in lower transformer layers and larger updates in higher layers and the classifier head. To further stabilize training and improve convergence, linear warmup followed by cosine annealing was used as the learning rate schedule. \\ 
+
+\noindent \textbf{Evaluation} We evaluate each model using accuracy, macro F1, weighted F1, and a per-class classification report to assess both overall and class-level performance. \\ 
+
+\noindent \textbf{Comparision} For systematic comparison, we report validation accuracy, test accuracy, macro F1, training time, inference latency, and the number of parameters.
+
+\section{Results and Discussion}
+
+\subsection{Image Track --- Stanford Dogs, ResNet-50, and ViT-B/16}
+
 \subsubsection{Experimental Results, Figures, Analysis, and Discussion}
-\noindent \textbf{Fair benchmark results} Table~\ref{tab:image_results_stanford_dogs} summarizes the four experiments exported from the final notebook.
+\noindent \textbf{Fair benchmark results} Table~\ref{tab:image_results_stanford_dogs} summarizes the four experiments in the final benchmark.
 
 \begin{table}[H]
 \centering
@@ -356,13 +485,14 @@ ViT-B/16 & Head 3 + full 8 epochs & 85.89M & 93.48\% & 0.9311 & 0.019799 \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.86\textwidth]{stanforddogs_comparison_overview.png}
-\caption{Overview figure exported from the fair four-run benchmark.}
+\caption{Overview figure from the fair four-run benchmark.}
 \label{fig:stanforddogs_comparison_overview}
 \end{figure}
 
 \noindent \textbf{Discussion} Several observations follow from these results. First, \textbf{ViT-B/16} achieves the highest absolute accuracy and macro F1, with the staged strategy reaching 93.48\% accuracy and 0.9311 macro F1. Second, the \textbf{staged strategy} improves both families relative to full fine-tuning, suggesting that head warm-up before full unfreezing is beneficial on this fine-grained benchmark. Third, \textbf{ResNet-50} remains significantly lighter and faster to train than ViT-B/16, but its final accuracy is lower. This establishes a clear trade-off between efficiency and absolute performance.\\
 
-\noindent \textbf{Calibration analysis} The staged runs are also the best-per-family models from the exported benchmark files, so their reliability diagrams are shown below.
+\subsubsection{Other Extension Reports}
+\noindent \textbf{Calibration analysis} In addition to the main benchmark comparison, we also examine calibration using the best staged run from each family. The reliability diagrams below show that ViT-B/16 is better calibrated than ResNet-50 on the official Stanford Dogs test set, with a lower Expected Calibration Error (ECE). This is useful because a better-calibrated model produces confidence scores that are more trustworthy in practice.
 
 \begin{figure}[H]
 \centering
@@ -378,23 +508,13 @@ ViT-B/16 & Head 3 + full 8 epochs & 85.89M & 93.48\% & 0.9311 & 0.019799 \\
 \label{fig:vitb16_calibration_staged}
 \end{figure}
 
-\noindent \textbf{Interpretation} ViT-B/16 is not only more accurate but also better calibrated than ResNet-50 in the final benchmark. Nevertheless, the CNN baseline remains useful because it is lighter, faster, and easier to deploy in constrained environments.
-
-\subsubsection{Other Extension Reports}
-\noindent \textbf{Interpretability} In addition to metrics, the notebook exports qualitative explanation artifacts for the best staged runs. For ResNet-50, Grad-CAM highlights the local regions that most influence breed prediction. For ViT-B/16, the attention gallery visualizes the spatial emphasis of the CLS-token attention pattern. These artifacts are useful for checking whether the models focus on semantically meaningful dog regions rather than background shortcuts.
+\noindent \textbf{Interpretability} We also include a qualitative interpretability artifact for the best ResNet-50 staged run. Grad-CAM highlights the local image regions that most influence breed prediction, which helps check whether the CNN attends to semantically meaningful dog features rather than relying only on background shortcuts.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.92\textwidth]{resnet50_gradcam_gallery_staged.png}
+\includegraphics[width=0.8\textwidth]{resnet50_gradcam_gallery_staged.png}
 \caption{Grad-CAM gallery for the staged ResNet-50 model on Stanford Dogs.}
 \label{fig:resnet50_gradcam_gallery_staged}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.92\textwidth]{vit_b16_attention_gallery_staged.png}
-\caption{Attention gallery for the staged ViT-B/16 model on Stanford Dogs.}
-\label{fig:vit_b16_attention_gallery_staged}
 \end{figure}
 
 \clearpage
@@ -457,13 +577,13 @@ The multimodal experiments show that ViT-B/16 is more stable than RN50 across ad
 \label{fig:rn50_calibration_summary}
 \end{figure}
 
-\section{Extensions}
-Beyond the mandatory comparisons, we include additional analyses:
-\begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Image:} interpretability and calibration analysis.
-    \item \textbf{Text:} fine-tuning strategy comparison and efficiency analysis.
-    \item \textbf{Multimodal:} augmentation vs no-augmentation, calibration, and confusion-matrix-based error analysis.
-\end{itemize}
+% \section{Extensions}
+% Beyond the mandatory comparisons, we include additional analyses:
+% \begin{itemize}[leftmargin=*, nosep]
+%     \item \textbf{Image:} interpretability and calibration analysis.
+%     \item \textbf{Text:} fine-tuning strategy comparison and efficiency analysis.
+%     \item \textbf{Multimodal:} augmentation vs no-augmentation, calibration, and confusion-matrix-based error analysis.
+% \end{itemize}
 
 \section{Conclusion}
 This final report demonstrates that pretrained deep learning models can be effectively adapted across image, text, and multimodal classification tasks.

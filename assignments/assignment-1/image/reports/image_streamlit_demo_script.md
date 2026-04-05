@@ -19,10 +19,10 @@ This script is designed for a short live demo after the image-result slides.
    - predicted breed
    - top-1 confidence
    - top-k predictions
-   - attention / explanation image
+   - interpretability image
 
 ### What to say
-"Besides offline experiments, we also deployed a small Streamlit demo for the image track. The app includes all four benchmark checkpoints: ResNet-50 full fine-tuning, ResNet-50 staged fine-tuning, ViT-B/16 full fine-tuning, and ViT-B/16 staged fine-tuning. For this demo, I choose the best overall model, ViT-B/16 with the staged strategy. I upload a dog image, run prediction, and the app returns the predicted breed, the confidence score, the top candidate classes, and an interpretability view showing where the model focuses."
+"Besides offline experiments, we also deployed a small Streamlit demo for the image track. The app includes all four benchmark checkpoints: ResNet-50 full fine-tuning, ResNet-50 staged fine-tuning, ViT-B/16 full fine-tuning, and ViT-B/16 staged fine-tuning. For this demo, I choose the best overall model, ViT-B/16 with the staged strategy. I upload a dog image, run prediction, and the app returns the predicted breed, the confidence score, the top candidate classes, and an interpretability view. For ViT, this view is now shown as attention rollout rather than a raw last-layer attention map."
 
 ---
 
@@ -94,7 +94,7 @@ This script is designed for a short live demo after the image-result slides.
 - Click `Predict & Explain`
 
 ### What to say while waiting
-"When I click Predict and Explain, the app runs inference and also generates an interpretability visualization, so we can see not only the final class prediction but also part of the model's visual reasoning."
+"When I click Predict and Explain, the app runs inference and also generates an interpretability visualization, so we can see not only the final class prediction but also an approximate view of where the model concentrates information."
 
 ---
 
@@ -122,13 +122,22 @@ This script is designed for a short live demo after the image-result slides.
 ### What to do on screen
 - Scroll to the explanation image
 - If using ResNet-50, mention Grad-CAM
-- If using ViT-B/16, mention attention overlay
+- If using ViT-B/16, mention attention rollout
 
 ### What to say for ViT-B/16
-"Because I selected ViT-B/16, the app shows an attention-based explanation. This helps us see which spatial regions of the dog image contributed most to the prediction. Ideally, the model should focus on the head, ears, muzzle, fur pattern, or body region of the dog rather than irrelevant background."
+"Because I selected ViT-B/16, the app shows an attention-rollout visualization. This is more informative than simply displaying the last-layer attention map, because it summarizes how information flows across multiple Transformer blocks. We interpret it as an approximate indication of which spatial regions support the prediction, not as a perfect proof of causal importance."
+
+### Extra explanation for the colors
+"In the attention-rollout panel, warmer colors such as yellow, orange, and red indicate higher rollout values, meaning those regions receive stronger aggregated attention flow through the Transformer layers. Cooler colors such as blue or purple indicate lower values. In the overlay panel, the same color map is projected back onto the original image, so red or yellow regions are the areas the model is relatively emphasizing more, while blue regions contribute less in this visualization."
+
+### Important clarification
+"However, higher intensity here does not mean absolute certainty, and it does not prove that the model uses only that region. It is better understood as a qualitative importance map rather than an exact causal explanation."
 
 ### What to say for ResNet-50
 "If we switch to ResNet-50, the app shows a Grad-CAM explanation. This highlights the local image regions that most influenced the classifier. It is a useful way to confirm whether the CNN is using meaningful dog-specific features."
+
+### Safe interpretation line
+"So for the demo, the main purpose of this panel is qualitative inspection. If the highlighted area overlaps the dog region, that is a good sign, but we still treat it as supportive evidence rather than a definitive explanation."
 
 ---
 
@@ -155,7 +164,7 @@ This script is designed for a short live demo after the image-result slides.
 ## 4. Fast Backup Script If Time Is Short
 
 ### 20-second version
-"Here is our Streamlit demo for the image track. It exposes all four trained checkpoints from the benchmark. I select the best model, ViT-B/16 staged, upload one dog image, and run prediction. The app returns the predicted breed, confidence, top candidate classes, and an attention-based explanation, so we can evaluate both performance and model focus in a practical setting."
+"Here is our Streamlit demo for the image track. It exposes all four trained checkpoints from the benchmark. I select the best model, ViT-B/16 staged, upload one dog image, and run prediction. The app returns the predicted breed, confidence, top candidate classes, and an attention-rollout visualization, so we can evaluate both performance and model behavior in a practical setting."
 
 ---
 

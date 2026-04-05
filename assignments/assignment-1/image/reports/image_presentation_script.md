@@ -242,7 +242,7 @@ Use this table:
   - ViT-B/16 staged: `ECE = 0.0198`
 - Interpretability:
   - Grad-CAM for ResNet-50
-  - Attention gallery for ViT-B/16
+  - Attention rollout / attention gallery for ViT-B/16
 - Message:
   - ViT is more accurate and better calibrated
   - Both models focus on meaningful dog regions
@@ -255,7 +255,10 @@ Use this table:
   - `vit_b16_attention_gallery_staged.png`
 
 ### Speaking script
-"We also evaluated the models beyond raw accuracy. In terms of calibration, ViT-B/16 is clearly better, with a lower expected calibration error than ResNet-50. This means its confidence scores are more reliable. For interpretability, we used Grad-CAM for ResNet-50 and attention visualization for ViT-B/16. In both cases, the visualizations show that the models focus mainly on the dog region rather than irrelevant background, which increases confidence that the models learn meaningful features."
+"We also evaluated the models beyond raw accuracy. In terms of calibration, ViT-B/16 is clearly better, with a lower expected calibration error than ResNet-50. This means its confidence scores are more reliable. For interpretability, we used Grad-CAM for ResNet-50 and attention-based visualization for ViT-B/16. For the Transformer, we interpret the rollout or attention map as a qualitative hint about where information is concentrated, not as a perfect causal explanation. Even so, these visualizations are useful for checking whether the model attends to the dog region instead of relying entirely on background context."
+
+### Optional explanation if the audience asks about colors
+"In the ViT attention-rollout view, yellow to red regions indicate higher rollout intensity, which means stronger aggregated attention flow across Transformer layers. Blue or purple regions indicate lower intensity. When this heatmap is overlaid on the input image, the warmer regions show where the model is relatively focusing more in this visualization."
 
 ---
 
