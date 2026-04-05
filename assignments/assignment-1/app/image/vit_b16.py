@@ -77,69 +77,90 @@ def create_vit_classifier(num_classes: int) -> nn.Module:
 
 
 class ViTAttentionVisualizer:
-    """Attention visualization helper for the last ViT encoder block."""
+    """Attention-rollout visualizer across all ViT encoder blocks."""
 
     def __init__(self, model: nn.Module):
         self.model = model
-        self.attentions = None
-        self._patch_last_encoder_block()
+        self.attentions: List[torch.Tensor] = []
+        self._patch_encoder_blocks()
 
-    def _patch_last_encoder_block(self) -> None:
-        last_block = self.model.encoder.layers[-1]
+    def _patch_encoder_blocks(self) -> None:
         visualizer = self
 
-        def forward_with_attention(block, input_tensor):
-            torch._assert(
-                input_tensor.dim() == 3,
-                f"Expected (batch_size, seq_length, hidden_dim) got {input_tensor.shape}",
-            )
+        for block in self.model.encoder.layers:
+            def forward_with_attention(block, input_tensor):
+                torch._assert(
+                    input_tensor.dim() == 3,
+                    f"Expected (batch_size, seq_length, hidden_dim) got {input_tensor.shape}",
+                )
 
-            x = block.ln_1(input_tensor)
-            attn_output, attn_weights = block.self_attention(
-                x,
-                x,
-                x,
-                need_weights=True,
-                average_attn_weights=False,
-            )
-            visualizer.attentions = attn_weights.detach()
+                x = block.ln_1(input_tensor)
+                attn_output, attn_weights = block.self_attention(
+                    x,
+                    x,
+                    x,
+                    need_weights=True,
+                    average_attn_weights=False,
+                )
+                visualizer.attentions.append(attn_weights.detach())
 
-            x = block.dropout(attn_output)
-            x = x + input_tensor
+                x = block.dropout(attn_output)
+                x = x + input_tensor
 
-            y = block.ln_2(x)
-            y = block.mlp(y)
-            return x + y
+                y = block.ln_2(x)
+                y = block.mlp(y)
+                return x + y
 
-        last_block.forward = types.MethodType(forward_with_attention, last_block)
+            block.forward = types.MethodType(forward_with_attention, block)
 
-    def generate_attention_map(self, input_tensor: torch.Tensor) -> Optional[np.ndarray]:
-        self.model.eval()
-        with torch.no_grad():
-            _ = self.model(input_tensor)
-
-        if self.attentions is None:
+    @staticmethod
+    def _compute_rollout_mask(attentions: List[torch.Tensor]) -> Optional[np.ndarray]:
+        if not attentions:
             return None
 
-        cls_attention = self.attentions[0, :, 0, 1:].mean(dim=0)
-        num_patches = int(cls_attention.shape[0] ** 0.5)
+        device = attentions[0].device
+        token_count = attentions[0].shape[-1]
+        rollout = torch.eye(token_count, device=device)
 
-        if num_patches * num_patches != cls_attention.shape[0]:
-            return cls_attention.cpu().numpy()
+        for layer_attention in attentions:
+            fused_attention = layer_attention[0].mean(dim=0)
+            fused_attention = fused_attention.clamp(min=0)
 
-        attention_map = cls_attention.reshape(num_patches, num_patches).cpu().numpy()
+            # Include residual connections so rollout preserves information flow
+            # across encoder blocks instead of over-emphasizing a single layer.
+            fused_attention = fused_attention + torch.eye(token_count, device=device)
+            fused_attention = fused_attention / fused_attention.sum(
+                dim=-1,
+                keepdim=True,
+            ).clamp(min=1e-6)
+            rollout = fused_attention @ rollout
+
+        cls_rollout = rollout[0, 1:]
+        patch_dim = int(cls_rollout.shape[0] ** 0.5)
+
+        if patch_dim * patch_dim != cls_rollout.shape[0]:
+            return cls_rollout.cpu().numpy()
+
+        attention_map = cls_rollout.reshape(patch_dim, patch_dim).cpu().numpy()
         attention_map = attention_map - attention_map.min()
         if attention_map.max() > 0:
             attention_map = attention_map / attention_map.max()
         return attention_map
 
+    def generate_attention_map(self, input_tensor: torch.Tensor) -> Optional[np.ndarray]:
+        self.attentions = []
+        self.model.eval()
+        with torch.no_grad():
+            _ = self.model(input_tensor)
+        return self._compute_rollout_mask(self.attentions)
+
 
 def create_attention_overlay(
     image_np: np.ndarray,
     attention_map: Optional[np.ndarray],
-    alpha: float = 0.5,
+    alpha: float = 0.42,
 ) -> np.ndarray:
-    """Create a three-panel attention visualization."""
+    """Create a three-panel attention-rollout visualization."""
     import matplotlib
 
     matplotlib.use("Agg")
@@ -168,7 +189,7 @@ def create_attention_overlay(
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
     fig.patch.set_facecolor("#0d1117")
 
-    titles = ["Original Image", "Attention Map", "Overlay"]
+    titles = ["Original Image", "Attention Rollout", "Overlay"]
     images = [image_np, colormap, overlay]
 
     for ax, img, title in zip(axes, images, titles):
@@ -355,4 +376,3 @@ class StanfordDogsViTFullHandler(StanfordDogsViTHandler):
 class StanfordDogsViTStagedHandler(StanfordDogsViTHandler):
     def __init__(self, model_path: str):
         super().__init__(model_path, VIT_B16_STAGED_CONFIG)
-

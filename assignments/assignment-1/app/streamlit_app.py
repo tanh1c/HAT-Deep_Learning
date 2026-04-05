@@ -70,7 +70,7 @@ MODEL_SPECS: Dict[str, Dict[str, Any]] = {
         "configured_url_key": "STANFORDDOGS_VIT_B16_FULL_URL",
         "configured_gdrive_key": "STANFORDDOGS_VIT_B16_FULL_GDRIVE_ID",
         "family": "Transformer",
-        "interpretability_caption": "Attention overlay generated directly from the ViT-B/16 full fine-tuning checkpoint.",
+        "interpretability_caption": "Attention-rollout overlay generated from the ViT-B/16 full fine-tuning checkpoint.",
     },
     "stanforddogs_vit_b16_staged": {
         "label": "ViT-B/16 · Head 3 + Full 8",
@@ -80,7 +80,7 @@ MODEL_SPECS: Dict[str, Dict[str, Any]] = {
         "configured_url_key": "STANFORDDOGS_VIT_B16_STAGED_URL",
         "configured_gdrive_key": "STANFORDDOGS_VIT_B16_STAGED_GDRIVE_ID",
         "family": "Transformer",
-        "interpretability_caption": "Attention overlay generated directly from the ViT-B/16 staged fine-tuning checkpoint.",
+        "interpretability_caption": "Attention-rollout overlay generated from the ViT-B/16 staged fine-tuning checkpoint.",
     },
 }
 

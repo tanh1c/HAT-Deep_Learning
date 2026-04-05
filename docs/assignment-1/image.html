@@ -449,6 +449,65 @@
                 <li><code>split_metadata.csv</code> records the internal stratified split: 10,200 train, 1,800 val, and 8,580 test</li>
                 <li>The later tensor target is <code>(3, 224, 224)</code> per image, but the actual resize-to-tensor logic is intentionally deferred to node 2</li>
               </ul>
+              <div class="story-grid">
+                <section class="story-block">
+                  <p class="card-kicker">Official split files</p>
+                  <h3 class="card-title">What <code>train_list.mat</code> and <code>test_list.mat</code> actually are</h3>
+                  <p class="track-copy">
+                    These two files are not image folders. They are MATLAB annotation files shipped with Stanford Dogs and used to
+                    define the original benchmark partition. Each file stores sample-level metadata such as relative image paths and
+                    integer breed labels, so the notebook can recover the official <code>train</code>/<code>test</code> split instead
+                    of inventing a new one from scratch.
+                  </p>
+                  <ul class="mini-list">
+                    <li><code>train_list.mat</code>: official training-image entries and labels</li>
+                    <li><code>test_list.mat</code>: official test-image entries and labels</li>
+                    <li>The notebook reads them with the Stanford Dogs root as context, then resolves each relative path into a real image under <code>Images/</code></li>
+                    <li>Only after that reconstruction step does the notebook create the internal <code>train</code> and <code>val</code> split from <code>official_train</code></li>
+                  </ul>
+                </section>
+
+                <section class="story-block">
+                  <p class="card-kicker">Dataset layout</p>
+                  <h3 class="card-title">How the Stanford Dogs dataset is organized on disk</h3>
+                  <p class="track-copy">
+                    The notebook downloads three archives: image files, breed annotations, and the official split lists. In practice,
+                    the code resolves <code>TRAIN_LIST_MAT</code> and <code>TEST_LIST_MAT</code> either from the dataset root or from
+                    the extracted <code>lists/</code> folder.
+                  </p>
+                  <div class="code-sample">
+                    <div class="code-sample-bar">
+                      <div class="code-sample-dots" aria-hidden="true">
+                        <span class="code-sample-dot code-sample-dot-red"></span>
+                        <span class="code-sample-dot code-sample-dot-yellow"></span>
+                        <span class="code-sample-dot code-sample-dot-green"></span>
+                      </div>
+                      <span class="code-sample-label">dataset tree</span>
+                      <button class="code-sample-copy" type="button" data-copy-code>Copy</button>
+                    </div>
+<pre class="language-text"><code class="language-text">stanford_dogs/
+├── images.tar
+├── annotation.tar
+├── lists.tar
+├── Images/
+│   ├── n02085620-Chihuahua/
+│   │   ├── n02085620_10074.jpg
+│   │   └── ...
+│   ├── n02085782-Japanese_spaniel/
+│   └── ...
+├── Annotation/
+│   ├── n02085620-Chihuahua/
+│   │   ├── n02085620_10074
+│   │   └── ...
+│   └── ...
+├── lists/
+│   ├── train_list.mat
+│   └── test_list.mat
+├── train_list.mat   # sometimes resolved from the root
+└── test_list.mat    # sometimes resolved from the root</code></pre>
+                  </div>
+                </section>
+              </div>
             <div class="code-sample">
               <div class="code-sample-bar">
                 <div class="code-sample-dots" aria-hidden="true">
