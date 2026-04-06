@@ -1649,9 +1649,9 @@ print("ViT-B/16 params:", f"{count_total_params(vit_model):,}")</code></pre>
                     <td>CNN</td>
                     <td>Head 3 + full fine-tune 8 epochs</td>
                     <td>23.75</td>
-                    <td>0.8655</td>
-                    <td>0.8599</td>
-                    <td>205.0</td>
+                    <td class="metric-cell metric-good">0.8655</td>
+                    <td class="metric-cell metric-good">0.8599</td>
+                    <td class="metric-cell metric-fast">205.0</td>
                   </tr>
                   <tr>
                     <td>ViT-B/16</td>
@@ -1667,8 +1667,8 @@ print("ViT-B/16 params:", f"{count_total_params(vit_model):,}")</code></pre>
                     <td>Transformer</td>
                     <td>Head 3 + full fine-tune 8 epochs</td>
                     <td>85.89</td>
-                    <td>0.9348</td>
-                    <td>0.9311</td>
+                    <td class="metric-cell metric-best">0.9348</td>
+                    <td class="metric-cell metric-best">0.9311</td>
                     <td>755.2</td>
                   </tr>
                 </tbody>
@@ -2290,9 +2290,9 @@ def evaluate_model(model, loader, class_names, model_name, artifact_dir):
                     <td>ViT-B/16</td>
                     <td>CLS token 768-d embedding</td>
                     <td><code>nn.Linear(768, 120)</code></td>
-                    <td>0.9348</td>
-                    <td>0.9311</td>
-                    <td>0.9350</td>
+                    <td class="metric-cell metric-best">0.9348</td>
+                    <td class="metric-cell metric-best">0.9311</td>
+                    <td class="metric-cell metric-best">0.9350</td>
                     <td>
                       <a href="../assets/assignment-1/stanford_dogs/benchmark/vit/vit_b16_head_then_full/vit_b_16___head_3_+_full_fine_tune_8_epochs_classification_report.csv" target="_blank" rel="noreferrer"><code>classification_report.csv</code></a><br>
                       <a href="../assets/assignment-1/stanford_dogs/benchmark/vit/vit_b16_head_then_full/vit_b_16___head_3_+_full_fine_tune_8_epochs_metrics.json" target="_blank" rel="noreferrer"><code>metrics.json</code></a><br>
@@ -2535,7 +2535,7 @@ def evaluate_model(model, loader, class_names, model_name, artifact_dir):
                     <td>0.8599</td>
                     <td>0.8659</td>
                     <td>0.0408</td>
-                    <td>205.03</td>
+                    <td class="metric-cell metric-fast">205.03</td>
                     <td>23.75</td>
                   </tr>
                   <tr>
@@ -2544,16 +2544,16 @@ def evaluate_model(model, loader, class_names, model_name, artifact_dir):
                     <td>0.9077</td>
                     <td>0.9026</td>
                     <td>0.9080</td>
-                    <td>0.0178</td>
+                    <td class="metric-cell metric-calibration">0.0178</td>
                     <td>943.43</td>
                     <td>85.89</td>
                   </tr>
                   <tr>
                     <td>ViT-B/16</td>
                     <td>Head 3 + full fine-tune 8 epochs</td>
-                    <td>0.9348</td>
-                    <td>0.9311</td>
-                    <td>0.9350</td>
+                    <td class="metric-cell metric-best">0.9348</td>
+                    <td class="metric-cell metric-best">0.9311</td>
+                    <td class="metric-cell metric-best">0.9350</td>
                     <td>0.0198</td>
                     <td>755.21</td>
                     <td>85.89</td>
@@ -2585,15 +2585,15 @@ def evaluate_model(model, loader, class_names, model_name, artifact_dir):
                     <td>0.8655</td>
                     <td>0.8599</td>
                     <td>0.0408</td>
-                    <td>205.03</td>
+                    <td class="metric-cell metric-fast">205.03</td>
                   </tr>
                   <tr>
                     <td>ViT-B/16</td>
                     <td>Transformer</td>
                     <td>Head 3 + full fine-tune 8 epochs</td>
-                    <td>0.9348</td>
-                    <td>0.9311</td>
-                    <td>0.0198</td>
+                    <td class="metric-cell metric-best">0.9348</td>
+                    <td class="metric-cell metric-best">0.9311</td>
+                    <td class="metric-cell metric-calibration">0.0198</td>
                     <td>755.21</td>
                   </tr>
                 </tbody>

@@ -379,3 +379,432 @@ Con số này cũng giúp ước lượng:
 - không phải số ảnh
 - chúng được suy ra từ số ảnh trong mỗi split chia cho `batch_size = 32`
 - cả ResNet-50 và ViT-B/16 giống nhau ở chỗ này vì dùng cùng split và cùng batch size
+
+## Q4. Rút ra được key insight gì từ việc `staged strategy` có accuracy cao hơn `full fine-tuning`? `Full fine-tuning` khác gì `staged` mà accuracy lại thấp hơn? Ngoài ra, `ECE diagram` là gì và đọc reliability diagram như thế nào?
+
+### A4.
+
+Đây là một trong những insight quan trọng nhất của toàn bộ benchmark image, vì nó không chỉ nói “model nào mạnh hơn”, mà còn cho thấy **cách fine-tune quan trọng không kém bản thân backbone**.
+
+---
+
+### 1. Trước hết, `full fine-tuning` và `staged strategy` khác nhau ở đâu?
+
+#### `Full fine-tuning`
+
+Ngay từ epoch đầu tiên:
+
+- mở toàn bộ model
+- classifier head và backbone cùng được cập nhật
+- tất cả tham số cùng thay đổi trong suốt quá trình train
+
+Trong benchmark của bạn:
+
+- `ResNet-50 full fine-tuning`: `12 epochs`
+- `ViT-B/16 full fine-tuning`: `12 epochs`
+
+#### `Staged strategy`
+
+Quá trình train được tách thành 2 giai đoạn:
+
+1. **Head-only warmup**
+
+- đóng băng backbone
+- chỉ train classifier head
+- mục tiêu là để head mới học trước cách map đặc trưng pretrained sang 120 lớp Stanford Dogs
+
+2. **Full fine-tuning**
+
+- mở toàn bộ backbone
+- tiếp tục fine-tune toàn model
+- lúc này backbone chỉ cần điều chỉnh tinh hơn, thay vì bị cập nhật quá sớm từ đầu
+
+Trong benchmark của bạn:
+
+- `Head 3 epochs + full fine-tune 8 epochs`
+
+---
+
+### 2. Key insight lớn nhất khi staged strategy cao hơn full fine-tuning là gì?
+
+Key insight là:
+
+- **trên bài toán transfer learning fine-grained như Stanford Dogs, sự ổn định ở giai đoạn đầu quan trọng hơn việc mở toàn bộ model ngay lập tức**
+
+Nói cách khác:
+
+- pretrained backbone đã mang sẵn tri thức rất tốt từ ImageNet
+- điều đầu tiên cần học chưa phải là “thay đổi toàn bộ backbone”
+- mà là “để classifier head mới hiểu cách dùng các đặc trưng có sẵn cho bài toán 120 lớp”
+
+Khi staged strategy tốt hơn full fine-tuning, ta rút ra được rằng:
+
+1. **Backbone pretrained đã đủ tốt để làm nền**
+
+- không cần chỉnh mạnh từ đầu
+- nếu chỉnh quá sớm, có thể làm hỏng một phần các đặc trưng đã học tốt trước đó
+
+2. **Phần head mới là phần cần thích nghi trước**
+
+- vì head được khởi tạo mới cho 120 lớp
+- nó chưa biết cách đọc vector đặc trưng pretrained để phân loại giống chó
+
+3. **Bài toán fine-grained nhạy với nhiễu optimization**
+
+- Stanford Dogs cần phân biệt các khác biệt rất nhỏ
+- nếu giai đoạn đầu không ổn định, model dễ cập nhật sai hướng
+
+4. **Transfer learning hiệu quả không chỉ nằm ở model, mà còn nằm ở protocol fine-tuning**
+
+- cùng một backbone
+- cùng một dataset
+- nhưng chiến lược train khác có thể tạo ra chênh lệch đáng kể
+
+---
+
+### 3. Bằng chứng từ chính kết quả của bạn
+
+Trong benchmark hiện tại:
+
+- `ResNet-50 full fine-tuning`: `85.57%`
+- `ResNet-50 staged`: `86.55%`
+
+Chênh lệch:
+
+- tăng khoảng `0.98` điểm accuracy
+
+Với `ViT-B/16`:
+
+- `ViT-B/16 full fine-tuning`: `90.77%`
+- `ViT-B/16 staged`: `93.48%`
+
+Chênh lệch:
+
+- tăng khoảng `2.71` điểm accuracy
+
+Điều này cho thấy:
+
+- staged strategy cải thiện cho **cả hai family**
+- và đặc biệt hữu ích với `ViT-B/16`
+
+Insight sâu hơn ở đây là:
+
+- **stability-first transfer** đang có lợi hơn **aggressive full adaptation from the first epoch**
+
+---
+
+### 4. Tại sao full fine-tuning lại có accuracy thấp hơn?
+
+Điểm mấu chốt nằm ở giai đoạn đầu của optimization.
+
+#### Khi full fine-tuning từ đầu
+
+Classifier head mới:
+
+- còn ngẫu nhiên hoặc chưa ổn định
+- dự đoán ban đầu còn nhiễu
+
+Nhưng vì toàn bộ backbone đã mở ngay:
+
+- gradient từ head chưa ổn định sẽ truyền ngược vào tất cả các layer phía dưới
+- backbone pretrained bị cập nhật sớm theo tín hiệu chưa tốt
+
+Điều đó có thể gây ra:
+
+- **feature drift**: đặc trưng tốt từ pretrained bị lệch đi quá sớm
+- **catastrophic forgetting nhẹ**: model quên bớt tri thức hữu ích từ ImageNet
+- **optimization khó ổn định hơn**, nhất là với bài toán fine-grained
+
+Nói đơn giản:
+
+- full fine-tuning giống như vừa thay đầu ra mới, vừa yêu cầu cả hệ thống bên dưới đổi theo ngay từ đầu
+- trong khi chính đầu ra mới còn chưa học xong cách đọc đặc trưng cũ
+
+#### Khi staged strategy
+
+Ở 3 epoch đầu:
+
+- backbone được giữ nguyên
+- head mới học cách “dịch” đặc trưng pretrained thành 120 giống chó
+
+Sau khi head đã ổn hơn:
+
+- mới mở toàn bộ backbone
+- lúc này gradient quay về backbone “sạch” và có ý nghĩa hơn
+
+Do đó:
+
+- quá trình fine-tuning ổn định hơn
+- ít làm hỏng tri thức pretrained hơn
+- thường cho accuracy cuối tốt hơn
+
+---
+
+### 5. Vì sao effect này còn rõ hơn với ViT-B/16?
+
+Với kết quả của bạn, ViT hưởng lợi từ staged strategy mạnh hơn ResNet.
+
+Một cách giải thích hợp lý là:
+
+- ViT-B/16 có số tham số lớn hơn nhiều: `85.89M` so với `23.75M` của ResNet-50
+- Transformer cũng khá nhạy với recipe fine-tuning
+- nếu mở toàn bộ model từ đầu, quá trình thích nghi có thể “rung” mạnh hơn
+
+Staged strategy lúc này đóng vai trò như một bước:
+
+- ổn định hóa optimization
+- giúp head học nhiệm vụ mới trước
+- rồi mới cho backbone Transformer điều chỉnh
+
+Đây không phải quy luật tuyệt đối cho mọi dataset, nhưng trong benchmark Stanford Dogs của bạn, nó là một insight rất rõ.
+
+---
+
+### 6. Tóm tắt một câu dễ nhớ về staged vs full
+
+Bạn có thể nói ngắn gọn như sau:
+
+> Staged strategy tốt hơn vì nó cho classifier head thích nghi trước với bài toán mới, từ đó giảm nhiễu gradient ở giai đoạn đầu và giữ lại đặc trưng pretrained của backbone tốt hơn so với full fine-tuning ngay từ đầu.
+
+---
+
+## Phần 2. `ECE diagram` là gì?
+
+`ECE` là viết tắt của:
+
+- `Expected Calibration Error`
+
+Nó đo xem:
+
+- **độ tự tin của model có khớp với độ chính xác thực tế hay không**
+
+Ví dụ:
+
+- nếu model thường nói “tôi tự tin 90%”
+- thì trong những lần nó tự tin khoảng 90%, nó có đúng thật khoảng 90% không?
+
+Nếu có:
+
+- model được gọi là **well-calibrated**
+
+Nếu không:
+
+- model bị lệch calibration
+
+### Ý nghĩa trực giác
+
+Accuracy trả lời:
+
+- model đoán đúng bao nhiêu
+
+ECE trả lời:
+
+- model có **biết mình đúng đến mức nào** hay không
+
+Vì vậy:
+
+- một model có thể accuracy cao
+- nhưng nếu confidence quá phóng đại thì calibration vẫn kém
+
+---
+
+### 7. ECE được tính theo ý tưởng nào?
+
+Thông thường ta:
+
+1. chia confidence thành nhiều khoảng, ví dụ:
+
+- `0.0-0.1`
+- `0.1-0.2`
+- ...
+- `0.9-1.0`
+
+2. với mỗi bin:
+
+- tính **confidence trung bình**
+- tính **accuracy thực tế**
+
+3. lấy độ lệch giữa hai giá trị đó
+
+4. cộng có trọng số theo số lượng mẫu trong từng bin
+
+Nói trực giác:
+
+- nếu các bin có confidence trung bình rất gần accuracy thực tế
+- thì ECE thấp
+
+`ECE` càng thấp thì càng tốt.
+
+Trong hình bạn gửi:
+
+- `ECE = 0.0408`
+
+Nghĩa là trung bình độ lệch calibration vào khoảng hơn `4%`.
+
+Đây là mức khá ổn, không quá tệ.
+
+---
+
+## Phần 3. Reliability diagram là gì và đọc hình này thế nào?
+
+Hình bạn gửi có 2 phần:
+
+1. **Reliability diagram** ở bên trái
+2. **Confidence histogram** ở bên phải
+
+---
+
+### 8. Reliability diagram bên trái thể hiện gì?
+
+Trên đồ thị bên trái:
+
+- trục ngang là `confidence bin`
+- trục dọc là `accuracy / confidence`
+
+Có 3 thành phần:
+
+1. **Đường nét đứt `Perfect calibration`**
+
+- đây là đường lý tưởng `y = x`
+- nếu confidence bằng accuracy ở mọi bin, model calibrated hoàn hảo
+
+2. **Đường xanh `Confidence`**
+
+- cho biết confidence trung bình của model trong từng bin
+
+3. **Cột cam `Accuracy`**
+
+- cho biết accuracy thực tế trong từng bin
+
+---
+
+### 9. Cách đọc reliability diagram
+
+Nguyên tắc rất quan trọng:
+
+- nếu **đường xanh cao hơn cột cam** -> model **overconfident**
+  - tự tin hơn mức đúng thực tế
+
+- nếu **cột cam cao hơn đường xanh** -> model **underconfident**
+  - đúng nhiều hơn mức nó tự tin
+
+- nếu hai cái gần nhau và cùng bám gần đường nét đứt -> calibration tốt
+
+---
+
+### 10. Giải thích cụ thể hình ResNet-50 staged của bạn
+
+Tiêu đề hình là:
+
+- `ResNet-50 | Head 3 + full fine-tune 8 epochs reliability diagram`
+- `ECE = 0.0408`
+
+Từ hình này có thể đọc ra vài ý:
+
+#### a. Ở các bin confidence cao, model khá ổn
+
+Đặc biệt ở vùng:
+
+- `0.85`
+- `0.95`
+
+đường xanh và cột cam tương đối gần nhau, và cùng gần đường chuẩn.
+
+Điều đó cho thấy:
+
+- khi model rất tự tin, nó cũng khá đúng thật
+
+Đây là tín hiệu tốt.
+
+#### b. Ở một số bin trung bình, model hơi overconfident
+
+Có vài đoạn:
+
+- đường xanh nằm nhỉnh hơn cột cam
+
+Điều này nghĩa là:
+
+- model tự tin hơi cao hơn accuracy thực tế một chút
+
+Nói cách khác:
+
+- nó có xu hướng “nói chắc hơn một ít” so với độ đúng thật
+
+#### c. Các bin confidence thấp hoặc ít mẫu có thể dao động mạnh
+
+Ở vùng confidence thấp:
+
+- số lượng mẫu thường ít hơn
+- accuracy/cột có thể dao động thất thường hơn
+
+Điều này khá bình thường và không nên diễn giải quá mạnh.
+
+---
+
+### 11. Confidence histogram bên phải nói gì?
+
+Biểu đồ bên phải cho thấy:
+
+- có bao nhiêu mẫu rơi vào từng khoảng confidence
+
+Trong hình của bạn, có một cột rất lớn ở vùng:
+
+- `0.9 - 1.0`
+
+Điều đó nghĩa là:
+
+- model dự đoán phần lớn mẫu với confidence rất cao
+
+Đây chưa chắc đã tốt hay xấu nếu nhìn riêng.
+
+Muốn kết luận đúng, phải kết hợp với reliability diagram bên trái:
+
+- nếu confidence rất cao và accuracy trong bin đó cũng cao -> tốt
+- nếu confidence rất cao mà accuracy thấp hơn nhiều -> overconfident nguy hiểm
+
+Trong hình này:
+
+- vì vùng confidence cao cũng tương đối bám sát đường chuẩn
+- nên có thể nói ResNet-50 staged **tự tin cao nhưng không bị lệch quá nhiều**
+
+---
+
+### 12. Từ hình này rút ra insight gì?
+
+Từ riêng hình ResNet-50 staged, ta có thể kết luận:
+
+1. model có xu hướng dự đoán với confidence khá cao
+2. calibration nhìn chung là ổn, vì `ECE = 0.0408` không lớn
+3. vẫn có một số mức confidence trung gian bị overconfident nhẹ
+4. ở vùng confidence cao nhất, model hoạt động tương đối đáng tin
+
+Nếu so với `ViT-B/16 staged` có `ECE = 0.0198`, thì:
+
+- ViT-B/16 còn calibrated tốt hơn nữa
+
+Nghĩa là:
+
+- không chỉ accuracy cao hơn
+- mà độ tự tin của ViT-B/16 cũng khớp với thực tế hơn
+
+---
+
+### 13. Câu trả lời ngắn gọn nếu thầy hỏi trực tiếp
+
+Bạn có thể trả lời ngắn như sau:
+
+> Việc staged strategy cao hơn full fine-tuning cho thấy trong transfer learning, đặc biệt với bài toán fine-grained như Stanford Dogs, việc cho classifier head thích nghi trước rồi mới mở toàn bộ backbone là ổn định hơn và giữ được đặc trưng pretrained tốt hơn. Còn ECE diagram dùng để kiểm tra model có calibrated tốt không: nếu confidence trung bình trong từng bin gần accuracy thực tế thì calibration tốt, và trong hình ResNet-50 staged này, model nhìn chung calibrated khá ổn với ECE khoảng 0.0408, dù vẫn hơi overconfident ở một vài bin trung gian.
+
+---
+
+### 14. Tóm tắt ngắn
+
+- `staged strategy` tốt hơn vì giảm nhiễu optimization ở giai đoạn đầu
+- head học trước giúp backbone pretrained không bị cập nhật sai quá sớm
+- `full fine-tuning` mở toàn bộ model ngay từ đầu nên dễ kém ổn định hơn
+- `ECE` đo độ lệch giữa confidence và accuracy thực tế
+- reliability diagram giúp nhìn xem model overconfident hay underconfident ở từng mức confidence
+- trong hình ResNet-50 staged của bạn:
+  - calibration khá ổn
+  - confidence cao tập trung nhiều ở vùng `0.9-1.0`
+  - có overconfidence nhẹ ở một số bin trung gian

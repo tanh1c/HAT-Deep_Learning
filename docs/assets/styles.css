@@ -4185,6 +4185,43 @@ html[data-image-theme="dark"] .image-report-page .eyebrow {
   color: var(--muted);
 }
 
+.image-report-page .metric-cell {
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.image-report-page .metric-best {
+  color: #21553f;
+}
+
+.image-report-page .metric-good {
+  color: #5f6a42;
+}
+
+.image-report-page .metric-fast {
+  color: #8a6415;
+}
+
+.image-report-page .metric-calibration {
+  color: #285f9f;
+}
+
+html[data-image-theme="dark"] .image-report-page .metric-best {
+  color: #b7f0d6;
+}
+
+html[data-image-theme="dark"] .image-report-page .metric-good {
+  color: #e2efbb;
+}
+
+html[data-image-theme="dark"] .image-report-page .metric-fast {
+  color: #ffe3a1;
+}
+
+html[data-image-theme="dark"] .image-report-page .metric-calibration {
+  color: #d3e8ff;
+}
+
 .image-report-page .button-primary {
   background: linear-gradient(135deg, var(--primary), var(--primary-deep));
   border-color: rgba(255, 255, 255, 0.16);
