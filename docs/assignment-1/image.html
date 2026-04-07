@@ -8,6 +8,11 @@
       name="description"
       content="Image report page for Assignment 1, covering Stanford Dogs with ResNet-50 and ViT-B/16."
     >
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/assignment-1/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/assignment-1/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/assignment-1/favicon_io/favicon-16x16.png">
+    <link rel="shortcut icon" href="../assets/assignment-1/favicon_io/favicon.ico">
+    <link rel="manifest" href="../assets/assignment-1/favicon_io/site.webmanifest">
     <script>
       (function () {
         try {
@@ -2890,15 +2895,6 @@ plt.savefig(ARTIFACT_ROOT / 'comparison_overview.png', bbox_inches='tight')</cod
                 <p class="figure-caption">
                   Grad-CAM for the staged ResNet-50 run shows which image regions the CNN relies on most strongly when making its
                   breed predictions.
-                </p>
-              </section>
-              <section class="figure-stack-item">
-                <div class="figure-frame">
-                  <img src="../assets/assignment-1/stanford_dogs/benchmark/vit/vit_b16_head_then_full/vit_b_16___head_3_+_full_fine_tune_8_epochs_attention_gallery.png" alt="ViT-B/16 staged attention visualization gallery on Stanford Dogs">
-                </div>
-                <p class="figure-caption">
-                  The attention gallery provides the transformer counterpart to Grad-CAM and shows how the strongest benchmark run
-                  distributes attention across patches and object parts.
                 </p>
               </section>
             </div>
