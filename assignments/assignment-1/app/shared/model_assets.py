@@ -102,7 +102,7 @@ def _download_from_google_drive(identifier: str, destination: Path) -> Path:
     import gdown
 
     if identifier.startswith("http://") or identifier.startswith("https://"):
-        gdown.download(url=identifier, output=str(destination), fuzzy=True, quiet=False)
+        gdown.download(url=identifier, output=str(destination), quiet=False)
     else:
         gdown.download(id=identifier, output=str(destination), quiet=False)
     return destination
