@@ -12,8 +12,11 @@ import tempfile
 import tomllib
 import urllib.request
 from collections.abc import Mapping
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any, Optional, Tuple
+
+import requests
 
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
@@ -100,25 +103,107 @@ def _download_from_url(url: str, destination: Path) -> Path:
     return destination
 
 
+class _GoogleDriveFormParser(HTMLParser):
+    """Extract the confirmation form from a Google Drive warning page."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.form_action: Optional[str] = None
+        self.inputs: dict[str, str] = {}
+        self._inside_form = False
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, Optional[str]]]) -> None:
+        attr_map = dict(attrs)
+        if tag == "form" and self.form_action is None:
+            self.form_action = attr_map.get("action")
+            self._inside_form = True
+            return
+
+        if tag == "input" and self._inside_form:
+            name = attr_map.get("name")
+            value = attr_map.get("value")
+            if name and value is not None:
+                self.inputs[name] = value
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "form" and self._inside_form:
+            self._inside_form = False
+
+
+def _is_valid_checkpoint_file(path: Path) -> bool:
+    """Check whether a downloaded checkpoint looks like a PyTorch artifact."""
+    if not path.exists() or path.stat().st_size == 0:
+        return False
+
+    with open(path, "rb") as f:
+        header = f.read(512)
+
+    stripped = header.lstrip().lower()
+    if stripped.startswith(b"<!doctype html") or stripped.startswith(b"<html"):
+        return False
+
+    return (
+        header.startswith(b"PK\x03\x04")
+        or header.startswith(b"PK\x05\x06")
+        or header.startswith(b"PK\x07\x08")
+        or header.startswith(b"\x80")
+    )
+
+
+def _write_response_to_destination(response: requests.Response, destination: Path) -> Path:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with open(destination, "wb") as f:
+        for chunk in response.iter_content(chunk_size=1024 * 1024):
+            if chunk:
+                f.write(chunk)
+    return destination
+
+
+def _download_google_drive_with_confirm(identifier: str, destination: Path) -> Path:
+    session = requests.Session()
+    initial_url = (
+        identifier
+        if identifier.startswith(("http://", "https://"))
+        else f"https://drive.google.com/uc?id={identifier}&export=download"
+    )
+    response = session.get(initial_url, allow_redirects=True, stream=True, timeout=120)
+    content_type = (response.headers.get("content-type") or "").lower()
+
+    if "text/html" not in content_type:
+        return _write_response_to_destination(response, destination)
+
+    parser = _GoogleDriveFormParser()
+    parser.feed(response.text)
+    if not parser.form_action:
+        raise RuntimeError("Google Drive returned HTML instead of a downloadable file.")
+
+    confirmed = session.get(
+        parser.form_action,
+        params=parser.inputs,
+        allow_redirects=True,
+        stream=True,
+        timeout=120,
+    )
+    return _write_response_to_destination(confirmed, destination)
+
+
 def _download_from_google_drive(identifier: str, destination: Path) -> Path:
     destination.parent.mkdir(parents=True, exist_ok=True)
 
-    import gdown
+    try:
+        _download_google_drive_with_confirm(identifier, destination)
+    except Exception:
+        import gdown
 
-    if identifier.startswith("http://") or identifier.startswith("https://"):
-        result = gdown.download(
-            url=identifier,
-            output=str(destination),
-            quiet=False,
-            fuzzy=True,
-        )
-    else:
-        result = gdown.download(id=identifier, output=str(destination), quiet=False)
+        if identifier.startswith("http://") or identifier.startswith("https://"):
+            gdown.download(url=identifier, output=str(destination), fuzzy=True, quiet=False)
+        else:
+            gdown.download(id=identifier, output=str(destination), quiet=False)
 
-    if not result or not destination.exists() or destination.stat().st_size == 0:
-        raise FileNotFoundError(
-            "Google Drive download did not produce a valid checkpoint file. "
-            f"Expected: {destination}"
+    if not _is_valid_checkpoint_file(destination):
+        destination.unlink(missing_ok=True)
+        raise RuntimeError(
+            f"Google Drive download did not produce a valid checkpoint file. Expected: {destination}"
         )
     return destination
 
@@ -158,7 +243,9 @@ def ensure_model_checkpoint(
 
     cached_path = download_root / filename
     if cached_path.exists():
-        return cached_path, "Cached downloaded file"
+        if _is_valid_checkpoint_file(cached_path):
+            return cached_path, "Cached downloaded file"
+        cached_path.unlink(missing_ok=True)
 
     configured_gdrive = _lookup_secret(configured_gdrive_key, secrets)
     if configured_gdrive:
