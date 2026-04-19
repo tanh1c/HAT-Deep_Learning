@@ -8,6 +8,7 @@ same logic can be reused by Streamlit or any future lightweight demos.
 from __future__ import annotations
 
 import os
+import re
 import tempfile
 import tomllib
 import urllib.request
@@ -99,8 +100,25 @@ def _download_from_url(url: str, destination: Path) -> Path:
     if not destination.exists() or destination.stat().st_size == 0:
         raise FileNotFoundError(
             f"Download from URL did not create a valid checkpoint file at {destination}."
-        )
+    )
     return destination
+
+
+def _extract_google_drive_id(identifier: str) -> Optional[str]:
+    """Extract a Google Drive file id from either a raw id or a Drive URL."""
+    if identifier.startswith(("http://", "https://")):
+        patterns = [
+            r"/file/d/([^/]+)",
+            r"[?&]id=([^&]+)",
+            r"/uc\?.*?[?&]id=([^&]+)",
+        ]
+        for pattern in patterns:
+            match = re.search(pattern, identifier)
+            if match:
+                return match.group(1)
+        return None
+
+    return identifier
 
 
 class _GoogleDriveFormParser(HTMLParser):
@@ -161,10 +179,11 @@ def _write_response_to_destination(response: requests.Response, destination: Pat
 
 def _download_google_drive_with_confirm(identifier: str, destination: Path) -> Path:
     session = requests.Session()
+    file_id = _extract_google_drive_id(identifier)
     initial_url = (
-        identifier
-        if identifier.startswith(("http://", "https://"))
-        else f"https://drive.google.com/uc?id={identifier}&export=download"
+        f"https://drive.google.com/uc?id={file_id}&export=download"
+        if file_id
+        else identifier
     )
     response = session.get(initial_url, allow_redirects=True, stream=True, timeout=120)
     content_type = (response.headers.get("content-type") or "").lower()
@@ -195,8 +214,11 @@ def _download_from_google_drive(identifier: str, destination: Path) -> Path:
     except Exception:
         import gdown
 
-        if identifier.startswith("http://") or identifier.startswith("https://"):
-            gdown.download(url=identifier, output=str(destination), fuzzy=True, quiet=False)
+        file_id = _extract_google_drive_id(identifier)
+        if file_id:
+            gdown.download(id=file_id, output=str(destination), quiet=False)
+        elif identifier.startswith("http://") or identifier.startswith("https://"):
+            gdown.download(url=identifier, output=str(destination), quiet=False)
         else:
             gdown.download(id=identifier, output=str(destination), quiet=False)
 
