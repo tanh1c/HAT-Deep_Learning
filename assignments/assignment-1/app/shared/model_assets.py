@@ -93,6 +93,10 @@ def _download_from_url(url: str, destination: Path) -> Path:
     )
     with urllib.request.urlopen(request) as response, open(destination, "wb") as f:
         f.write(response.read())
+    if not destination.exists() or destination.stat().st_size == 0:
+        raise FileNotFoundError(
+            f"Download from URL did not create a valid checkpoint file at {destination}."
+        )
     return destination
 
 
@@ -102,9 +106,20 @@ def _download_from_google_drive(identifier: str, destination: Path) -> Path:
     import gdown
 
     if identifier.startswith("http://") or identifier.startswith("https://"):
-        gdown.download(url=identifier, output=str(destination), quiet=False)
+        result = gdown.download(
+            url=identifier,
+            output=str(destination),
+            quiet=False,
+            fuzzy=True,
+        )
     else:
-        gdown.download(id=identifier, output=str(destination), quiet=False)
+        result = gdown.download(id=identifier, output=str(destination), quiet=False)
+
+    if not result or not destination.exists() or destination.stat().st_size == 0:
+        raise FileNotFoundError(
+            "Google Drive download did not produce a valid checkpoint file. "
+            f"Expected: {destination}"
+        )
     return destination
 
 
